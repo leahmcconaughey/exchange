@@ -259,6 +259,12 @@ nav.main a.on{color:var(--navy)}
 .cta-body{display:grid;gap:14px;align-content:center;min-width:0}
 .cta-body .email{justify-self:start}
 @media (max-width:820px){.cta{grid-template-columns:minmax(0,1fr)!important}}
+.yt-wrap{position:relative;aspect-ratio:2/1;background:#000;transition:aspect-ratio .3s ease;cursor:pointer}
+.yt-wrap.playing{aspect-ratio:16/9}
+.yt-frame,.yt-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.yt-cover{position:absolute;inset:0;pointer-events:none;transition:opacity .35s ease;z-index:1}
+.yt-wrap.playing .yt-cover{opacity:0}
+.yt-wrap:not(.ready) .yt-cover{pointer-events:auto;cursor:progress}
 </style>
 </head>
 <body>
@@ -714,7 +720,7 @@ function renderStory(s){
   app.innerHTML = `<article class="wrap story">
     <a class="back" href="#stories" data-go="stories">← Back to Stories</a>
     <h1>${esc(s.title)}</h1>
-    ${s.video?`<button class="player" id="player" aria-label="Play video: ${esc(s.title)}">${coverHTML(s)}</button>`:`<a class="player" href="${esc(s.link)}" target="_blank" rel="noopener">${coverHTML(s)}</a>`}
+    ${s.video?`<div class="player yt-wrap" id="ytwrap"><div class="yt-frame"><div id="yt"></div></div><div class="yt-cover" aria-hidden="true">${coverHTML(s)}</div></div>`:`<a class="player" href="${esc(s.link)}" target="_blank" rel="noopener">${coverHTML(s)}</a>`}
     <p class="desc">${esc(s.summary)}</p>
     <div class="where">${esc(s.places.slice().reverse().join(" · "))}</div>
     ${s.allTags.length?`<div class="chips">${s.allTags.map(t=>`<button class="chip" data-tag="${esc(t)}">${esc(t)}</button>`).join("")}</div>`:""}
@@ -724,12 +730,43 @@ function renderStory(s){
   </article>`;
   wireRows(app);
   app.querySelectorAll("button.chip").forEach(b=>b.onclick=()=>tagToFilter(b.dataset.tag));
-  const pl = app.querySelector("#player");
-  if(pl) pl.onclick = ()=>{
-    const wrap = document.createElement("div"); wrap.className = "player video";
-    wrap.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${s.video}?autoplay=1&rel=0&playsinline=1&modestbranding=1" title="${esc(s.title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
-    pl.replaceWith(wrap);
+  if(s.video) mountVideo(s);
+}
+
+/* The YouTube player loads behind the cover, and the cover lets clicks pass through,
+   so the visitor's first click lands on the player itself. Safari counts that as a real
+   "play" click, so it starts with sound in one click everywhere. The cover fades once playing. */
+let ytReady = null;
+function loadYT(){
+  if(ytReady) return ytReady;
+  ytReady = new Promise((resolve, reject)=>{
+    if(window.YT && window.YT.Player) return resolve(window.YT);
+    window.onYouTubeIframeAPIReady = ()=>resolve(window.YT);
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    tag.onerror = reject;
+    document.head.appendChild(tag);
+  });
+  return ytReady;
+}
+function mountVideo(s){
+  const wrap = document.getElementById("ytwrap");
+  const fallback = ()=>{
+    if(!document.body.contains(wrap)) return;
+    wrap.outerHTML = `<a class="player" href="${esc(s.link)}" target="_blank" rel="noopener">${coverHTML(s)}</a>`;
   };
+  loadYT().then(YT=>{
+    if(!document.body.contains(wrap)) return;
+    new YT.Player("yt", {
+      host: "https://www.youtube-nocookie.com",
+      videoId: s.video, width: "100%", height: "100%",
+      playerVars: {rel:0, playsinline:1, modestbranding:1},
+      events: {
+        onReady: ()=>wrap.classList.add("ready"),
+        onStateChange: e=>{ if(e.data===1 || e.data===3) wrap.classList.add("playing"); }
+      }
+    });
+  }).catch(fallback);
 }
 function renderResource(r){
   const seeIt = stories.filter(s=>s.focus.some(f=>r.focus.includes(f))).slice(0,8);
