@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LearningWorks Exchange</title>
+<meta name="description" content="Real stories and practical resources to help educators create meaningful, student-centered learning experiences.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: brand header, stories grid with filter bar; story view = title, cover, description, related.
+   Single light brand theme by choice (matches the live Exchange). */
+:root{
+  --navy:#05415B; --blue:#038FDD; --orange:#FF9C39; --beige:#FCF2E8;
+  --page:#F8EFE6; --card:#FFFFFF; --line:#E6D9CB; --muted:#5E7480;
+  --sky:#DDEEFA; --sage:#BFDCC2; --peach:#F8CFA3; --orangeDeep:#F2A04F;
+  --font:"Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--navy);font-family:var(--font);font-size:16px;line-height:1.55}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* header */
+header.site{background:#fff;border-bottom:1px solid var(--line)}
+header.site .wrap{display:flex;align-items:center;gap:24px;padding-block:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:14px;text-decoration:none}
+.brand b{font-weight:800;font-size:20px;letter-spacing:-.01em}
+.brand span{border-left:1px solid var(--line);padding-left:14px;font-weight:700;font-size:13px;letter-spacing:.22em;color:var(--muted)}
+nav.main{margin-left:auto;display:flex;gap:22px;flex-wrap:wrap;font-weight:600;font-size:15px}
+nav.main a{text-decoration:none;color:var(--muted)}
+nav.main a.on{color:var(--navy)}
+.note{background:var(--sky);font-size:13.5px}
+.note .wrap{padding-block:9px}
+
+/* intro */
+.intro{padding-block:44px 8px}
+.eyebrow{font-size:12.5px;font-weight:800;letter-spacing:.16em;color:var(--blue);text-transform:uppercase}
+.intro h1{font-size:clamp(34px,5.5vw,58px);line-height:1.04;font-weight:800;margin:10px 0 12px;text-wrap:balance;letter-spacing:-.015em}
+.intro p{color:var(--muted);font-size:18px;max-width:62ch;margin:0}
+
+/* filters */
+.filters{margin-top:28px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:14px}
+.search{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:12px;padding:0 14px;background:var(--beige)}
+.search:focus-within{border-color:var(--blue)}
+.search svg{flex:none}
+.search input::placeholder{color:var(--muted);opacity:1;transition:opacity .25s}
+.search input.swap::placeholder{opacity:0}
+.search input{border:0;background:transparent;font:inherit;font-size:16px;color:var(--navy);padding:13px 0;width:100%;outline:none}
+.selects{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.filters .clear{font-size:14.5px}
+.field{display:grid;gap:5px;min-width:0}
+.field label{font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.field select{font:inherit;font-size:15px;font-weight:600;color:var(--navy);background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:10px 34px 10px 12px;width:100%;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2305415B' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;cursor:pointer}
+.field select.set{border-color:var(--blue);background-color:#EEF7FE}
+.field select:focus-visible,.search input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:14.5px;color:var(--muted)}
+.meta strong{color:var(--navy)}
+.clear{font:inherit;font-size:14px;font-weight:700;color:var(--blue);background:none;border:0;cursor:pointer;padding:0}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;padding-block:26px 64px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;transition:transform .18s ease, box-shadow .18s ease}
+.card:hover{transform:translateY(-3px);box-shadow:0 14px 30px -18px rgba(5,65,91,.45)}
+.card .body{padding:18px 20px 22px;display:grid;gap:8px;min-width:0}
+.kicker{font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.card h3{margin:0;font-size:20px;line-height:1.25;font-weight:800;text-wrap:balance}
+.card p{margin:0;color:var(--muted);font-size:14.5px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.empty{grid-column:1/-1;text-align:center;padding:60px 16px;color:var(--muted)}
+.empty b{display:block;color:var(--navy);font-size:20px;margin-bottom:6px}
+
+/* COVER (auto-drawn) */
+.cover{position:relative;aspect-ratio:2/1;max-width:100%;container-type:inline-size;overflow:hidden;background:var(--c-bg);color:var(--c-title)}
+.cover .shape{position:absolute;inset:0}
+.cover .txt{position:absolute;left:6.5cqw;top:0;bottom:0;width:52cqw;display:flex;flex-direction:column;justify-content:center;gap:2.4cqw}
+.cover .pill{align-self:flex-start;font-size:2.1cqw;font-weight:800;letter-spacing:.06em;padding:.9cqw 2cqw;border-radius:99px;background:var(--c-pill);color:var(--c-pilltxt);white-space:nowrap}
+.cover .ttl{font-size:5.6cqw;line-height:1.08;font-weight:800;letter-spacing:-.01em;text-wrap:balance}
+.cover .ttl.long{font-size:4.7cqw}
+.cover .rule{width:12cqw;height:.9cqw;border-radius:9px;background:var(--c-rule)}
+.cover .gs{font-size:2.3cqw;font-weight:700;opacity:.9}
+.cover .gs i{font-style:normal;opacity:.55;padding:0 1.2cqw}
+.cover .art{position:absolute;right:4cqw;top:50%;transform:translateY(-50%);width:34cqw;height:34cqw;border-radius:50%;background:var(--c-circle);display:grid;place-items:center}
+.cover .art svg{width:70%;height:70%;transform:rotate(-6deg)}
+.cover .play{position:absolute;right:4.5cqw;bottom:5cqw;width:8cqw;height:8cqw;border-radius:50%;background:var(--navy);display:grid;place-items:center;box-shadow:0 0 0 .8cqw rgba(255,255,255,.85)}
+.cover .play::after{content:"";margin-left:1cqw;border-left:2.8cqw solid #fff;border-top:1.7cqw solid transparent;border-bottom:1.7cqw solid transparent}
+/* templates */
+.t-sunrise{--c-bg:var(--beige);--c-title:var(--navy);--c-pill:var(--navy);--c-pilltxt:#fff;--c-rule:var(--orange);--c-circle:var(--peach)}
+.t-sky{--c-bg:var(--sky);--c-title:var(--navy);--c-pill:#fff;--c-pilltxt:var(--navy);--c-rule:var(--blue);--c-circle:#fff}
+.t-navy{--c-bg:var(--navy);--c-title:#fff;--c-pill:var(--orange);--c-pilltxt:var(--navy);--c-rule:var(--blue);--c-circle:var(--beige)}
+.t-garden{--c-bg:var(--beige);--c-title:var(--navy);--c-pill:var(--sage);--c-pilltxt:var(--navy);--c-rule:var(--orange);--c-circle:#fff}
+.t-orange{--c-bg:var(--orangeDeep);--c-title:var(--navy);--c-pill:var(--navy);--c-pilltxt:#fff;--c-rule:#fff;--c-circle:var(--beige)}
+.t-split{--c-bg:var(--beige);--c-title:var(--navy);--c-pill:var(--sky);--c-pilltxt:var(--navy);--c-rule:var(--blue);--c-circle:#7EC4F0}
+.t-sunrise .shape{background:radial-gradient(circle at 105% 110%, var(--peach) 0 38%, transparent 38.3%)}
+.t-sky .shape{background:radial-gradient(ellipse at 100% 100%, #fff 0 34%, transparent 34.4%)}
+.t-navy .shape{background:radial-gradient(circle at 100% 112%, #0B5675 0 40%, transparent 40.3%)}
+.t-garden .shape{background:linear-gradient(90deg, transparent 0 60%, var(--sage) 60%)}
+.t-orange .shape{background:radial-gradient(circle at 0% 0%, #F7B06A 0 30%, transparent 30.3%)}
+.t-split .shape{background:linear-gradient(90deg, transparent 0 60%, var(--blue) 60%)}
+.t-navy .play{background:var(--orange)} .t-navy .play::after{border-left-color:var(--navy)}
+
+/* story view */
+.story{padding-block:22px 70px;display:grid;gap:22px}
+.back{font-weight:700;color:var(--blue);text-decoration:none;font-size:15px;display:inline-flex;gap:6px;align-items:center;justify-self:start}
+.story h1{margin:0;font-size:34px;line-height:1.2;font-weight:800;text-wrap:balance}
+.player{display:block;border-radius:18px;overflow:hidden;box-shadow:0 20px 40px -28px rgba(5,65,91,.55);text-decoration:none}
+.player .cover .play{width:11cqw;height:11cqw;right:44.5cqw;bottom:auto;top:50%;transform:translateY(-50%);opacity:0;transition:opacity .2s}
+.player:hover .cover .play,.player:focus-visible .cover .play{opacity:1}
+.story .desc{font-size:18px;line-height:1.6;margin:0}
+.story .where{color:var(--muted);font-size:15px;margin-top:-8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:13.5px;font-weight:700;background:#fff;color:var(--navy);border:1.5px solid var(--line);border-radius:99px;padding:6px 13px;cursor:pointer}
+.chip:hover{border-color:var(--blue);color:var(--blue)}
+.next{border-top:1px solid var(--line);padding-top:26px;display:grid;gap:16px}
+.next h2{margin:0;font-size:22px;font-weight:800}
+.next .grid{padding:0}
+
+/* sliding rows */
+.rows{display:grid;gap:40px;padding-block:34px 70px}
+.row{display:grid;gap:14px;min-width:0}
+.row-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
+.row h2{margin:0;font-size:26px;font-weight:800;line-height:1.2}
+.row-sub{color:var(--muted);font-size:14.5px;margin-top:2px}
+.arrows{display:flex;gap:8px;flex:none}
+.arrow{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--navy);display:grid;place-items:center;cursor:pointer}
+.arrow:hover:not(:disabled){background:var(--navy);color:#fff;border-color:var(--navy)}
+.arrow:disabled{opacity:.35;cursor:default}
+.track{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 2px 14px;min-width:0}
+.track::-webkit-scrollbar{display:none}
+.track>*{flex:0 0 clamp(270px,42%,440px);scroll-snap-align:start}
+.track>.empty{flex-basis:100%}
+.track .card:hover{transform:translateY(-2px)}
+.coll{display:grid;align-content:start;gap:8px;padding:24px;border-radius:16px;text-decoration:none;min-height:190px;background:var(--k-bg);color:var(--k-fg);transition:transform .18s ease}
+.coll:hover{transform:translateY(-2px)}
+.track>.coll{flex-basis:clamp(240px,30%,320px)}
+.coll-icon{width:46px;height:46px;border-radius:12px;background:var(--k-chip);display:grid;place-items:center;color:var(--k-icon)}
+.coll-icon svg{width:24px;height:24px}
+.coll-title{font-size:21px;font-weight:800;line-height:1.2;margin-top:8px}
+.coll-blurb{font-size:15px;opacity:.85}
+.coll-count{font-size:13.5px;font-weight:800;margin-top:8px}
+.tone-blue{--k-bg:#038FDD;--k-fg:#fff;--k-chip:rgba(255,255,255,.2);--k-icon:#fff}
+.tone-orange{--k-bg:#FF9C39;--k-fg:#05415B;--k-chip:rgba(255,255,255,.45);--k-icon:#05415B}
+.tone-sage{--k-bg:#BFDCC2;--k-fg:#05415B;--k-chip:#fff;--k-icon:#05415B}
+.tone-navy{--k-bg:#05415B;--k-fg:#fff;--k-chip:rgba(255,255,255,.15);--k-icon:#FF9C39}
+.tone-peach{--k-bg:#F8CFA3;--k-fg:#05415B;--k-chip:#fff;--k-icon:#05415B}
+.tone-sky{--k-bg:#DDEEFA;--k-fg:#05415B;--k-chip:#fff;--k-icon:#038FDD}
+.coll-hero{display:flex;gap:18px;align-items:center;padding:26px;border-radius:18px;background:var(--k-bg);color:var(--k-fg)}
+.coll-hero .eyebrow{color:inherit;opacity:.8}
+.coll-hero h1{margin:2px 0}
+.coll-hero p{margin:0;opacity:.85}
+.coll-chip{text-decoration:none;background:var(--beige)}
+.next{border-top:1px solid var(--line);padding-top:26px}
+/* real covers */
+.cover.real{background:var(--beige)}
+.cover.real img{display:block;width:100%;height:100%;object-fit:cover}
+/* home */
+.home-hero{background:var(--navy);color:#fff}
+.home-hero .wrap{padding-block:56px 60px;display:grid;gap:16px}
+.eyebrow.light{color:var(--orange)}
+.eyebrow.orange{color:var(--orange)}
+.home-hero h1{margin:0;font-size:clamp(40px,6.5vw,76px);line-height:1.02;font-weight:800;letter-spacing:-.02em}
+.home-hero h1 span{color:var(--orange)}
+.home-hero p{margin:0;font-size:19px;max-width:56ch;opacity:.9}
+.hero-search{display:flex;align-items:center;gap:10px;background:#fff;border-radius:14px;padding:6px 6px 6px 16px;max-width:720px;margin-top:8px}
+.hero-search input{flex:1;min-width:0;border:0;font:inherit;font-size:16px;color:var(--navy);padding:12px 0;outline:none;background:transparent}
+.hero-search input::placeholder{color:var(--muted);opacity:1;transition:opacity .25s}
+.hero-search input.swap::placeholder{opacity:0}
+.hero-search button{font:inherit;font-weight:800;font-size:15px;background:var(--orange);color:var(--navy);border:0;border-radius:10px;padding:12px 22px;cursor:pointer}
+.hero-note{font-size:13.5px;opacity:.75}
+.doors{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;padding-block:28px 0}
+.door{display:grid;align-content:start;gap:6px;padding:20px;background:#fff;border:1px solid var(--line);border-radius:16px;text-decoration:none;transition:transform .18s ease,border-color .18s}
+.door:hover{transform:translateY(-2px);border-color:var(--blue)}
+.door .coll-icon{--k-chip:var(--sky);--k-icon:var(--blue);margin-bottom:6px}
+.door b{font-size:18px;line-height:1.25}
+.door span:last-child{color:var(--muted);font-size:14.5px}
+.link{color:var(--blue);font-weight:700;text-decoration:none}
+/* library tabs */
+.tabs{display:flex;gap:6px;margin-top:10px;border-bottom:2px solid var(--line)}
+.tab{font-size:clamp(28px,4vw,40px);font-weight:800;text-decoration:none;color:var(--muted);padding:4px 18px 10px 0;margin-bottom:-2px;border-bottom:4px solid transparent;display:flex;align-items:baseline;gap:8px}
+.tab em{font-style:normal;font-size:15px;font-weight:700;background:#fff;border:1px solid var(--line);border-radius:99px;padding:1px 9px;color:var(--muted)}
+.tab.on{color:var(--navy);border-bottom-color:var(--orange)}
+.tab.on em{background:var(--navy);border-color:var(--navy);color:#fff}
+.tab-desc{color:var(--muted);font-size:17px;margin:14px 0 0;max-width:62ch}
+.selects{grid-template-columns:repeat(var(--cols,5),minmax(0,1fr))}
+.sample-note{font-style:italic}
+/* resources */
+.res{display:grid;align-content:start;gap:10px;padding:20px;background:#fff;border:1px solid var(--line);border-radius:16px;text-decoration:none;min-height:230px;transition:transform .18s}
+.res:hover{transform:translateY(-2px);border-color:var(--blue)}
+.res-top{display:flex;align-items:center;gap:10px}
+.res-icon{width:44px;height:44px;border-radius:12px;background:var(--beige);color:var(--blue);display:grid;place-items:center;flex:none}
+.res-icon svg{width:24px;height:24px}
+.res-icon.big{width:64px;height:64px;background:#fff}
+.res-icon.big svg{width:34px;height:34px}
+.res-type{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.sample{margin-left:auto;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:var(--peach);color:var(--navy);border-radius:99px;padding:3px 9px}
+.res h3{margin:0;font-size:20px;font-weight:800;line-height:1.25}
+.res p{margin:0;color:var(--muted);font-size:14.5px}
+.res-for{font-size:13.5px;font-weight:700;color:var(--blue)}
+.res-hero{display:flex;gap:18px;align-items:center}
+.res-hero h1{margin:0}
+.chip.static{cursor:default}
+.tryit{background:var(--sky);border-radius:18px;padding:24px;display:grid;gap:12px}
+.tryit h2{margin:0;font-size:24px;font-weight:800}
+.tryit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+/* leaders */
+.lead-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;padding-block:28px 0}
+.lead-grid .coll{min-height:200px}
+/* about */
+.about-intro p{max-width:66ch}
+.about-sec{padding-block:30px;border-top:1px solid var(--line);display:grid;gap:16px}
+.about-sec h2{margin:0;font-size:28px;font-weight:800}
+.lede{margin:0;font-size:18px;max-width:66ch}
+.people{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.person{display:flex;gap:18px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px}
+.person b{display:block;font-size:19px}
+.person .role{display:block;color:var(--blue);font-weight:700;font-size:14px;margin:2px 0 8px}
+.person p{margin:0;color:var(--muted);font-size:15px}
+.avatar{width:84px;height:84px;border-radius:50%;flex:none;background:var(--peach);display:grid;place-items:center;font-weight:800;font-size:24px;border:3px dashed #fff;box-shadow:0 0 0 2px var(--peach)}
+.avatar.alt{background:var(--sage);box-shadow:0 0 0 2px var(--sage)}
+.photo-note{font-size:13.5px;color:var(--muted);font-style:italic}
+.pillars{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.pillar{display:grid;gap:6px;padding:18px;background:#fff;border-radius:14px;border-top:5px solid var(--blue)}
+.pillar:nth-child(2){border-top-color:var(--orange)}.pillar:nth-child(3){border-top-color:#7DB884}.pillar:nth-child(4){border-top-color:var(--navy)}
+.pillar b{font-size:17px}
+.pillar span{color:var(--muted);font-size:14.5px}
+.places{display:flex;flex-wrap:wrap;gap:14px}
+.place{font:inherit;color:var(--navy);text-align:left;display:grid;gap:4px;padding:18px 22px;background:#fff;border:1.5px solid var(--line);border-radius:14px;cursor:pointer;min-width:240px}
+.place:hover{border-color:var(--blue)}
+.place span{color:var(--blue);font-weight:700;font-size:14px}
+.cta{background:var(--navy);color:#fff;border-radius:20px;padding:30px;border:0;grid-template-columns:1fr auto;align-items:center;margin-block:30px 70px}
+.cta p{margin:6px 0 0;opacity:.85}
+.email{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:rgba(255,255,255,.1);padding:10px 10px 10px 18px;border-radius:12px}
+.email span{font-weight:800;font-size:18px;user-select:all}
+.email button{font:inherit;font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px;background:var(--orange);color:var(--navy);border:0;border-radius:9px;padding:9px 14px;cursor:pointer}
+.email button svg{width:16px;height:16px}
+@media (max-width:980px){.doors,.pillars{grid-template-columns:repeat(2,minmax(0,1fr))}.cta{grid-template-columns:1fr}.selects{grid-template-columns:repeat(3,minmax(0,1fr))}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.doors,.pillars,.people,.lead-grid{grid-template-columns:minmax(0,1fr)}.person{flex-direction:column}.place{min-width:0;width:100%}.hero-search button{padding:12px 14px}.track>*{flex-basis:84%}.track>.coll{flex-basis:70%}.row h2{font-size:22px}.selects{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.grid{grid-template-columns:minmax(0,1fr)}nav.main{margin-left:0;gap:16px;font-size:14px}.story h1{font-size:26px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.player{border:0;padding:0;width:100%;cursor:pointer;background:none;font:inherit}
+.player.video{aspect-ratio:16/9;background:#000;max-width:100%}
+.player.video iframe{width:100%;height:100%;border:0;display:block}
+.loading{padding-block:80px;text-align:center;color:var(--muted);font-size:17px}
+.loading b{color:var(--navy)}
+.open-res{justify-self:start;background:var(--navy);color:#fff;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:12px}
+.site-foot{border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+.site-foot .wrap{padding-block:22px}
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="#" data-go=""><b>LearningWorks</b><span>EXCHANGE</span></a>
+    <nav class="main"><a href="#" data-go="" data-nav="home">Home</a><a href="#stories" data-go="stories" data-nav="stories">Stories</a><a href="#resources" data-go="resources" data-nav="resources">Resources</a><a href="#leaders" data-go="leaders" data-nav="leaders">For Leaders &amp; Coaches</a><a href="#about" data-go="about" data-nav="about">About</a></nav>
+  </div>
+</header>
+<main id="app"></main>
+<footer class="site-foot"><div class="wrap">© LearningWorks · <a href="https://learning-works.org" target="_blank" rel="noopener">learning-works.org</a> · info@learning-works.org</div></footer>
+<script>
+/* ---------- tag sorting (case-insensitive, so spelling cleanup can wait) ---------- */
+const GRADES = {"elementary school":"Elementary","elementary":"Elementary","middle school":"Middle School","high school":"High School"};
+const SUBJECTS = ["math","science","biology","chemistry","ela","writing","history","social studies","spanish","economics","special education"];
+const SPECIFIC = ["chemistry","biology"];
+const SPECIAL = {"ela":"ELA"};
+const nice = t => SPECIAL[t] || t.replace(/\b\w/g,c=>c.toUpperCase());
+const slug = t => t.toLowerCase().replace(/[’']/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const TEMPLATES = ["sunrise","sky","navy","garden","orange","split"];
+
+function pickIcon(subj, focus, pathway){
+  if(subj.some(s=>["science","biology","chemistry"].includes(s))) return "flask";
+  if(subj.includes("spanish")) return "talk";
+  if(subj.some(s=>["math","economics"].includes(s))) return "chart";
+  if(subj.some(s=>["history","social studies"].includes(s))) return "photos";
+  if(subj.some(s=>["ela","writing","special education"].includes(s))) return "book";
+  if(focus.includes("learning walks")) return "door";
+  if(focus.includes("coaching")) return "puzzle";
+  return "school";
+}
+
+/* stand-in pictures (the real site uses your ChatGPT illustrations) */
+const N="#05415B", S='stroke="#05415B" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"';
+const ICONS = {
+ flask:`<svg viewBox="0 0 100 100"><path d="M40 12h20M43 12v26L22 78a8 8 0 0 0 7 12h42a8 8 0 0 0 7-12L57 38V12" fill="#fff" ${S}/><path d="M31 64h38l9 14a8 8 0 0 1-7 12H29a8 8 0 0 1-7-12z" fill="#038FDD" ${S}/><circle cx="44" cy="76" r="5" fill="#FF9C39"/><circle cx="58" cy="70" r="3.5" fill="#FCF2E8"/></svg>`,
+ chart:`<svg viewBox="0 0 100 100"><path d="M14 86h74" fill="none" ${S}/><rect x="20" y="52" width="14" height="34" rx="3" fill="#BFDCC2" ${S}/><rect x="42" y="36" width="14" height="50" rx="3" fill="#FF9C39" ${S}/><rect x="64" y="18" width="14" height="68" rx="3" fill="#038FDD" ${S}/></svg>`,
+ book:`<svg viewBox="0 0 100 100"><path d="M50 26C40 18 24 18 12 22v58c12-4 28-4 38 4 10-8 26-8 38-4V22c-12-4-28-4-38 4z" fill="#fff" ${S}/><path d="M50 26v58" fill="none" ${S}/><path d="M20 36c8-2 16-2 22 1M20 48c8-2 16-2 22 1M58 37c6-3 14-3 22-1M58 49c6-3 14-3 22-1" fill="none" stroke="#038FDD" stroke-width="3.5" stroke-linecap="round"/></svg>`,
+ photos:`<svg viewBox="0 0 100 100"><rect x="26" y="14" width="54" height="62" rx="4" transform="rotate(10 53 45)" fill="#F8CFA3" ${S}/><rect x="18" y="24" width="54" height="62" rx="4" fill="#fff" ${S}/><rect x="25" y="31" width="40" height="34" fill="#DDEEFA" stroke="#05415B" stroke-width="3"/><path d="M25 60l12-12 9 9 7-6 12 12" fill="#BFDCC2" stroke="#05415B" stroke-width="3" stroke-linejoin="round"/><circle cx="55" cy="41" r="4" fill="#FF9C39"/></svg>`,
+ talk:`<svg viewBox="0 0 100 100"><path d="M12 22h46a6 6 0 0 1 6 6v24a6 6 0 0 1-6 6H32l-12 10V58h-8a6 6 0 0 1-6-6V28a6 6 0 0 1 6-6z" fill="#038FDD" ${S}/><path d="M88 40H52a6 6 0 0 0-6 6v22a6 6 0 0 0 6 6h22l12 10V74h2a6 6 0 0 0 6-6V46a6 6 0 0 0-6-6z" fill="#FF9C39" ${S}/><path d="M56 54h26M56 63h18" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>`,
+ door:`<svg viewBox="0 0 100 100"><rect x="22" y="12" width="56" height="78" rx="3" fill="#FCF2E8" ${S}/><path d="M30 18l32 8v62l-32-8z" fill="#FF9C39" ${S}/><circle cx="54" cy="56" r="3" fill="${N}"/><path d="M70 30l10-6M72 44h12" stroke="#038FDD" stroke-width="4" stroke-linecap="round"/></svg>`,
+ puzzle:`<svg viewBox="0 0 100 100"><rect x="14" y="14" width="34" height="34" rx="4" fill="#038FDD" ${S}/><rect x="52" y="14" width="34" height="34" rx="4" fill="#FF9C39" ${S}/><rect x="14" y="52" width="34" height="34" rx="4" fill="#BFDCC2" ${S}/><rect x="52" y="52" width="34" height="34" rx="4" fill="#F8CFA3" ${S}/><circle cx="50" cy="31" r="6" fill="#038FDD" ${S}/><circle cx="69" cy="50" r="6" fill="#FF9C39" ${S}/></svg>`,
+ school:`<svg viewBox="0 0 100 100"><path d="M50 8v18" ${S}/><path d="M50 9h18v10H50" fill="#038FDD" ${S}/><path d="M14 46l36-22 36 22" fill="#FF9C39" ${S}/><rect x="18" y="44" width="64" height="44" fill="#FCF2E8" ${S}/><path d="M42 88V70a8 8 0 0 1 16 0v18" fill="#038FDD" ${S}/><rect x="25" y="54" width="10" height="10" fill="#DDEEFA" stroke="#05415B" stroke-width="3"/><rect x="65" y="54" width="10" height="10" fill="#DDEEFA" stroke="#05415B" stroke-width="3"/><circle cx="50" cy="52" r="6" fill="#DDEEFA" stroke="#05415B" stroke-width="3"/></svg>`
+};
+
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function coverHTML(s){
+  if(s.img) return `<div class="cover real"><img src="${s.img}" alt="" loading="lazy"></div>`;
+  return `<div class="cover t-${s.template}" aria-hidden="true">
+    <div class="shape"></div>
+    <div class="txt">
+      <span class="pill">${s.label}</span>
+      <div class="ttl${s.title.length>40?" long":""}">${esc(s.title)}</div>
+      <div class="rule"></div>
+      <div class="gs">${esc(s.gLine)}<i>|</i>${esc(s.sLine)}</div>
+    </div>
+    <div class="art">${ICONS[s.icon]}</div>
+    <div class="play"></div>
+  </div>`;
+}
+function cardHTML(s){
+  return `<a class="card" href="#${s.slug}" data-story="${s.slug}">
+    ${coverHTML(s)}
+    <div class="body">
+      <div class="kicker">${esc(s.pathway)} · ${esc(s.school || s.org)}</div>
+      <h3>${esc(s.title)}</h3>
+      <p>${esc(s.summary)}</p>
+    </div></a>`;
+}
+
+/* ---------- live data from the Content Intake sheet ---------- */
+const SHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvSIu4YfXKaXQjH0Yy2f81OlShOV2WtCcoCeiUkQmj_hll65lKqH5D3BJE3jVNguOPNviu0IHZBXN1/pub?gid=1208055489&single=true&output=csv";
+
+function parseCSV(text){
+  const rows=[]; let row=[], f="", q=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){f+='"';i++;} else q=false; } else f+=c; }
+    else if(c==='"') q=true;
+    else if(c===','){ row.push(f); f=""; }
+    else if(c==='\n'){ row.push(f); rows.push(row); row=[]; f=""; }
+    else if(c!=='\r') f+=c;
+  }
+  if(f!==""||row.length){ row.push(f); rows.push(row); }
+  return rows;
+}
+function splitTags(tags){
+  const t = (tags||"").split(",").map(s=>s.trim().toLowerCase()).filter(Boolean);
+  return {
+    grades: t.filter(x=>GRADES[x]).map(x=>GRADES[x]),
+    subjectsRaw: t.filter(x=>SUBJECTS.includes(x)),
+    focusRaw: t.filter(x=>!GRADES[x] && !SUBJECTS.includes(x))
+  };
+}
+const imgPath = p => (p||"").trim().replace(/^\//,"");
+function ytId(url){
+  const m = (url||"").match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
+  return m ? m[1] : "";
+}
+function buildData(rows){
+  const head = rows[0].map(h=>h.trim());
+  const col = name => head.indexOf(name);
+  const get = (r,name) => (r[col(name)]||"").trim();
+  const approved = rows.slice(1).filter(r=>get(r,"Approved to Import?").toUpperCase()==="TRUE" && get(r,"Title"));
+  const S=[], R=[];
+  approved.forEach(r=>{
+    const type = get(r,"Content Type").toLowerCase();
+    const {grades, subjectsRaw, focusRaw} = splitTags(get(r,"Tags"));
+    const parts = get(r,"Organization / School").split(",").map(s=>s.trim()).filter(Boolean);
+    const base = {title:get(r,"Title"), link:get(r,"Primary Link"), summary:get(r,"Short Summary"),
+      grades, subjects:subjectsRaw.map(nice), focus:focusRaw.map(nice), places:parts, org:parts[0]||"", school:parts[1]||"",
+      img: imgPath(get(r,"Featured Image URL"))};
+    if(type==="resource"){
+      const audience = get(r,"Audience").split(",").map(s=>s.trim()).filter(Boolean).map(nice);
+      const rtype = nice(get(r,"Resource Type").toLowerCase()) || "Resource";
+      R.push({...base, type:rtype, audience, slug:"r-"+slug(base.title), allTags:[...grades,...base.subjects,...base.focus,rtype,...audience]});
+    } else {
+      const i = S.length, pathway = get(r,"Pathway") || "Classroom";
+      const coaching = focusRaw.includes("coaching");
+      let gLine = grades[0] || (pathway==="District" ? "District" : pathway);
+      const spec = subjectsRaw.find(s=>SPECIFIC.includes(s));
+      let sLine = spec ? nice(spec) : subjectsRaw.slice(0,2).map(nice).join(" & ");
+      if(!sLine){ const f = focusRaw.find(x=>x!=="meaning making" && x!=="engagement blueprint"); sLine = f ? nice(f) : "Leadership"; }
+      S.push({...base, pathway, slug:slug(base.title), label: coaching?"COACHING STORY":pathway.toUpperCase()+" STORY",
+        gLine, sLine, template:TEMPLATES[i%TEMPLATES.length], icon:pickIcon(subjectsRaw, focusRaw, pathway), video:ytId(base.link),
+        allTags:[...grades,...base.subjects,...base.focus]});
+    }
+  });
+  return {S,R};
+}
+let stories=[], resources=[];
+async function boot(){
+  const app = document.getElementById("app");
+  app.innerHTML = `<div class="wrap loading">Loading stories…</div>`;
+  try{
+    const res = await fetch(SHEET_CSV, {cache:"no-store"});
+    if(!res.ok) throw new Error(res.status);
+    const {S,R} = buildData(parseCSV(await res.text()));
+    stories = S; resources = R;
+    startApp();
+  }catch(err){
+    app.innerHTML = `<div class="wrap loading"><b>The stories couldn't load right now.</b><br>Please refresh the page in a moment.</div>`;
+    console.error(err);
+  }
+}
+
+function startApp(){
+/* ---------- curated collections (placeholder picks until Leah sends hers) ---------- */
+const COLLECTIONS = [
+ {id:"use-tomorrow", title:"Use Tomorrow", blurb:"Ready-to-use ideas", tone:"blue", icon:"spark",
+  stories:["a-small-shift-that-gets-students-thinking","less-telling-more-thinking","looking-beyond-the-surface","they-already-knew-more-than-i-thought","rethinking-needs-and-wants","same-story-different-truths"]},
+ {id:"staff-meeting-ready", title:"Staff Meeting Ready", blurb:"Short, practical prompts for teams to use together", tone:"orange", icon:"people", leaders:true,
+  stories:["is-our-system-really-working","opening-the-classroom-door","getting-back-to-the-classroom-i-wanted","stepping-back-so-students-can-step-up","when-collaboration-becomes-the-culture"]},
+ {id:"coaching-conversation", title:"Coaching Conversation", blurb:"Questions that help the work become more visible", tone:"sage", icon:"chat", leaders:true,
+  stories:["seeing-the-big-picture","opening-the-classroom-door","stepping-back-so-students-can-step-up","building-community-through-student-centered-learning","from-delivering-content-to-facilitating-thinking"]},
+ {id:"learn-the-amt-framework", title:"Learn the AMT Framework", blurb:"Build shared understanding of meaningful learning", tone:"navy", icon:"bookicon", leaders:true,
+  stories:["concept-before-content","from-sound-to-sense-making","from-delivering-content-to-facilitating-thinking","they-already-knew-more-than-i-thought","looking-beyond-the-surface"]},
+ {id:"engagement-blueprint", title:"Explore the Engagement Blueprint", blurb:"A guide for designing the conditions for engagement", tone:"peach", icon:"compass", leaders:true,
+  stories:["stepping-back-so-students-can-step-up","learning-spanish-beyond-the-textbook","students-take-a-seat-at-the-table","finding-learning-all-around-us","whats-beneath-the-surface"]},
+ {id:"build-a-better-unit", title:"Build a Better Unit", blurb:"Align learning, assessment & instruction", tone:"sky", icon:"check",
+  stories:["seeing-the-big-picture","students-take-a-seat-at-the-table","whats-beneath-the-surface","brewing-up-real-world-math","when-words-have-a-purpose","learning-spanish-beyond-the-textbook"]},
+ {id:"5-minutes-or-less", title:"5 Minutes or Less", blurb:"Quick ideas, examples & videos", tone:"blue", icon:"clock",
+  stories:["a-small-shift-that-gets-students-thinking","less-telling-more-thinking","finding-learning-all-around-us","rethinking-needs-and-wants","concept-before-content"]}
+];
+const L = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+const CICONS = {
+ spark:`<svg viewBox="0 0 24 24" ${L}><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/></svg>`,
+ people:`<svg viewBox="0 0 24 24" ${L}><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.3 0 4 1.5 4.5 4"/></svg>`,
+ chat:`<svg viewBox="0 0 24 24" ${L}><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12.5h5"/></svg>`,
+ bookicon:`<svg viewBox="0 0 24 24" ${L}><path d="M12 6c-2-1.6-5-2-8-1v14c3-1 6-.6 8 1 2-1.6 5-2 8-1V5c-3-1-6-.6-8 1z"/><path d="M12 6v14"/></svg>`,
+ check:`<svg viewBox="0 0 24 24" ${L}><rect x="4" y="3.5" width="16" height="17" rx="2"/><path d="M8 12l3 3 5-6"/></svg>`,
+ clock:`<svg viewBox="0 0 24 24" ${L}><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg>`,
+ compass:`<svg viewBox="0 0 24 24" ${L}><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>`,
+ play:`<svg viewBox="0 0 24 24" ${L}><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor"/></svg>`,
+ doc:`<svg viewBox="0 0 24 24" ${L}><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 15.5h6"/></svg>`,
+ list:`<svg viewBox="0 0 24 24" ${L}><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg>`,
+ copy:`<svg viewBox="0 0 24 24" ${L}><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>`
+};
+const bySlug = Object.fromEntries(stories.map(s=>[s.slug,s]));
+
+const RES_TYPE_ICON = {"Tutorial Video":"play","Video":"play","Template":"doc","Protocol":"list","Guide":"bookicon"};
+const resBySlug = Object.fromEntries(resources.map(r=>[r.slug,r]));
+function resourceHTML(r){
+  return `<a class="res" href="#${r.slug}" data-res="${r.slug}">
+    <div class="res-top"><span class="res-icon">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><span class="res-type">${esc(r.type)}</span></div>
+    <h3>${esc(r.title)}</h3>
+    <p>${esc(r.summary)}</p>
+    ${r.audience.length?`<div class="res-for">For ${esc(r.audience.join(", ").toLowerCase())}</div>`:""}
+  </a>`;
+}
+
+/* ---------- filters ---------- */
+const uniq = arr => [...new Set(arr)].sort((a,b)=>a.localeCompare(b));
+const STORY_FILTERS = {
+  grade: {label:"Grade level", all:"All grades", opts:["Elementary","Middle School","High School"].filter(g=>stories.some(s=>s.grades.includes(g)))},
+  subject: {label:"Subject", all:"All subjects", opts:uniq(stories.flatMap(s=>s.subjects))},
+  focus: {label:"Focus", all:"All focus areas", opts:uniq(stories.flatMap(s=>s.focus))},
+  place: {label:"School / District", all:"All schools & districts", opts:uniq(stories.flatMap(s=>s.places))},
+  level: {label:"Where it happens", all:"Anywhere", opts:["Classroom","School","District"]}
+};
+const RES_FILTERS = {
+  focus: {label:"Focus", all:"All focus areas", opts:uniq(resources.flatMap(r=>r.focus))},
+  type: {label:"Type", all:"All types", opts:uniq(resources.map(r=>r.type))},
+  audience: {label:"Who it's for", all:"Everyone", opts:uniq(resources.flatMap(r=>r.audience))},
+  grade: {label:"Grade level", all:"All grades", opts:uniq(resources.flatMap(r=>r.grades))},
+  subject: {label:"Subject", all:"All subjects", opts:uniq(resources.flatMap(r=>r.subjects))}
+};
+const blank = F => Object.fromEntries([["q",""],...Object.keys(F).map(k=>[k,""])]);
+let fState = {stories: blank(STORY_FILTERS), resources: blank(RES_FILTERS)};
+try{ const saved = JSON.parse(localStorage.getItem("lw-filters3")||"null"); if(saved) fState = {stories:{...fState.stories,...saved.stories}, resources:{...fState.resources,...saved.resources}}; }catch(e){}
+const save = ()=>{ try{ localStorage.setItem("lw-filters3", JSON.stringify(fState)); }catch(e){} };
+
+const textHit = (q, hay) => !q || q.toLowerCase().split(/\s+/).filter(Boolean).every(w=>hay.toLowerCase().includes(w));
+function storyMatch(s, st){
+  if(st.grade && !s.grades.includes(st.grade)) return false;
+  if(st.subject && !s.subjects.includes(st.subject)) return false;
+  if(st.focus && !s.focus.includes(st.focus)) return false;
+  if(st.place && !s.places.includes(st.place)) return false;
+  if(st.level && s.pathway!==st.level) return false;
+  return textHit(st.q, s.title+" "+s.summary+" "+s.allTags.join(" ")+" "+s.places.join(" "));
+}
+function resMatch(r, st){
+  if(st.focus && !r.focus.includes(st.focus)) return false;
+  if(st.type && r.type!==st.type) return false;
+  if(st.audience && !r.audience.includes(st.audience)) return false;
+  if(st.grade && !r.grades.includes(st.grade)) return false;
+  if(st.subject && !r.subjects.includes(st.subject)) return false;
+  return textHit(st.q, r.title+" "+r.summary+" "+r.allTags.join(" "));
+}
+
+/* ---------- sliding rows ---------- */
+const ARROW = d => `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="${d==="l"?"M15 5l-7 7 7 7":"M9 5l7 7-7 7"}"/></svg>`;
+function rowHTML(id, heading, sub, itemsHTML){
+  return `<section class="row" id="${id}">
+    <div class="row-head">
+      <div><h2>${heading}</h2>${sub?`<div class="row-sub">${sub}</div>`:""}</div>
+      <div class="arrows"><button class="arrow" data-dir="-1" aria-label="Previous">${ARROW("l")}</button><button class="arrow" data-dir="1" aria-label="Next">${ARROW("r")}</button></div>
+    </div>
+    <div class="track" tabindex="0" aria-label="${heading}">${itemsHTML}</div>
+  </section>`;
+}
+function wireRows(root){
+  root.querySelectorAll(".row").forEach(row=>{
+    if(row.dataset.wired) return; row.dataset.wired = "1";
+    const track = row.querySelector(".track");
+    const [prev,next] = row.querySelectorAll(".arrow");
+    const sync = ()=>{
+      prev.disabled = track.scrollLeft <= 4;
+      next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+    };
+    row.querySelectorAll(".arrow").forEach(b=>b.onclick=()=>{
+      const item = track.firstElementChild; const step = item ? item.getBoundingClientRect().width + 20 : track.clientWidth;
+      track.scrollBy({left: step * Number(b.dataset.dir), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+    });
+    track.addEventListener("scroll", sync, {passive:true});
+    new ResizeObserver(sync).observe(track); sync();
+  });
+}
+function collectionHTML(c){
+  const n = c.stories.filter(x=>bySlug[x]).length;
+  return `<a class="coll tone-${c.tone}" href="#c-${c.id}" data-coll="${c.id}">
+    <span class="coll-icon">${CICONS[c.icon]}</span>
+    <span class="coll-title">${esc(c.title)}</span>
+    <span class="coll-blurb">${esc(c.blurb)}</span>
+    <span class="coll-count">${n} stories →</span>
+  </a>`;
+}
+const collRow = (list=COLLECTIONS, title="Curated Collections", sub="Start with what you need") => rowHTML("coll-"+title.length, title, sub, list.map(collectionHTML).join(""));
+const SEARCH_ICON = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#038FDD" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>`;
+
+const app = document.getElementById("app");
+
+/* rotating search examples (swap in Leah's list) */
+const HINTS = ["meaning making ideas for 4th grade math","fractions","student voice in high school","special education","unit design","authentic learning projects","middle school science","giving students ownership"];
+let hintTimer;
+function startHints(input){
+  clearInterval(hintTimer);
+  let i = 0;
+  hintTimer = setInterval(()=>{
+    if(!document.body.contains(input)){ clearInterval(hintTimer); return; }
+    if(input.value || document.activeElement===input) return;
+    i = (i+1) % HINTS.length;
+    input.classList.add("swap");
+    setTimeout(()=>{ input.placeholder = `Try “${HINTS[i]}”`; input.classList.remove("swap"); }, 250);
+  }, 3200);
+}
+
+/* ---------- HOME ---------- */
+function renderHome(){
+  const featuredPicks = ["brewing-up-real-world-math","is-our-system-really-working","stepping-back-so-students-can-step-up","when-words-have-a-purpose","learning-spanish-beyond-the-textbook","seeing-the-big-picture","concept-before-content","students-take-a-seat-at-the-table"].map(x=>bySlug[x]).filter(Boolean);
+  const featured = featuredPicks.length ? featuredPicks : stories.slice(0,8);
+  app.innerHTML = `
+  <section class="home-hero"><div class="wrap">
+    <div class="eyebrow light">LearningWorks Exchange</div>
+    <h1>Find support.<br><span>See it in practice.</span></h1>
+    <p>Real stories and practical resources to help educators create meaningful, student-centered learning experiences.</p>
+    <form class="hero-search" id="heroSearch">
+      ${SEARCH_ICON}
+      <input id="hq" type="search" placeholder="Try “meaning making ideas for 4th grade math”" aria-label="Search stories and resources">
+      <button type="submit">Search</button>
+    </form>
+    <div class="hero-note">Searches both stories and resources</div>
+  </div></section>
+  <section class="wrap doors">
+    <a class="door" href="#stories" data-go="stories"><span class="coll-icon">${CICONS.play}</span><b>See a Story</b><span>The work brought to life in real classrooms, schools, and districts</span></a>
+    <a class="door" href="#resources" data-go="resources"><span class="coll-icon">${CICONS.doc}</span><b>Find a Resource</b><span>Tools, tutorials, and protocols for doing the work</span></a>
+    <a class="door" href="#c-engagement-blueprint" data-coll="engagement-blueprint"><span class="coll-icon">${CICONS.compass}</span><b>Explore the Engagement Blueprint</b><span>Design cognitively engaging lessons</span></a>
+    <a class="door" href="#leaders" data-go="leaders"><span class="coll-icon">${CICONS.people}</span><b>For Leaders &amp; Coaches</b><span>Starting points for staff meetings and coaching</span></a>
+  </section>
+  <div class="wrap rows">
+    ${rowHTML("featured","Featured stories",`<a href="#stories" data-go="stories" class="link">See all ${stories.length} stories →</a>`, featured.map(cardHTML).join(""))}
+    ${collRow()}
+  </div>`;
+  wireRows(app);
+  const hq = app.querySelector("#hq"); startHints(hq);
+  app.querySelector("#heroSearch").onsubmit = e=>{
+    e.preventDefault();
+    fState = {stories:{...blank(STORY_FILTERS), q:hq.value}, resources:{...blank(RES_FILTERS), q:hq.value}}; save();
+    go("stories");
+  };
+}
+
+/* ---------- LIBRARY (Stories / Resources) ---------- */
+function renderLibrary(tab){
+  const F = tab==="stories" ? STORY_FILTERS : RES_FILTERS;
+  const st = fState[tab];
+  const keys = Object.keys(F).filter(k=>F[k].opts.length);
+  app.innerHTML = `
+  <section class="wrap intro">
+    <div class="eyebrow">LearningWorks Exchange</div>
+    <div class="tabs" role="tablist">
+      <a role="tab" href="#stories" data-go="stories" class="tab${tab==="stories"?" on":""}" aria-selected="${tab==="stories"}">Stories <em id="n-stories"></em></a>
+      <a role="tab" href="#resources" data-go="resources" class="tab${tab==="resources"?" on":""}" aria-selected="${tab==="resources"}">Resources <em id="n-resources"></em></a>
+    </div>
+    <p class="tab-desc">${tab==="stories" ? "The work brought to life. See it in classrooms, schools, and districts, and hear from the people doing it." : "How to do the work. Tools, templates, protocols, and tutorials you can use right away."}</p>
+    <div class="filters" role="search">
+      <div class="search">${SEARCH_ICON}<input id="q" type="search" placeholder="Try “${HINTS[0]}”" value="${esc(st.q)}" aria-label="Search ${tab}"></div>
+      <div class="selects" style="--cols:${keys.length}">
+        ${keys.map(k=>`<div class="field"><label for="f-${k}">${F[k].label}</label>
+          <select id="f-${k}" data-key="${k}"><option value="">${F[k].all}</option>${F[k].opts.map(o=>`<option${st[k]===o?" selected":""}>${esc(o)}</option>`).join("")}</select></div>`).join("")}
+      </div>
+    </div>
+  </section>
+  <div class="wrap rows"><div id="results"></div>${collRow()}</div>`;
+  const q = app.querySelector("#q"); startHints(q);
+  q.addEventListener("input",e=>{st.q=e.target.value;save();update();});
+  app.querySelectorAll("select").forEach(sel=>sel.addEventListener("change",e=>{st[e.target.dataset.key]=e.target.value;save();update();}));
+  wireRows(app);
+  function update(){
+    const sList = stories.filter(s=>storyMatch(s,fState.stories));
+    const rList = resources.filter(r=>resMatch(r,fState.resources));
+    app.querySelector("#n-stories").textContent = sList.length;
+    app.querySelector("#n-resources").textContent = rList.length;
+    app.querySelectorAll("select").forEach(sel=>sel.classList.toggle("set",!!sel.value));
+    const list = tab==="stories" ? sList : rList, total = tab==="stories" ? stories.length : resources.length;
+    const active = Object.values(st).some(Boolean);
+    const sub = `${list.length} of ${total} ${tab}${active?` · <button class="clear" id="clear">Clear filters</button>`:""}`;
+    const items = list.length ? list.map(tab==="stories"?cardHTML:resourceHTML).join("") :
+      (tab==="resources" && !resources.length ? `<div class="empty"><b>Practical resources are on the way!</b>In the meantime, explore the stories. <a class="link" href="#stories" data-go="stories">Explore Stories →</a></div>` : `<div class="empty"><b>Nothing matches those filters yet.</b>Try removing a filter or searching a different word.</div>`);
+    const holder = app.querySelector("#results");
+    holder.innerHTML = rowHTML("res-"+tab, active ? `Matching ${tab}` : (tab==="stories"?"All stories":"All resources"), sub, items);
+    wireRows(holder);
+    const c = holder.querySelector("#clear"); if(c) c.onclick = ()=>{ fState[tab]=blank(F); save(); renderLibrary(tab); };
+  }
+  update();
+}
+
+/* ---------- LEADERS & COACHES ---------- */
+function renderLeaders(){
+  const lead = COLLECTIONS.filter(c=>c.leaders);
+  const sysStories = stories.filter(s=>s.pathway!=="Classroom" || s.focus.some(f=>["Learning Walks","Coaching","Collective Practice"].includes(f)));
+  const lRes = resources.filter(r=>r.audience.some(a=>/^(lead|coach|admin|principal)/i.test(a)));
+  app.innerHTML = `
+  <section class="wrap intro">
+    <div class="eyebrow orange">LearningWorks Exchange</div>
+    <h1>For leaders &amp; coaches</h1>
+    <p>Curated starting points for the next staff meeting, coaching conversation, or system-level question.</p>
+  </section>
+  <section class="wrap lead-grid">${lead.map(c=>collectionHTML(c)).join("")}</section>
+  <div class="wrap rows">
+    ${rowHTML("lead-stories","Stories about leading the work","District and school stories, learning walks, and coaching", sysStories.map(cardHTML).join(""))}
+    ${lRes.length?rowHTML("lead-res","Resources for leaders & coaches","", lRes.map(resourceHTML).join("")):""}
+  </div>`;
+  wireRows(app);
+}
+
+/* ---------- ABOUT ---------- */
+function renderAbout(){
+  const orgs = uniq(stories.map(s=>s.org));
+  app.innerHTML = `
+  <section class="wrap intro about-intro">
+    <div class="eyebrow">About the Exchange</div>
+    <h1>Learning from one another</h1>
+    <p>The LearningWorks Exchange makes student-centered change visible. <strong>Stories</strong> show the work brought to life: teachers, leaders, and students rethinking traditional practice. <strong>Resources</strong> show how to do the work yourself. Everything here is free, and no account is needed.</p>
+  </section>
+  <section class="wrap about-sec">
+    <h2>Who we are</h2>
+    <div class="people">
+      <div class="person"><div class="avatar">LM</div><div><b>Leah McConaughey, Ed.D.</b><span class="role">Founder &amp; Chief Learning Officer</span><p>Over 20 years as a Peace Corps Volunteer, New York City teacher and administrator, Director of Curriculum in the NYC Office of Innovation, and Apple Education Leadership Executive.</p></div></div>
+      <div class="person"><div class="avatar alt">PF</div><div><b>Paul Facteau, Ed.D.</b><span class="role">Co-founder</span><p>Education leader and researcher. A core design team member of ConnectED, the Apple and White House partnership, and one of six design partners for the NYC Office of Innovation.</p></div></div>
+    </div>
+    <div class="photo-note">Photos go in the circles once you upload them.</div>
+  </section>
+  <section class="wrap about-sec">
+    <h2>How we work with schools</h2>
+    <p class="lede">LearningWorks partners with education leaders to move from traditional models to learning built around each student's needs, strengths, and motivations: from acquiring knowledge to applying it.</p>
+    <div class="pillars">
+      <div class="pillar"><b>Authentic Transfer</b><span>Learning design, including UbD units and authentic tasks</span></div>
+      <div class="pillar"><b>Meaningful Measures</b><span>Competency-based grading and student and family ownership of learning plans</span></div>
+      <div class="pillar"><b>Flexible Environments</b><span>Redesigned schedules, flexible grouping, and reimagined educator roles</span></div>
+      <div class="pillar"><b>Community Alliance</b><span>Expert collaboration and policies for systemic change</span></div>
+    </div>
+  </section>
+  <section class="wrap about-sec">
+    <h2>Where the work is happening</h2>
+    <div class="places">${orgs.map(o=>`<button class="place" data-place="${esc(o)}"><b>${esc(o)}</b><span>${stories.filter(s=>s.org===o).length} stories →</span></button>`).join("")}</div>
+  </section>
+  <section class="wrap about-sec cta">
+    <div><h2>Work with us</h2><p>Want this kind of change in your classrooms, school, or district? We answer every inquiry within 24 hours.</p></div>
+    <div class="email"><span id="em">info@learning-works.org</span><button id="copy">${CICONS.copy} Copy email</button></div>
+  </section>`;
+  app.querySelectorAll(".place").forEach(b=>b.onclick=()=>{ fState.stories={...blank(STORY_FILTERS), place:b.dataset.place}; save(); go("stories"); });
+  app.querySelector("#copy").onclick = async e=>{
+    const b = e.currentTarget;
+    try{ await navigator.clipboard.writeText("info@learning-works.org"); b.lastChild.textContent = " Copied"; }
+    catch(err){ const r=document.createRange(); r.selectNodeContents(app.querySelector("#em")); const s=getSelection(); s.removeAllRanges(); s.addRange(r); }
+  };
+}
+
+/* ---------- COLLECTION, STORY, RESOURCE pages ---------- */
+function renderCollection(c){
+  const list = c.stories.map(x=>bySlug[x]).filter(Boolean);
+  app.innerHTML = `<article class="wrap story">
+    <a class="back" href="#stories" data-go="stories">← Back to the library</a>
+    <div class="coll-hero tone-${c.tone}"><span class="coll-icon">${CICONS[c.icon]}</span><div><div class="eyebrow">Curated Collection</div><h1>${esc(c.title)}</h1><p>${esc(c.blurb)}</p></div></div>
+    <div class="grid">${list.map(cardHTML).join("")}</div>
+  </article>`;
+}
+function tagToFilter(t){
+  const F = STORY_FILTERS;
+  const k = F.grade.opts.includes(t)?"grade":F.subject.opts.includes(t)?"subject":"focus";
+  fState.stories = {...blank(F),[k]:t}; save(); go("stories");
+}
+function renderStory(s){
+  const related = stories.filter(o=>o!==s).map(o=>({o,n:o.allTags.filter(t=>s.allTags.includes(t)&&t!=="Meaning Making"&&t!=="Engagement Blueprint").length + (o.pathway===s.pathway?0.5:0)}))
+    .sort((a,b)=>b.n-a.n).slice(0,8).map(x=>x.o);
+  const tryIt = resources.filter(r=>r.focus.some(f=>s.focus.includes(f)));
+  const inColls = COLLECTIONS.filter(c=>c.stories.includes(s.slug));
+  app.innerHTML = `<article class="wrap story">
+    <a class="back" href="#stories" data-go="stories">← Back to Stories</a>
+    <h1>${esc(s.title)}</h1>
+    ${s.video?`<button class="player" id="player" aria-label="Play video: ${esc(s.title)}">${coverHTML(s)}</button>`:`<a class="player" href="${esc(s.link)}" target="_blank" rel="noopener">${coverHTML(s)}</a>`}
+    <p class="desc">${esc(s.summary)}</p>
+    <div class="where">${esc(s.places.slice().reverse().join(" · "))}</div>
+    ${s.allTags.length?`<div class="chips">${s.allTags.map(t=>`<button class="chip" data-tag="${esc(t)}">${esc(t)}</button>`).join("")}</div>`:""}
+    ${inColls.length?`<div class="chips">${inColls.map(c=>`<a class="chip coll-chip" href="#c-${c.id}" data-coll="${c.id}">In collection: ${esc(c.title)}</a>`).join("")}</div>`:""}
+    ${tryIt.length?`<section class="tryit"><div class="eyebrow">Your next step</div><h2>Try it yourself</h2><div class="tryit-grid">${tryIt.map(resourceHTML).join("")}</div></section>`:""}
+    <div class="next">${rowHTML("related","More stories like this","", related.map(cardHTML).join(""))}</div>
+  </article>`;
+  wireRows(app);
+  app.querySelectorAll("button.chip").forEach(b=>b.onclick=()=>tagToFilter(b.dataset.tag));
+  const pl = app.querySelector("#player");
+  if(pl) pl.onclick = ()=>{
+    const wrap = document.createElement("div"); wrap.className = "player video";
+    wrap.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${s.video}?autoplay=1&rel=0&playsinline=1&modestbranding=1" title="${esc(s.title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+    pl.replaceWith(wrap);
+  };
+}
+function renderResource(r){
+  const seeIt = stories.filter(s=>s.focus.some(f=>r.focus.includes(f))).slice(0,8);
+  app.innerHTML = `<article class="wrap story">
+    <a class="back" href="#resources" data-go="resources">← Back to Resources</a>
+    <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
+    <p class="desc">${esc(r.summary)}</p>
+    ${r.audience.length?`<div class="where">For ${esc(r.audience.join(", ").toLowerCase())}</div>`:""}
+    ${r.link?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
+    <div class="chips">${r.focus.map(t=>`<span class="chip static">${esc(t)}</span>`).join("")}</div>
+    ${seeIt.length?`<div class="next">${rowHTML("seeit","See it in practice","Stories that bring this work to life", seeIt.map(cardHTML).join(""))}</div>`:""}
+  </article>`;
+  wireRows(app);
+}
+
+/* ---------- routing ---------- */
+const PAGES = {"":renderHome, stories:()=>renderLibrary("stories"), resources:()=>renderLibrary("resources"), leaders:renderLeaders, about:renderAbout};
+const NAV_FOR = {"":"home", stories:"stories", resources:"resources", leaders:"leaders", about:"about"};
+function go(hash){ if(location.hash.slice(1)!==hash){ location.hash = hash; } else route(); }
+function route(){
+  clearInterval(hintTimer);
+  const h = location.hash.slice(1);
+  const c = h.startsWith("c-") && COLLECTIONS.find(x=>"c-"+x.id===h);
+  let navKey = NAV_FOR[h];
+  if(PAGES[h]) PAGES[h]();
+  else if(c) renderCollection(c);
+  else if(bySlug[h]){ renderStory(bySlug[h]); navKey="stories"; }
+  else if(resBySlug[h]){ renderResource(resBySlug[h]); navKey="resources"; }
+  else { renderHome(); navKey="home"; }
+  document.querySelectorAll("nav.main a").forEach(a=>a.classList.toggle("on", a.dataset.nav===navKey));
+  window.scrollTo(0,0);
+}
+document.addEventListener("click",e=>{
+  const t = e.target.closest("[data-go],[data-coll],[data-story],[data-res]"); if(!t) return;
+  e.preventDefault();
+  if(t.dataset.go!==undefined) go(t.dataset.go);
+  else if(t.dataset.coll) go("c-"+t.dataset.coll);
+  else if(t.dataset.story) go(t.dataset.story);
+  else go(t.dataset.res);
+});
+window.addEventListener("hashchange",route);
+route();
+
+}
+boot();
+</script>
+</body>
+</html>
