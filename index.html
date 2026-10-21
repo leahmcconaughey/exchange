@@ -296,13 +296,14 @@ details.multi.set>summary{border-color:var(--blue);background-color:#EEF7FE}
 .tabbar .tab{margin-bottom:-2px}
 .tabbar .tab-desc{margin:0 0 12px;max-width:50ch;font-size:19px;line-height:1.45;color:var(--muted);text-wrap:balance}
 @media (max-width:760px){.tabbar{flex-direction:column;align-items:stretch;gap:0;border-bottom:0}.tabbar .tabs{border-bottom:2px solid var(--line)}.tabbar .tab-desc{margin:12px 0 0;max-width:none}}
+nav.main .nav-sub{font-weight:400;opacity:.85}
 </style>
 </head>
 <body>
 <header class="site">
   <div class="wrap">
     <a class="brand" href="#" data-go="" aria-label="LearningWorks Exchange home"><img src="logo.svg" alt="LearningWorks" class="logo"><span>EXCHANGE</span></a>
-    <nav class="main"><a href="#" data-go="" data-nav="home">Home</a><a href="#stories" data-go="stories" data-nav="stories">Stories</a><a href="#resources" data-go="resources" data-nav="resources">Resources</a><a href="#leaders" data-go="leaders" data-nav="leaders">For Leaders &amp; Coaches</a><a href="#about" data-go="about" data-nav="about">About</a></nav>
+    <nav class="main"><a href="#" data-go="" data-nav="home">Home <span class="nav-sub">(Stories + Resources)</span></a><a href="#leaders" data-go="leaders" data-nav="leaders">For Leaders &amp; Coaches</a><a href="#about" data-go="about" data-nav="about">About</a></nav>
   </div>
 </header>
 <main id="app"></main>
@@ -902,7 +903,7 @@ function renderResource(r){
 
 /* ---------- routing ---------- */
 const PAGES = {"":()=>renderLibrary("stories"), stories:()=>renderLibrary("stories"), resources:()=>renderLibrary("resources"), leaders:renderLeaders, about:renderAbout};
-const NAV_FOR = {"":"home", stories:"stories", resources:"resources", leaders:"leaders", about:"about"};
+const NAV_FOR = {"":"home", stories:"home", resources:"home", leaders:"leaders", about:"about"};
 function go(hash){ if(location.hash.slice(1)!==hash){ location.hash = hash; } else route(); }
 function route(){
   clearInterval(hintTimer);
@@ -911,8 +912,8 @@ function route(){
   let navKey = NAV_FOR[h];
   if(PAGES[h]) PAGES[h]();
   else if(c) renderCollection(c);
-  else if(bySlug[h]){ renderStory(bySlug[h]); navKey="stories"; }
-  else if(resBySlug[h]){ renderResource(resBySlug[h]); navKey="resources"; }
+  else if(bySlug[h]){ renderStory(bySlug[h]); navKey="home"; }
+  else if(resBySlug[h]){ renderResource(resBySlug[h]); navKey="home"; }
   else { renderHome(); navKey="home"; }
   document.querySelectorAll("nav.main a").forEach(a=>a.classList.toggle("on", a.dataset.nav===navKey));
   window.scrollTo(0,0);
