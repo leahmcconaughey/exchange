@@ -250,6 +250,15 @@ nav.main a.on{color:var(--navy)}
 .lib-hero .wrap{padding-block:40px 44px;gap:12px}
 .lib-hero h1{font-size:clamp(34px,5vw,56px)}
 .lib-intro{padding-top:26px}
+.team{margin:0;border-radius:20px;overflow:hidden;aspect-ratio:16/8;max-width:100%}
+.team img{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block}
+.search{background:#fff!important;border-color:var(--blue)!important}
+.cta{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)!important;gap:30px}
+.cta-photo{margin:0;border-radius:14px;overflow:hidden;aspect-ratio:3/2}
+.cta-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.cta-body{display:grid;gap:14px;align-content:center;min-width:0}
+.cta-body .email{justify-self:start}
+@media (max-width:820px){.cta{grid-template-columns:minmax(0,1fr)!important}}
 </style>
 </head>
 <body>
@@ -650,11 +659,11 @@ function renderAbout(){
   </section>
   <section class="wrap about-sec">
     <h2>Who we are</h2>
+    <figure class="team"><img src="team.jpg" alt="Paul Facteau and Leah McConaughey planning together at a table covered in sticky notes" loading="lazy"></figure>
     <div class="people">
-      <div class="person"><div class="avatar">LM</div><div><b>Leah McConaughey, Ed.D.</b><span class="role">Founder &amp; Chief Learning Officer</span><p>Over 20 years as a Peace Corps Volunteer, New York City teacher and administrator, Director of Curriculum in the NYC Office of Innovation, and Apple Education Leadership Executive.</p></div></div>
-      <div class="person"><div class="avatar alt">PF</div><div><b>Paul Facteau, Ed.D.</b><span class="role">Co-founder</span><p>Education leader and researcher. A core design team member of ConnectED, the Apple and White House partnership, and one of six design partners for the NYC Office of Innovation.</p></div></div>
+      <div class="person"><div><b>Leah McConaughey, Ed.D.</b><span class="role">Founder &amp; Chief Learning Officer</span><p>Over 20 years as a Peace Corps Volunteer, New York City teacher and administrator, Director of Curriculum in the NYC Office of Innovation, and Apple Education Leadership Executive.</p></div></div>
+      <div class="person"><div><b>Paul Facteau, Ed.D.</b><span class="role">Co-founder</span><p>Education leader and researcher. A core design team member of ConnectED, the Apple and White House partnership, and one of six design partners for the NYC Office of Innovation.</p></div></div>
     </div>
-    <div class="photo-note">Photos go in the circles once you upload them.</div>
   </section>
   <section class="wrap about-sec">
     <h2>How we work with schools</h2>
@@ -671,8 +680,9 @@ function renderAbout(){
     <div class="places">${orgs.map(o=>`<button class="place" data-place="${esc(o)}"><b>${esc(o)}</b><span>${stories.filter(s=>s.org===o).length} stories →</span></button>`).join("")}</div>
   </section>
   <section class="wrap about-sec cta">
-    <div><h2>Work with us</h2><p>Want this kind of change in your classrooms, school, or district? We answer every inquiry within 24 hours.</p></div>
-    <div class="email"><span id="em">info@learning-works.org</span><button id="copy">${CICONS.copy} Copy email</button></div>
+    <figure class="cta-photo"><img src="high-five.jpg" alt="Leah and Paul high-fiving in front of a whiteboard that says Story" loading="lazy"></figure>
+    <div class="cta-body"><h2>Work with us</h2><p>Want this kind of change in your classrooms, school, or district? We answer every inquiry within 24 hours.</p>
+    <div class="email"><span id="em">info@learning-works.org</span><button id="copy">${CICONS.copy} Copy email</button></div></div>
   </section>`;
   app.querySelectorAll(".place").forEach(b=>b.onclick=()=>{ fState.stories={...blank(STORY_FILTERS), place:b.dataset.place}; save(); go("stories"); });
   app.querySelector("#copy").onclick = async e=>{
