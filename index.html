@@ -267,6 +267,30 @@ nav.main a.on{color:var(--navy)}
 .yt-wrap:not(.ready) .yt-cover{pointer-events:auto;cursor:progress}
 .place.soon{cursor:default}
 .place.soon span{color:var(--muted);font-weight:600}
+.field{position:relative}
+.flabel{font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+details.multi>summary{list-style:none;font-size:15px;font-weight:600;color:var(--navy);background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:10px 34px 10px 12px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2305415B' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+details.multi>summary::-webkit-details-marker{display:none}
+details.multi>summary:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+details.multi.set>summary{border-color:var(--blue);background-color:#EEF7FE}
+.multi-pop{position:absolute;z-index:20;top:calc(100% + 6px);left:0;width:min(420px,calc(100vw - 32px));background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 40px -16px rgba(5,65,91,.35);padding:14px;display:grid;gap:12px}
+.bands{display:flex;flex-wrap:wrap;gap:6px}
+.band{font:inherit;font-size:13px;font-weight:700;color:var(--navy);background:var(--beige);border:1.5px solid var(--line);border-radius:99px;padding:5px 11px;cursor:pointer}
+.band:hover{border-color:var(--blue)}
+.band.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.grade-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.field .gchk{position:relative;display:block;cursor:pointer;text-transform:none;letter-spacing:0;font-size:14px}
+.gchk input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.gchk span{display:grid;place-items:center;min-height:38px;padding:4px;border:1.5px solid var(--line);border-radius:9px;font-weight:800;font-size:14px;color:var(--navy);text-align:center;line-height:1.1}
+.gchk input:checked+span{background:var(--blue);border-color:var(--blue);color:#fff}
+.gchk input:focus-visible+span{outline:3px solid var(--blue);outline-offset:2px}
+.gchk:hover span{border-color:var(--blue)}
+.gchk.none span{color:#9AAAB2;border-style:dashed}
+.multi-foot{display:flex;justify-content:space-between;align-items:center}
+.multi-clear{font:inherit;font-size:14px;font-weight:700;color:var(--blue);background:none;border:0;cursor:pointer;padding:4px 0}
+.multi-done{font:inherit;font-size:14px;font-weight:800;color:#fff;background:var(--navy);border:0;border-radius:9px;padding:8px 16px;cursor:pointer}
+.filters{overflow:visible}
 </style>
 </head>
 <body>
@@ -368,6 +392,40 @@ function ytId(url){
 }
 /* Shorthand typed in the sheet -> the full name shown on the site */
 const ORG_ALIASES = {"nycdoe":"New York City Public Schools","nycps":"New York City Public Schools","nycpublicschools":"New York City Public Schools","newyorkcitypublicschools":"New York City Public Schools"};
+/* ---------- grade levels (from the "Grade Level" column) ---------- */
+const GRADE_ORDER = ["Pre-K","Young 5s","K","1","2","3","4","5","6","7","8","9","10","11","12"];
+const BANDS = {
+  "Elementary": ["Pre-K","Young 5s","K","1","2","3","4","5"],
+  "Middle School": ["6","7","8"],
+  "High School": ["9","10","11","12"],
+  "K–12": ["K","1","2","3","4","5","6","7","8","9","10","11","12"]
+};
+function normGrade(g){
+  const x = g.trim().toLowerCase().replace(/\s+/g," ");
+  if(!x) return "";
+  if(/^(pre-?k|pk|prek|pre-kindergarten)$/.test(x)) return "Pre-K";
+  if(/^(young ?5s?|young fives|y5s?|ygk)$/.test(x)) return "Young 5s";
+  if(/^(k|kg|kdg|kindergarten)$/.test(x)) return "K";
+  const m = x.match(/^(?:grade )?(\d{1,2})(?:st|nd|rd|th)?(?: grade)?$/);
+  if(m && +m[1]>=1 && +m[1]<=12) return String(+m[1]);
+  return "";
+}
+function parseGrades(cell){
+  const out = new Set();
+  (cell||"").split(/[,;\/]/).forEach(part=>{
+    const r = part.trim().match(/^(.+?)\s*(?:-|–|—|to)\s*(.+)$/i);
+    if(r){
+      const a = GRADE_ORDER.indexOf(normGrade(r[1])), b = GRADE_ORDER.indexOf(normGrade(r[2]));
+      if(a>-1 && b>-1){ for(let i=Math.min(a,b); i<=Math.max(a,b); i++) out.add(GRADE_ORDER[i]); return; }
+    }
+    const g = normGrade(part); if(g) out.add(g);
+  });
+  return GRADE_ORDER.filter(g=>out.has(g));
+}
+const ordinal = n => n+(["th","st","nd","rd"][(n%100>10&&n%100<14)?0:(n%10)]||"th");
+const gradeWords = gl => gl.map(g=>g==="K"?"kindergarten k":g==="Young 5s"?"young 5s young fives":g==="Pre-K"?"pre-k prek":`grade ${g} ${ordinal(+g)} grade`).join(" ");
+const gradeLabel = g => /^\d+$/.test(g) ? ordinal(+g) : g;
+
 function buildData(rows){
   const head = rows[0].map(h=>h.trim());
   const col = name => head.indexOf(name);
@@ -381,7 +439,8 @@ function buildData(rows){
     if(parts[0]) parts[0] = ORG_ALIASES[parts[0].toLowerCase().replace(/[\s.]+/g,"")] || parts[0];
     const base = {title:get(r,"Title"), link:get(r,"Primary Link"), summary:get(r,"Short Summary"),
       grades, subjects:subjectsRaw.map(nice), focus:focusRaw.map(nice), places:parts, org:parts[0]||"", school:parts[1]||"",
-      img: imgPath(get(r,"Featured Image URL"))};
+      img: imgPath(get(r,"Featured Image URL")),
+      gradeLevels: parseGrades(get(r,"Grade Level"))};
     if(type==="resource"){
       const audience = get(r,"Audience").split(",").map(s=>s.trim()).filter(Boolean).map(nice);
       const rtype = nice(get(r,"Resource Type").toLowerCase()) || "Resource";
@@ -464,7 +523,7 @@ function resourceHTML(r){
 /* ---------- filters ---------- */
 const uniq = arr => [...new Set(arr)].sort((a,b)=>a.localeCompare(b));
 const STORY_FILTERS = {
-  grade: {label:"Grade level", all:"All grades", opts:["Elementary","Middle School","High School"].filter(g=>stories.some(s=>s.grades.includes(g)))},
+  grade: {label:"Grade level", all:"All grades", multi:true, opts:GRADE_ORDER.filter(g=>BANDS["K–12"].includes(g) || stories.some(s=>s.gradeLevels.includes(g)))},
   subject: {label:"Subject", all:"All subjects", opts:uniq(stories.flatMap(s=>s.subjects))},
   focus: {label:"Focus", all:"All focus areas", opts:uniq(stories.flatMap(s=>s.focus))},
   place: {label:"School / District", all:"All schools & districts", opts:uniq(stories.flatMap(s=>s.places))},
@@ -474,30 +533,35 @@ const RES_FILTERS = {
   focus: {label:"Focus", all:"All focus areas", opts:uniq(resources.flatMap(r=>r.focus))},
   type: {label:"Type", all:"All types", opts:uniq(resources.map(r=>r.type))},
   audience: {label:"Who it's for", all:"Everyone", opts:uniq(resources.flatMap(r=>r.audience))},
-  grade: {label:"Grade level", all:"All grades", opts:uniq(resources.flatMap(r=>r.grades))},
+  grade: {label:"Grade level", all:"All grades", multi:true, opts:GRADE_ORDER.filter(g=>resources.some(r=>r.gradeLevels.includes(g)))},
   subject: {label:"Subject", all:"All subjects", opts:uniq(resources.flatMap(r=>r.subjects))}
 };
-const blank = F => Object.fromEntries([["q",""],...Object.keys(F).map(k=>[k,""])]);
+const blank = F => Object.fromEntries([["q",""],...Object.keys(F).map(k=>[k, F[k].multi ? [] : ""])]);
+const isActive = st => Object.values(st).some(v=>Array.isArray(v) ? v.length : v);
 let fState = {stories: blank(STORY_FILTERS), resources: blank(RES_FILTERS)};
-try{ const saved = JSON.parse(localStorage.getItem("lw-filters3")||"null"); if(saved) fState = {stories:{...fState.stories,...saved.stories}, resources:{...fState.resources,...saved.resources}}; }catch(e){}
-const save = ()=>{ try{ localStorage.setItem("lw-filters3", JSON.stringify(fState)); }catch(e){} };
+try{
+  const saved = JSON.parse(localStorage.getItem("lw-filters4")||"null");
+  if(saved) fState = {stories:{...fState.stories,...saved.stories}, resources:{...fState.resources,...saved.resources}};
+  ["stories","resources"].forEach(t=>{ if(!Array.isArray(fState[t].grade)) fState[t].grade = []; });
+}catch(e){}
+const save = ()=>{ try{ localStorage.setItem("lw-filters4", JSON.stringify(fState)); }catch(e){} };
 
 const textHit = (q, hay) => !q || q.toLowerCase().split(/\s+/).filter(Boolean).every(w=>hay.toLowerCase().includes(w));
 function storyMatch(s, st){
-  if(st.grade && !s.grades.includes(st.grade)) return false;
+  if(st.grade.length && !s.gradeLevels.some(g=>st.grade.includes(g))) return false;
   if(st.subject && !s.subjects.includes(st.subject)) return false;
   if(st.focus && !s.focus.includes(st.focus)) return false;
   if(st.place && !s.places.includes(st.place)) return false;
   if(st.level && s.pathway!==st.level) return false;
-  return textHit(st.q, s.title+" "+s.summary+" "+s.allTags.join(" ")+" "+s.places.join(" "));
+  return textHit(st.q, s.title+" "+s.summary+" "+s.allTags.join(" ")+" "+s.places.join(" ")+" "+gradeWords(s.gradeLevels));
 }
 function resMatch(r, st){
   if(st.focus && !r.focus.includes(st.focus)) return false;
   if(st.type && r.type!==st.type) return false;
   if(st.audience && !r.audience.includes(st.audience)) return false;
-  if(st.grade && !r.grades.includes(st.grade)) return false;
+  if(st.grade.length && !r.gradeLevels.some(g=>st.grade.includes(g))) return false;
   if(st.subject && !r.subjects.includes(st.subject)) return false;
-  return textHit(st.q, r.title+" "+r.summary+" "+r.allTags.join(" "));
+  return textHit(st.q, r.title+" "+r.summary+" "+r.allTags.join(" ")+" "+gradeWords(r.gradeLevels));
 }
 
 /* ---------- sliding rows ---------- */
@@ -593,6 +657,26 @@ function renderHome(){
 }
 
 /* ---------- LIBRARY (Stories / Resources) ---------- */
+function gradeSummary(v, f){
+  if(!v.length) return f.all;
+  for(const [name, band] of Object.entries(BANDS)){
+    const b = band.filter(g=>f.opts.includes(g));
+    if(b.length===v.length && b.every(g=>v.includes(g))) return name==="K–12" ? "K–12" : name;
+  }
+  return v.length<=4 ? v.map(g=>/^\d+$/.test(g)?g:g).join(", ") : `${v.length} grades`;
+}
+function gradePickerHTML(k, f, v){
+  const count = g => (k==="grade" ? stories : resources).filter(x=>x.gradeLevels.includes(g)).length;
+  return `<div class="field"><span class="flabel" id="lab-${k}">${f.label}</span>
+    <details class="multi${v.length?" set":""}" data-key="${k}">
+      <summary aria-labelledby="lab-${k}"><span>${gradeSummary(v,f)}</span></summary>
+      <div class="multi-pop" role="group" aria-label="${f.label}">
+        <div class="bands">${Object.keys(BANDS).map(b=>`<button type="button" class="band" data-band="${b}">${b==="K–12"?"All K–12":b}</button>`).join("")}</div>
+        <div class="grade-grid">${f.opts.map(g=>{ const n=count(g); return `<label class="gchk${n?"":" none"}" title="${n} ${n===1?"story":"stories"}"><input type="checkbox" value="${esc(g)}"${v.includes(g)?" checked":""}><span>${esc(g)}</span></label>`; }).join("")}</div>
+        <div class="multi-foot"><button type="button" class="multi-clear">Clear</button><button type="button" class="multi-done">Done</button></div>
+      </div>
+    </details></div>`;
+}
 function renderLibrary(tab){
   const F = tab==="stories" ? STORY_FILTERS : RES_FILTERS;
   const st = fState[tab];
@@ -611,7 +695,7 @@ function renderLibrary(tab){
     <div class="filters" role="search">
       <div class="search">${SEARCH_ICON}<input id="q" type="search" placeholder="Try “${HINTS[0]}”" value="${esc(st.q)}" aria-label="Search ${tab}"></div>
       <div class="selects" style="--cols:${keys.length}">
-        ${keys.map(k=>`<div class="field"><label for="f-${k}">${F[k].label}</label>
+        ${keys.map(k=>F[k].multi ? gradePickerHTML(k, F[k], st[k]) : `<div class="field"><label for="f-${k}">${F[k].label}</label>
           <select id="f-${k}" data-key="${k}"><option value="">${F[k].all}</option>${F[k].opts.map(o=>`<option${st[k]===o?" selected":""}>${esc(o)}</option>`).join("")}</select></div>`).join("")}
       </div>
     </div>
@@ -620,6 +704,20 @@ function renderLibrary(tab){
   const q = app.querySelector("#q"); startHints(q);
   q.addEventListener("input",e=>{st.q=e.target.value;save();update();});
   app.querySelectorAll("select").forEach(sel=>sel.addEventListener("change",e=>{st[e.target.dataset.key]=e.target.value;save();update();}));
+  app.querySelectorAll("details.multi").forEach(d=>{
+    const k = d.dataset.key, opts = F[k].opts;
+    const sync = ()=>{ d.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked = st[k].includes(c.value)); };
+    d.querySelectorAll("input[type=checkbox]").forEach(c=>c.addEventListener("change",()=>{
+      st[k] = opts.filter(g=> g===c.value ? c.checked : st[k].includes(g)); save(); update();
+    }));
+    d.querySelectorAll("[data-band]").forEach(b=>b.onclick=()=>{
+      const band = BANDS[b.dataset.band].filter(g=>opts.includes(g));
+      const allOn = band.every(g=>st[k].includes(g));
+      st[k] = opts.filter(g=> band.includes(g) ? !allOn : st[k].includes(g)); sync(); save(); update();
+    });
+    d.querySelector(".multi-clear").onclick = ()=>{ st[k] = []; sync(); save(); update(); };
+    d.querySelector(".multi-done").onclick = ()=>{ d.open = false; };
+  });
   wireRows(app);
   function update(){
     const sList = stories.filter(s=>storyMatch(s,fState.stories));
@@ -627,8 +725,14 @@ function renderLibrary(tab){
     app.querySelector("#n-stories").textContent = sList.length;
     app.querySelector("#n-resources").textContent = rList.length;
     app.querySelectorAll("select").forEach(sel=>sel.classList.toggle("set",!!sel.value));
+    app.querySelectorAll("details.multi").forEach(d=>{
+      const v = st[d.dataset.key];
+      d.querySelector("summary span").textContent = gradeSummary(v, F[d.dataset.key]);
+      d.classList.toggle("set", v.length>0);
+      d.querySelectorAll("[data-band]").forEach(b=>{ const band = BANDS[b.dataset.band].filter(g=>F[d.dataset.key].opts.includes(g)); b.classList.toggle("on", band.length>0 && band.every(g=>v.includes(g))); });
+    });
     const list = tab==="stories" ? sList : rList, total = tab==="stories" ? stories.length : resources.length;
-    const active = Object.values(st).some(Boolean);
+    const active = isActive(st);
     const sub = `${list.length} of ${total} ${tab}${active?` · <button class="clear" id="clear">Clear filters</button>`:""}`;
     const items = list.length ? list.map(tab==="stories"?cardHTML:resourceHTML).join("") :
       (tab==="resources" && !resources.length ? `<div class="empty"><b>Practical resources are on the way!</b>In the meantime, explore the stories. <a class="link" href="#stories" data-go="stories">Explore Stories →</a></div>` : `<div class="empty"><b>Nothing matches those filters yet.</b>Try removing a filter or searching a different word.</div>`);
@@ -717,7 +821,8 @@ function renderCollection(c){
 }
 function tagToFilter(t){
   const F = STORY_FILTERS;
-  const k = F.grade.opts.includes(t)?"grade":F.subject.opts.includes(t)?"subject":"focus";
+  if(BANDS[t]){ fState.stories = {...blank(F), grade: BANDS[t].filter(g=>F.grade.opts.includes(g))}; save(); go("stories"); return; }
+  const k = F.subject.opts.includes(t)?"subject":"focus";
   fState.stories = {...blank(F),[k]:t}; save(); go("stories");
 }
 function renderStory(s){
@@ -815,6 +920,8 @@ document.addEventListener("click",e=>{
   else if(t.dataset.story) go(t.dataset.story);
   else go(t.dataset.res);
 });
+document.addEventListener("click",e=>{ document.querySelectorAll("details.multi[open]").forEach(d=>{ if(!d.contains(e.target)) d.open=false; }); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") document.querySelectorAll("details.multi[open]").forEach(d=>{ d.open=false; d.querySelector("summary").focus(); }); });
 window.addEventListener("hashchange",route);
 route();
 
