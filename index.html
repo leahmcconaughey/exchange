@@ -246,12 +246,16 @@ nav.main a.on{color:var(--navy)}
 .open-res{justify-self:start;background:var(--navy);color:#fff;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:12px}
 .site-foot{border-top:1px solid var(--line);color:var(--muted);font-size:14px}
 .site-foot .wrap{padding-block:22px}
+.brand .logo{height:30px;width:auto;display:block}
+.lib-hero .wrap{padding-block:40px 44px;gap:12px}
+.lib-hero h1{font-size:clamp(34px,5vw,56px)}
+.lib-intro{padding-top:26px}
 </style>
 </head>
 <body>
 <header class="site">
   <div class="wrap">
-    <a class="brand" href="#" data-go=""><b>LearningWorks</b><span>EXCHANGE</span></a>
+    <a class="brand" href="#" data-go="" aria-label="LearningWorks Exchange home"><img src="logo.svg" alt="LearningWorks" class="logo"><span>EXCHANGE</span></a>
     <nav class="main"><a href="#" data-go="" data-nav="home">Home</a><a href="#stories" data-go="stories" data-nav="stories">Stories</a><a href="#resources" data-go="resources" data-nav="resources">Resources</a><a href="#leaders" data-go="leaders" data-nav="leaders">For Leaders &amp; Coaches</a><a href="#about" data-go="about" data-nav="about">About</a></nav>
   </div>
 </header>
@@ -311,7 +315,6 @@ function cardHTML(s){
   return `<a class="card" href="#${s.slug}" data-story="${s.slug}">
     ${coverHTML(s)}
     <div class="body">
-      <div class="kicker">${esc(s.pathway)} · ${esc(s.school || s.org)}</div>
       <h3>${esc(s.title)}</h3>
       <p>${esc(s.summary)}</p>
     </div></a>`;
@@ -575,8 +578,11 @@ function renderLibrary(tab){
   const st = fState[tab];
   const keys = Object.keys(F).filter(k=>F[k].opts.length);
   app.innerHTML = `
-  <section class="wrap intro">
-    <div class="eyebrow">LearningWorks Exchange</div>
+  <section class="home-hero lib-hero"><div class="wrap">
+    <h1>Find support.<br><span>See it in practice.</span></h1>
+    <p>Real stories and practical resources to help educators create meaningful, student-centered learning experiences.</p>
+  </div></section>
+  <section class="wrap intro lib-intro">
     <div class="tabs" role="tablist">
       <a role="tab" href="#stories" data-go="stories" class="tab${tab==="stories"?" on":""}" aria-selected="${tab==="stories"}">Stories <em id="n-stories"></em></a>
       <a role="tab" href="#resources" data-go="resources" class="tab${tab==="resources"?" on":""}" aria-selected="${tab==="resources"}">Resources <em id="n-resources"></em></a>
@@ -730,7 +736,7 @@ function renderResource(r){
 }
 
 /* ---------- routing ---------- */
-const PAGES = {"":renderHome, stories:()=>renderLibrary("stories"), resources:()=>renderLibrary("resources"), leaders:renderLeaders, about:renderAbout};
+const PAGES = {"":()=>renderLibrary("stories"), stories:()=>renderLibrary("stories"), resources:()=>renderLibrary("resources"), leaders:renderLeaders, about:renderAbout};
 const NAV_FOR = {"":"home", stories:"stories", resources:"resources", leaders:"leaders", about:"about"};
 function go(hash){ if(location.hash.slice(1)!==hash){ location.hash = hash; } else route(); }
 function route(){
