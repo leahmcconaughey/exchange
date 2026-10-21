@@ -265,6 +265,8 @@ nav.main a.on{color:var(--navy)}
 .yt-cover{position:absolute;inset:0;pointer-events:none;transition:opacity .35s ease;z-index:1}
 .yt-wrap.playing .yt-cover{opacity:0}
 .yt-wrap:not(.ready) .yt-cover{pointer-events:auto;cursor:progress}
+.place.soon{cursor:default}
+.place.soon span{color:var(--muted);font-weight:600}
 </style>
 </head>
 <body>
@@ -656,7 +658,10 @@ function renderLeaders(){
 
 /* ---------- ABOUT ---------- */
 function renderAbout(){
-  const orgs = uniq(stories.map(s=>s.org));
+  /* Partners always listed here, even before their stories are added */
+  const PARTNERS = ["Farmington Public Schools","Perry Public Schools","New York City Public Schools"];
+  const orgs = uniq([...PARTNERS, ...stories.map(s=>s.org).filter(Boolean)]);
+  const countFor = o => stories.filter(s=>s.org.toLowerCase()===o.toLowerCase()).length;
   app.innerHTML = `
   <section class="wrap intro about-intro">
     <div class="eyebrow">About the Exchange</div>
@@ -683,14 +688,14 @@ function renderAbout(){
   </section>
   <section class="wrap about-sec">
     <h2>Where the work is happening</h2>
-    <div class="places">${orgs.map(o=>`<button class="place" data-place="${esc(o)}"><b>${esc(o)}</b><span>${stories.filter(s=>s.org===o).length} stories →</span></button>`).join("")}</div>
+    <div class="places">${orgs.map(o=>{ const n=countFor(o); return n ? `<button class="place" data-place="${esc(o)}"><b>${esc(o)}</b><span>${n} ${n===1?"story":"stories"} →</span></button>` : `<div class="place soon"><b>${esc(o)}</b><span>Stories coming soon</span></div>`; }).join("")}</div>
   </section>
   <section class="wrap about-sec cta">
     <figure class="cta-photo"><img src="high-five.jpg" alt="Leah and Paul high-fiving in front of a whiteboard that says Story" loading="lazy"></figure>
     <div class="cta-body"><h2>Work with us</h2><p>Want this kind of change in your classrooms, school, or district? We answer every inquiry within 24 hours.</p>
     <div class="email"><span id="em">info@learning-works.org</span><button id="copy">${CICONS.copy} Copy email</button></div></div>
   </section>`;
-  app.querySelectorAll(".place").forEach(b=>b.onclick=()=>{ fState.stories={...blank(STORY_FILTERS), place:b.dataset.place}; save(); go("stories"); });
+  app.querySelectorAll("button.place").forEach(b=>b.onclick=()=>{ fState.stories={...blank(STORY_FILTERS), place:b.dataset.place}; save(); go("stories"); });
   app.querySelector("#copy").onclick = async e=>{
     const b = e.currentTarget;
     try{ await navigator.clipboard.writeText("info@learning-works.org"); b.lastChild.textContent = " Copied"; }
