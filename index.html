@@ -602,7 +602,7 @@ function renderLibrary(tab){
       <a role="tab" href="#stories" data-go="stories" class="tab${tab==="stories"?" on":""}" aria-selected="${tab==="stories"}">Stories <em id="n-stories"></em></a>
       <a role="tab" href="#resources" data-go="resources" class="tab${tab==="resources"?" on":""}" aria-selected="${tab==="resources"}">Resources <em id="n-resources"></em></a>
     </div>
-    <p class="tab-desc">${tab==="stories" ? "The work brought to life. See it in classrooms, schools, and districts, and hear from the people doing it." : "How to do the work. Tools, templates, protocols, and tutorials you can use right away."}</p>
+    <p class="tab-desc">${tab==="stories" ? "The work brought to life. See it in classrooms, schools, and districts,<br>and hear from the people doing it." : "How to do the work. Tools, templates, protocols, and tutorials you can use right away."}</p>
     <div class="filters" role="search">
       <div class="search">${SEARCH_ICON}<input id="q" type="search" placeholder="Try “${HINTS[0]}”" value="${esc(st.q)}" aria-label="Search ${tab}"></div>
       <div class="selects" style="--cols:${keys.length}">
