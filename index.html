@@ -291,6 +291,11 @@ details.multi.set>summary{border-color:var(--blue);background-color:#EEF7FE}
 .multi-clear{font:inherit;font-size:14px;font-weight:700;color:var(--blue);background:none;border:0;cursor:pointer;padding:4px 0}
 .multi-done{font:inherit;font-size:14px;font-weight:800;color:#fff;background:var(--navy);border:0;border-radius:9px;padding:8px 16px;cursor:pointer}
 .filters{overflow:visible}
+.tabbar{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;border-bottom:2px solid var(--line);margin-top:10px}
+.tabbar .tabs{border-bottom:0;margin-top:0}
+.tabbar .tab{margin-bottom:-2px}
+.tabbar .tab-desc{margin:0 0 14px;max-width:44ch;font-size:15.5px;line-height:1.5;color:var(--muted);text-wrap:balance}
+@media (max-width:760px){.tabbar{flex-direction:column;align-items:stretch;gap:0;border-bottom:0}.tabbar .tabs{border-bottom:2px solid var(--line)}.tabbar .tab-desc{margin:12px 0 0;max-width:none}}
 </style>
 </head>
 <body>
@@ -687,11 +692,13 @@ function renderLibrary(tab){
     <p>Real stories and practical resources to help educators create meaningful, student-centered learning experiences.</p>
   </div></section>
   <section class="wrap intro lib-intro">
-    <div class="tabs" role="tablist">
-      <a role="tab" href="#stories" data-go="stories" class="tab${tab==="stories"?" on":""}" aria-selected="${tab==="stories"}">Stories <em id="n-stories"></em></a>
-      <a role="tab" href="#resources" data-go="resources" class="tab${tab==="resources"?" on":""}" aria-selected="${tab==="resources"}">Resources <em id="n-resources"></em></a>
+    <div class="tabbar">
+      <div class="tabs" role="tablist">
+        <a role="tab" href="#stories" data-go="stories" class="tab${tab==="stories"?" on":""}" aria-selected="${tab==="stories"}">Stories</a>
+        <a role="tab" href="#resources" data-go="resources" class="tab${tab==="resources"?" on":""}" aria-selected="${tab==="resources"}">Resources</a>
+      </div>
+      <p class="tab-desc">${tab==="stories" ? "The work brought to life. See it in classrooms, schools, and districts, and hear from the people doing it." : "How to do the work. Tools, templates, protocols, and tutorials you can use right away."}</p>
     </div>
-    <p class="tab-desc">${tab==="stories" ? "The work brought to life. See it in classrooms, schools, and districts,<br>and hear from the people doing it." : "How to do the work. Tools, templates, protocols, and tutorials<br>you can use right away."}</p>
     <div class="filters" role="search">
       <div class="search">${SEARCH_ICON}<input id="q" type="search" placeholder="Try “${HINTS[0]}”" value="${esc(st.q)}" aria-label="Search ${tab}"></div>
       <div class="selects" style="--cols:${keys.length}">
@@ -722,8 +729,6 @@ function renderLibrary(tab){
   function update(){
     const sList = stories.filter(s=>storyMatch(s,fState.stories));
     const rList = resources.filter(r=>resMatch(r,fState.resources));
-    app.querySelector("#n-stories").textContent = sList.length;
-    app.querySelector("#n-resources").textContent = rList.length;
     app.querySelectorAll("select").forEach(sel=>sel.classList.toggle("set",!!sel.value));
     app.querySelectorAll("details.multi").forEach(d=>{
       const v = st[d.dataset.key];
