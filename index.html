@@ -247,9 +247,13 @@ nav.main a.on{color:var(--navy)}
 .site-foot{border-top:1px solid var(--line);color:var(--muted);font-size:14px}
 .site-foot .wrap{padding-block:22px}
 .brand .logo{height:30px;width:auto;display:block}
-.lib-hero .wrap{padding-block:40px 44px;gap:12px}
-.lib-hero h1{font-size:clamp(34px,5vw,56px)}
-.lib-intro{padding-top:26px}
+.lib-hero .wrap{padding-block:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px 40px;flex-wrap:wrap}
+.lib-hero h1{font-size:clamp(28px,3.4vw,42px);line-height:1.1;white-space:nowrap}
+.lib-hero p{font-size:16px;max-width:46ch;margin:0;opacity:.85}
+.lib-intro{padding-top:12px}
+.lib-intro .tab{font-size:clamp(26px,3.2vw,36px)}
+.lib-intro .filters{margin-top:18px}
+@media (max-width:620px){.lib-hero h1{white-space:normal}}
 .team{margin:0;border-radius:20px;overflow:hidden;aspect-ratio:16/8;max-width:100%}
 .team img{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block}
 .search{background:#fff!important;border-color:var(--blue)!important}
@@ -274,7 +278,7 @@ details.multi>summary{list-style:none;font-size:15px;font-weight:600;color:var(-
 details.multi>summary::-webkit-details-marker{display:none}
 details.multi>summary:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 details.multi.set>summary{border-color:var(--blue);background-color:#EEF7FE}
-.multi-pop{position:absolute;z-index:20;top:calc(100% + 6px);left:0;width:min(420px,calc(100vw - 32px));background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 40px -16px rgba(5,65,91,.35);padding:14px;display:grid;gap:12px}
+.multi-pop{position:absolute;z-index:20;top:calc(100% + 6px);left:0;gap:10px!important;width:min(470px,calc(100vw - 32px));background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 40px -16px rgba(5,65,91,.35);padding:14px;display:grid;gap:12px}
 .bands{display:flex;flex-wrap:wrap;gap:6px}
 .band{font:inherit;font-size:13px;font-weight:700;color:var(--navy);background:var(--beige);border:1.5px solid var(--line);border-radius:99px;padding:5px 11px;cursor:pointer}
 .band:hover{border-color:var(--blue)}
@@ -282,7 +286,7 @@ details.multi.set>summary{border-color:var(--blue);background-color:#EEF7FE}
 .grade-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
 .field .gchk{position:relative;display:block;cursor:pointer;text-transform:none;letter-spacing:0;font-size:14px}
 .gchk input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
-.gchk span{display:grid;place-items:center;min-height:38px;padding:4px;border:1.5px solid var(--line);border-radius:9px;font-weight:800;font-size:14px;color:var(--navy);text-align:center;line-height:1.1}
+.gchk span{display:grid;place-items:center;min-height:34px;padding:3px;border:1.5px solid var(--line);border-radius:9px;font-weight:800;font-size:14px;color:var(--navy);text-align:center;line-height:1.1}
 .gchk input:checked+span{background:var(--blue);border-color:var(--blue);color:#fff}
 .gchk input:focus-visible+span{outline:3px solid var(--blue);outline-offset:2px}
 .gchk:hover span{border-color:var(--blue)}
@@ -689,7 +693,7 @@ function renderLibrary(tab){
   const keys = Object.keys(F).filter(k=>F[k].opts.length);
   app.innerHTML = `
   <section class="home-hero lib-hero"><div class="wrap">
-    <h1>Find support.<br><span>See it in practice.</span></h1>
+    <h1>Find support. <span>See it in practice.</span></h1>
     <p>Real stories and practical resources to help educators create meaningful, student-centered learning experiences.</p>
   </div></section>
   <section class="wrap intro lib-intro">
