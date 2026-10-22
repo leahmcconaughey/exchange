@@ -725,6 +725,15 @@ function renderLibrary(tab){
     });
     d.querySelector(".multi-clear").onclick = ()=>{ st[k] = []; sync(); save(); update(); };
     d.querySelector(".multi-done").onclick = ()=>{ d.open = false; };
+    /* When the picker opens below the visible screen, glide down just enough to show all of it */
+    d.addEventListener("toggle",()=>{
+      if(!d.open) return;
+      requestAnimationFrame(()=>{
+        const pop = d.querySelector(".multi-pop").getBoundingClientRect();
+        const overflow = pop.bottom - window.innerHeight + 16;
+        if(overflow > 0) window.scrollBy({top: overflow, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+      });
+    });
   });
   wireRows(app);
   function update(){
