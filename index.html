@@ -204,6 +204,17 @@ nav.main a.on{color:var(--navy)}
 .tryit{background:var(--sky);border-radius:18px;padding:24px;display:grid;gap:12px}
 .tryit h2{margin:0;font-size:24px;font-weight:800}
 .tryit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+/* Meaning Making 101: companion video callout */
+.companion{background:var(--beige);border:2px solid var(--peach);border-left:8px solid var(--orange);border-radius:18px;padding:22px 24px;display:grid;gap:10px}
+.companion h2{margin:0;font-size:22px;font-weight:800;line-height:1.25}
+.companion .note{margin:0;color:var(--muted);font-size:14.5px}
+.mini-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-top:6px}
+.mini{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;transition:transform .18s ease, box-shadow .18s ease}
+.mini:hover{transform:translateY(-3px);box-shadow:0 14px 30px -18px rgba(5,65,91,.45)}
+.mini .mb{padding:12px 14px 14px;display:grid;gap:4px}
+.mini .mt{font-weight:800;font-size:15.5px;line-height:1.25}
+.mini .who{font-size:13px;color:var(--muted);font-weight:700}
+.mini .nt{font-size:12.5px;font-weight:800;color:var(--blue)}
 /* leaders */
 .lead-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;padding-block:28px 0}
 .lead-grid .coll{min-height:200px}
@@ -902,15 +913,41 @@ function mountVideo(s){
     });
   }).catch(fallback);
 }
+/* ---------- Meaning Making 101 tutorial series ----------
+   Keyed by tutorial title. Companion videos are matched to Exchange stories by their
+   YouTube link, and open in a new tab so viewers keep their place in the tutorial. */
+const SERIES_NAME = "Meaning Making 101", SERIES_TOTAL = 5;
+const SERIES = {
+ "meaning making 101 - the why": {part:1},
+ "meaning making 101 - the how part 1": {part:2},
+ "meaning making 101 - the how part iia": {part:3, heading:"Before Part 4: Watch this classroom", note:"See these ideas come to life in a high school science lesson.",
+   videos:[["5Smjy0tjYVA","Nicole Daihl"]]},
+ "meaning making 101 - the how part iib": {part:4, heading:"Before Part 5: Watch any two of these six classrooms, and notice how students make meaning.",
+   videos:[["Mx2WPgGOTLc","Renae and Stephanie"],["JrTlZcAu7no","Stacy"],["fY1pT2msfhM","Bailey"],["Nk1sUr62QOI","Mandy"],["fyXpzHcqLw4","Lynn"],["Szp_C8R3RhM","Jeff"]]},
+ "meaning making 101 - leah's thinking": {part:5}
+};
+const seriesFor = r => SERIES[r.title.toLowerCase().replace(/[\u2018\u2019]/g,"'").replace(/\s+/g," ").trim()];
+function companionHTML(sr){
+  if(!sr || !sr.videos) return "";
+  const cards = sr.videos.map(([id,who])=>{
+    const st = stories.find(x=>x.video===id); if(!st) return "";
+    return `<a class="mini" href="#${st.slug}" target="_blank" rel="noopener" aria-label="${esc(st.title)} (opens in a new tab)">
+      ${coverHTML(st)}<div class="mb"><div class="mt">${esc(st.title)}</div><div class="who">${esc(who)}</div><div class="nt">Opens in a new tab ↗</div></div></a>`;
+  }).join("");
+  if(!cards) return "";
+  return `<section class="companion"><div class="eyebrow orange">Companion ${sr.videos.length>1?"videos":"video"}</div><h2>${esc(sr.heading)}</h2>${sr.note?`<p class="note">${esc(sr.note)}</p>`:""}<div class="mini-grid">${cards}</div></section>`;
+}
 function renderResource(r){
+  const sr = seriesFor(r);
   const seeIt = stories.filter(s=>s.focus.some(f=>r.focus.includes(f))).slice(0,8);
   app.innerHTML = `<article class="wrap story">
     <a class="back" href="#resources" data-go="resources">← Back to Resources</a>
-    <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
+    <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_NAME} · Part ${sr.part} of ${SERIES_TOTAL}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
     <p class="desc">${esc(r.summary)}</p>
     ${r.audience.length?`<div class="where">For ${esc(r.audience.join(", ").toLowerCase())}</div>`:""}
     ${r.link?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
     <div class="chips">${r.focus.map(t=>`<span class="chip static">${esc(t)}</span>`).join("")}</div>
+    ${companionHTML(sr)}
     ${seeIt.length?`<div class="next">${rowHTML("seeit","See it in practice","Stories that bring this work to life", seeIt.map(cardHTML).join(""))}</div>`:""}
   </article>`;
   wireRows(app);
