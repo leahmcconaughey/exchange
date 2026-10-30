@@ -216,6 +216,12 @@ nav.main a.on{color:var(--navy)}
 .quote-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 .results{display:grid;gap:16px;margin-top:44px}
 .results h2{margin:0;font-size:28px;font-weight:800}
+.pdf-view{border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#fff;height:min(78vh,820px)}
+.pdf-view iframe{width:100%;height:100%;border:0;display:block}
+.pdf-actions{display:flex;gap:12px;flex-wrap:wrap}
+.open-res.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--navy)}
+.bp-link{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--sky);border-radius:14px;padding:14px 18px;text-decoration:none;color:var(--navy)}
+.bp-link span{font-size:14px;font-weight:700;color:var(--blue)}
 .series-note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55;color:var(--muted)}
 .series-note b{color:var(--navy)}
 .res-icon{width:44px;height:44px;border-radius:12px;background:var(--beige);color:var(--blue);display:grid;place-items:center;flex:none}
@@ -541,7 +547,7 @@ const COLLECTIONS = [
  {id:"learn-the-amt-framework", title:"Learn the AMT Framework", blurb:"Build shared understanding of meaningful learning", tone:"navy", icon:"bookicon", leaders:true,
   stories:["concept-before-content","from-sound-to-sense-making","from-delivering-content-to-facilitating-thinking","they-already-knew-more-than-i-thought","looking-beyond-the-surface"]},
  {id:"engagement-blueprint", title:"Explore the Engagement Blueprint", blurb:"A guide for designing the conditions for engagement", tone:"peach", icon:"compass", leaders:true,
-  stories:["stepping-back-so-students-can-step-up","learning-spanish-beyond-the-textbook","students-take-a-seat-at-the-table","finding-learning-all-around-us","whats-beneath-the-surface"]},
+  resources:["r-engagement-blueprint"], stories:["stepping-back-so-students-can-step-up","learning-spanish-beyond-the-textbook","students-take-a-seat-at-the-table","finding-learning-all-around-us","whats-beneath-the-surface"]},
  {id:"build-a-better-unit", title:"Build a Better Unit", blurb:"Align learning, assessment & instruction", tone:"sky", icon:"check",
   stories:["seeing-the-big-picture","students-take-a-seat-at-the-table","whats-beneath-the-surface","brewing-up-real-world-math","when-words-have-a-purpose","learning-spanish-beyond-the-textbook"]},
  {id:"5-minutes-or-less", title:"5 Minutes or Less", blurb:"Quick ideas, examples & videos", tone:"blue", icon:"clock",
@@ -1015,13 +1021,13 @@ const SERIES = {
  "meaning making 101 - the how part 1": {s:"101", part:2, chapters:[["00:00","Introduction to Rigor Redefined"],["04:29","Understanding Produce Characteristics"],["07:10","Connecting the Dots"],["09:32","Content vs. Conceptual Understanding"],["11:14","Processing Meaning First"],["13:50","Conclusion and Next Steps"]]},
  "meaning making 101 - the how part iia": {s:"101", part:3, chapters:[["0:00","Introduction to Meaning Making 101"],["2:44","Defining Meaning Making"],["5:45","Nicole Daihl’s Teaching Shift"]], heading:"Before Part 4: Watch this classroom", note:"See these ideas come to life in a high school science lesson.",
    videos:[["5Smjy0tjYVA","Nicole Daihl"]]},
- "meaning making 101 - the how part iib": {s:"101", part:4, chapters:[["00:00","Introduction to Meaning-Making"],["01:54","Empowering Student Thinking"],["03:37","Defining Concepts for Students"],["06:00","Positioning for Meaning-Making"],["10:01","Observing Student Engagement"],["14:01","Student-Centered Learning"],["18:14","Extended Discussion Time"],["21:54","Intersection of Learning and Teaching"]], heading:"Before Part 5: Watch any two of these six classrooms, and notice how students make meaning.",
+ "meaning making 101 - the how part iib": {s:"101", blueprint:true, part:4, chapters:[["00:00","Introduction to Meaning-Making"],["01:54","Empowering Student Thinking"],["03:37","Defining Concepts for Students"],["06:00","Positioning for Meaning-Making"],["10:01","Observing Student Engagement"],["14:01","Student-Centered Learning"],["18:14","Extended Discussion Time"],["21:54","Intersection of Learning and Teaching"]], heading:"Before Part 5: Watch any two of these six classrooms, and notice how students make meaning.",
    videos:[["Mx2WPgGOTLc","Renae and Stephanie"],["JrTlZcAu7no","Stacy"],["fY1pT2msfhM","Bailey"],["Nk1sUr62QOI","Mandy"],["fyXpzHcqLw4","Lynn"],["Szp_C8R3RhM","Jeff"]]},
- "meaning making 101 - leah's thinking": {s:"101", part:5, chapters:[["00:00","Introduction to Leah’s Thinking"],["01:11","Renae and Stephanie - STEAM"],["02:17","Stacy - Longacre"],["04:07","Bailey - Power"],["06:15","Mandy - East"],["08:08","Lynn - Farmington High School"],["10:38","Jeff - North Farmington High School"],["12:00","Conclusion and Take Home Messages"]]},
+ "meaning making 101 - leah's thinking": {s:"101", blueprint:true, part:5, chapters:[["00:00","Introduction to Leah’s Thinking"],["01:11","Renae and Stephanie - STEAM"],["02:17","Stacy - Longacre"],["04:07","Bailey - Power"],["06:15","Mandy - East"],["08:08","Lynn - Farmington High School"],["10:38","Jeff - North Farmington High School"],["12:00","Conclusion and Take Home Messages"]]},
  "meaning making 201 - the why": {s:"201", part:1, chapters:[["0:00","Introduction to Meaning Making 201"],["1:23","Learning Targets Overview"],["3:09","Understanding Meaning Making"],["5:37","Connecting Profiles and Frameworks"]]},
- "meaning making 201 - the how": {s:"201", part:2, chapters:[["00:00","Introduction to Understanding First"],["02:09","Critical Thinking Focus"],["04:25","Ben Hunt-Davis Story"],["06:49","Simplifying Focus"],["10:40","Positioning Blueprint Elements"],["16:41","Conclusion and Next Steps"]]},
- "meaning making 201 - the what": {s:"201", part:3, chapters:[["00:00","Introduction to Examples"],["00:49","Middle School SS - Comparative Religions"],["02:37","High School Physics - Conservation of Momentum"],["06:51","Middle School Science - Earth\u2019s Origins"],["07:42","Middle School ELA - Symbolism"],["10:52","Middle School SS - World War II"],["12:55","Middle School Math - Geometry of Circles"]]},
- "meaning making 201 - leah's thinking": {s:"201", part:4, chapters:[["00:00","Introduction and Framing Discussion"],["01:34","Middle School SS - Comparative Religions"],["03:37","High School Physics - Conservation of Momentum"],["07:15","Middle School Science - Earth\u2019s Origins"],["09:25","Middle School ELA - Symbolism"],["14:59","Middle School SS - World War II"],["18:40","Middle School Math - Geometry of Circles"],["20:54","Conclusion and Take Home Messages"]]}
+ "meaning making 201 - the how": {s:"201", blueprint:true, part:2, chapters:[["00:00","Introduction to Understanding First"],["02:09","Critical Thinking Focus"],["04:25","Ben Hunt-Davis Story"],["06:49","Simplifying Focus"],["10:40","Positioning Blueprint Elements"],["16:41","Conclusion and Next Steps"]]},
+ "meaning making 201 - the what": {s:"201", blueprint:true, part:3, chapters:[["00:00","Introduction to Examples"],["00:49","Middle School SS - Comparative Religions"],["02:37","High School Physics - Conservation of Momentum"],["06:51","Middle School Science - Earth\u2019s Origins"],["07:42","Middle School ELA - Symbolism"],["10:52","Middle School SS - World War II"],["12:55","Middle School Math - Geometry of Circles"]]},
+ "meaning making 201 - leah's thinking": {s:"201", blueprint:true, part:4, chapters:[["00:00","Introduction and Framing Discussion"],["01:34","Middle School SS - Comparative Religions"],["03:37","High School Physics - Conservation of Momentum"],["07:15","Middle School Science - Earth\u2019s Origins"],["09:25","Middle School ELA - Symbolism"],["14:59","Middle School SS - World War II"],["18:40","Middle School Math - Geometry of Circles"],["20:54","Conclusion and Take Home Messages"]]}
 };
 const seriesFor = r => SERIES[r.title.toLowerCase().replace(/[\u2018\u2019]/g,"'").replace(/\s+/g," ").trim()];
 const toSec = t => t.split(":").reduce((a,v)=>a*60+(+v),0);
@@ -1055,9 +1061,12 @@ function videoEmbed(link){
   const yt = ytId(link);
   return yt ? `https://www.youtube-nocookie.com/embed/${yt}?rel=0&playsinline=1` : "";
 }
+const isPdf = l => /\.pdf(\?|#|$)/i.test(l||"");
+const BLUEPRINT_PDF = "docs/Engagement-Blueprint.pdf";
 function renderResource(r){
   const sr = seriesFor(r);
   const embed = videoEmbed(r.link);
+  const pdf = !embed && isPdf(r.link);
   const seeIt = stories.filter(s=>s.focus.some(f=>r.focus.includes(f))).slice(0,8);
   app.innerHTML = `<article class="wrap story">
     <a class="back" href="#resources" data-go="resources">← Back to Resources</a>
@@ -1065,10 +1074,13 @@ function renderResource(r){
     ${sr?statLineHTML(FEEDBACK[sr.s]):""}
     ${embed?`<div class="player video"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`:""}
     <p class="desc">${esc(r.summary)}</p>
+    ${sr&&sr.blueprint?`<a class="bp-link" href="${BLUEPRINT_PDF}" target="_blank" rel="noopener"><b>Keep the Engagement Blueprint open while you watch</b><span>Opens the PDF in a new tab ↗</span></a>`:""}
     ${chaptersHTML(sr, embed)}
     ${sr?`<div class="series-note">${SERIES_NOTE}</div>`:""}
     ${r.audience.length?`<div class="where">For ${esc(r.audience.join(", ").toLowerCase())}</div>`:""}
-    ${r.link&&!embed?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
+    ${pdf?`<div class="pdf-view"><iframe src="${esc(r.link)}#view=FitH" title="${esc(r.title)}" loading="lazy"></iframe></div>
+      <div class="pdf-actions"><a class="open-res" href="${esc(r.link)}" download>Download PDF ↓</a><a class="open-res ghost" href="${esc(r.link)}" target="_blank" rel="noopener">Open in a new tab ↗</a></div>`:""}
+    ${r.link&&!embed&&!pdf?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
     <div class="chips">${r.focus.map(t=>`<span class="chip static">${esc(t)}</span>`).join("")}</div>
     ${companionHTML(sr)}
     ${sr?quoteCardHTML(FEEDBACK[sr.s].quotes[(sr.part-1)%FEEDBACK[sr.s].quotes.length],FEEDBACK[sr.s]):""}
