@@ -503,6 +503,8 @@ function startApp(){
 const COLLECTIONS = [
  {id:"new-to-this-work", title:"New to This Work", tag:"Start Here", blurb:"Small, doable first steps from teachers who started where you are", tone:"sage", icon:"sprout",
   stories:["getting-back-to-the-classroom-i-wanted","stepping-back-so-students-can-step-up","a-small-shift-that-gets-students-thinking","less-telling-more-thinking","concept-before-content","they-already-knew-more-than-i-thought"]},
+ {id:"meaning-making-101", title:"Meaning Making 101", tag:"Video Series", blurb:"A self-paced tutorial series that walks you through meaning making, step by step", tone:"sky", icon:"play", series:true,
+  stories:[], resources:["r-meaning-making-101-the-why","r-meaning-making-101-the-how-part-1","r-meaning-making-101-the-how-part-iia","r-meaning-making-101-the-how-part-iib","r-meaning-making-101-leahs-thinking"]},
  {id:"use-tomorrow", title:"Use Tomorrow", blurb:"Ready-to-use ideas", tone:"blue", icon:"spark",
   stories:["a-small-shift-that-gets-students-thinking","less-telling-more-thinking","looking-beyond-the-surface","they-already-knew-more-than-i-thought","rethinking-needs-and-wants","same-story-different-truths"]},
  {id:"staff-meeting-ready", title:"Staff Meeting Ready", blurb:"Short, practical prompts for teams to use together", tone:"orange", icon:"people", leaders:true,
@@ -620,13 +622,14 @@ function wireRows(root){
   });
 }
 function collectionHTML(c){
-  const n = c.stories.filter(x=>bySlug[x]).length;
+  const n = c.stories.filter(x=>bySlug[x]).length, nr = (c.resources||[]).filter(x=>resBySlug[x]).length;
+  const count = c.series ? `${nr} tutorials` : [n?`${n} stories`:"", nr?`${nr} resources`:""].filter(Boolean).join(" · ");
   return `<a class="coll tone-${c.tone}" href="#c-${c.id}" data-coll="${c.id}">
     <span class="coll-icon">${CICONS[c.icon]}</span>
     ${c.tag?`<span class="coll-tag">${esc(c.tag)}</span>`:""}
     <span class="coll-title${c.tag?" tagged":""}">${esc(c.title)}</span>
     <span class="coll-blurb">${esc(c.blurb)}</span>
-    <span class="coll-count">${n} stories →</span>
+    <span class="coll-count">${count} →</span>
   </a>`;
 }
 const collRow = (list=COLLECTIONS, title="Curated Collections", sub="Start with what you need") => rowHTML("coll-"+title.length, title, sub, list.map(collectionHTML).join(""));
@@ -850,10 +853,12 @@ function renderAbout(){
 /* ---------- COLLECTION, STORY, RESOURCE pages ---------- */
 function renderCollection(c){
   const list = c.stories.map(x=>bySlug[x]).filter(Boolean);
+  const rlist = (c.resources||[]).map(x=>resBySlug[x]).filter(Boolean);
   app.innerHTML = `<article class="wrap story">
     <a class="back" href="#stories" data-go="stories">← Back to the library</a>
     <div class="coll-hero tone-${c.tone}"><span class="coll-icon">${CICONS[c.icon]}</span><div><div class="eyebrow">${c.tag?esc(c.tag)+" · ":""}Curated Collection</div><h1>${esc(c.title)}</h1><p>${esc(c.blurb)}</p></div></div>
-    <div class="grid">${list.map(cardHTML).join("")}</div>
+    ${rlist.length?`<div class="tryit-grid">${rlist.map(resourceHTML).join("")}</div>`:""}
+    ${list.length?`<div class="grid">${list.map(cardHTML).join("")}</div>`:""}
   </article>`;
 }
 function tagToFilter(t){
