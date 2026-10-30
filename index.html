@@ -222,6 +222,8 @@ nav.main a.on{color:var(--navy)}
 .open-res.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--navy)}
 .bp-link{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--sky);border-radius:14px;padding:14px 18px;text-decoration:none;color:var(--navy)}
 .bp-link span{font-size:14px;font-weight:700;color:var(--blue)}
+.precheck{background:#fff;border:1px solid var(--line);border-left:6px solid var(--blue);border-radius:14px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.precheck p{margin:4px 0 0;max-width:640px}
 .series-note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55;color:var(--muted)}
 .series-note b{color:var(--navy)}
 .res-icon{width:44px;height:44px;border-radius:12px;background:var(--beige);color:var(--blue);display:grid;place-items:center;flex:none}
@@ -1063,6 +1065,10 @@ function videoEmbed(link){
 }
 const isPdf = l => /\.pdf(\?|#|$)/i.test(l||"");
 const BLUEPRINT_PDF = "docs/Engagement-Blueprint.pdf";
+const CLASSVOICE_URL = "https://classvoice.net", PRECHECK_PDF = ""; /* add "docs/Pre-Check-Guide.pdf" once uploaded */
+const precheckHTML = () => `<section class="precheck"><div><div class="eyebrow">Get feedback on your lesson</div>
+  <p>Run your lesson through <b>Pre-Check in ClassVoice</b> to see which Engagement Blueprint components are present and what to strengthen.</p></div>
+  <div class="pdf-actions"><a class="open-res" href="${CLASSVOICE_URL}" target="_blank" rel="noopener">Open ClassVoice ↗</a>${PRECHECK_PDF?`<a class="open-res ghost" href="${PRECHECK_PDF}" target="_blank" rel="noopener">Pre-Check Guide (PDF) ↗</a>`:""}</div></section>`;
 function renderResource(r){
   const sr = seriesFor(r);
   const embed = videoEmbed(r.link);
@@ -1076,10 +1082,12 @@ function renderResource(r){
     <p class="desc">${esc(r.summary)}</p>
     ${sr&&sr.blueprint?`<a class="bp-link" href="${BLUEPRINT_PDF}" target="_blank" rel="noopener"><b>Keep the Engagement Blueprint open while you watch</b><span>Opens the PDF in a new tab ↗</span></a>`:""}
     ${chaptersHTML(sr, embed)}
+    ${sr&&sr.blueprint?precheckHTML():""}
     ${sr?`<div class="series-note">${SERIES_NOTE}</div>`:""}
     ${r.audience.length?`<div class="where">For ${esc(r.audience.join(", ").toLowerCase())}</div>`:""}
     ${pdf?`<div class="pdf-view"><iframe src="${esc(r.link)}#view=FitH" title="${esc(r.title)}" loading="lazy"></iframe></div>
       <div class="pdf-actions"><a class="open-res" href="${esc(r.link)}" download>Download PDF ↓</a><a class="open-res ghost" href="${esc(r.link)}" target="_blank" rel="noopener">Open in a new tab ↗</a></div>`:""}
+    ${/engagement blueprint/i.test(r.title)?precheckHTML():""}
     ${r.link&&!embed&&!pdf?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
     <div class="chips">${r.focus.map(t=>`<span class="chip static">${esc(t)}</span>`).join("")}</div>
     ${companionHTML(sr)}
