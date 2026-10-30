@@ -281,8 +281,9 @@ nav.main a.on{color:var(--navy)}
 .cta p{margin:6px 0 0;opacity:.85}
 .email{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:rgba(255,255,255,.1);padding:10px 10px 10px 18px;border-radius:12px}
 .email span{font-weight:800;font-size:18px;user-select:all}
-.email button{font:inherit;font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px;background:var(--orange);color:var(--navy);border:0;border-radius:9px;padding:9px 14px;cursor:pointer}
-.email button svg{width:16px;height:16px}
+.email .mail-btn{font:inherit;font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px;background:#F6C79B;color:var(--navy);border:0;border-radius:9px;padding:9px 14px;cursor:pointer;text-decoration:none}
+.email .mail-btn:hover{background:#FCF2E8}
+.email .mail-btn svg{width:16px;height:16px}
 @media (max-width:980px){.doors,.pillars{grid-template-columns:repeat(2,minmax(0,1fr))}.cta{grid-template-columns:1fr}.selects{grid-template-columns:repeat(3,minmax(0,1fr))}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:620px){.doors,.pillars,.people,.lead-grid{grid-template-columns:minmax(0,1fr)}.person{flex-direction:column}.place{min-width:0;width:100%}.hero-search button{padding:12px 14px}.track>*{flex-basis:84%}.track>.coll{flex-basis:70%}.row h2{font-size:22px}.selects{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.grid{grid-template-columns:minmax(0,1fr)}nav.main{margin-left:0;gap:16px;font-size:14px}.story h1{font-size:26px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -596,7 +597,8 @@ const CICONS = {
  play:`<svg viewBox="0 0 24 24" ${L}><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor"/></svg>`,
  doc:`<svg viewBox="0 0 24 24" ${L}><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 15.5h6"/></svg>`,
  list:`<svg viewBox="0 0 24 24" ${L}><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg>`,
- copy:`<svg viewBox="0 0 24 24" ${L}><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>`
+ copy:`<svg viewBox="0 0 24 24" ${L}><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>`,
+ mail:`<svg viewBox="0 0 24 24" ${L}><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>`
 };
 const bySlug = Object.fromEntries(stories.map(s=>[s.slug,s]));
 
@@ -920,14 +922,9 @@ function renderAbout(){
   <section class="wrap about-sec cta">
     <figure class="cta-photo"><img src="high-five.jpg" alt="Leah and Paul high-fiving in front of a whiteboard that says Story" loading="lazy"></figure>
     <div class="cta-body"><h2>Work with us</h2><p>Want this kind of change in your classrooms, school, or district? We answer every inquiry within 24 hours.</p>
-    <div class="email"><span id="em">info@learning-works.org</span><button id="copy">${CICONS.copy} Copy email</button></div></div>
+    <div class="email"><span id="em">info@learning-works.org</span><a class="mail-btn" data-mail="work" href="mailto:info@learning-works.org">${CICONS.mail} Email us</a></div></div>
   </section>`;
   app.querySelectorAll("button.place").forEach(b=>b.onclick=()=>{ fState.stories={...blank(STORY_FILTERS), place:b.dataset.place}; save(); go("stories"); });
-  app.querySelector("#copy").onclick = async e=>{
-    const b = e.currentTarget;
-    try{ await navigator.clipboard.writeText("info@learning-works.org"); b.lastChild.textContent = " Copied"; }
-    catch(err){ const r=document.createRange(); r.selectNodeContents(app.querySelector("#em")); const s=getSelection(); s.removeAllRanges(); s.addRange(r); }
-  };
 }
 
 /* ---------- COLLECTION, STORY, RESOURCE pages ---------- */
@@ -1162,6 +1159,7 @@ route();
   const TO = "info@learning-works.org";
   const MAIL = {
     question: {subject:"Question from the LearningWorks Exchange", body:"Hi LearningWorks team,\n\nMy question:\n\n\nMy name, role, and school or district:\n\n"},
+    work: {subject:"Working with LearningWorks", body:"Hi LearningWorks team,\n\nI am interested in bringing this kind of change to my classrooms, school, or district.\n\nWhat I am hoping for:\n\n\nMy name, role, and school or district:\n\n"},
     resource: {subject:"Resource request from the LearningWorks Exchange", body:"Hi LearningWorks team,\n\nThe resource I am looking for:\n\n\nHow I would use it (grade level, subject, or purpose):\n\n\nMy name, role, and school or district:\n\n"}
   };
   const href = k => { const m = MAIL[k]; const page = document.title + " (" + location.href + ")";
