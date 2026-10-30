@@ -196,6 +196,26 @@ nav.main a.on{color:var(--navy)}
 .chap{width:100%;display:flex;gap:14px;align-items:center;text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font:inherit;font-size:15.5px;color:var(--navy);cursor:pointer}
 .chap:hover,.chap.on{border-color:var(--blue);background:var(--sky)}
 .chap .ct{font-weight:800;color:var(--blue);min-width:52px;font-variant-numeric:tabular-nums}
+.proof{background:var(--navy);color:#fff;border-radius:18px;padding:26px 28px;display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center}
+.proof .stat{display:grid;gap:4px;max-width:220px}
+.proof .big{font-size:64px;font-weight:800;line-height:1;color:var(--orange);letter-spacing:-.02em}
+.proof .sub{font-size:14.5px;line-height:1.4;opacity:.9}
+.proof .eyebrow{color:var(--orange)}
+.proof blockquote{margin:6px 0 0;font-size:20px;line-height:1.5;font-weight:600;min-height:3em;transition:opacity .35s}
+.proof blockquote.fade{opacity:0}
+.proof .who{font-size:13.5px;opacity:.75;margin-top:8px}
+.proof .dots{display:flex;gap:8px;margin-top:12px}
+.proof .dots button{width:10px;height:10px;border-radius:50%;border:0;padding:0;background:rgba(255,255,255,.35);cursor:pointer}
+.proof .dots button.on{background:var(--orange)}
+@media (max-width:640px){.proof{grid-template-columns:1fr;gap:16px}.proof .big{font-size:52px}.proof blockquote{font-size:17px}}
+.stat-line{display:inline-flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:8px 16px;font-size:14.5px;font-weight:700;justify-self:start}
+.stat-line b{color:var(--orange);font-size:17px}
+.quote-card{background:#fff;border:1px solid var(--line);border-left:6px solid var(--orange);border-radius:14px;padding:18px 22px;display:grid;gap:8px}
+.quote-card q{font-size:17px;line-height:1.55;font-weight:600;quotes:"\201C" "\201D"}
+.quote-card .who{font-size:13.5px;color:var(--muted)}
+.quote-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.results{display:grid;gap:16px;margin-top:44px}
+.results h2{margin:0;font-size:28px;font-weight:800}
 .series-note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55;color:var(--muted)}
 .series-note b{color:var(--navy)}
 .res-icon{width:44px;height:44px;border-radius:12px;background:var(--beige);color:var(--blue);display:grid;place-items:center;flex:none}
@@ -216,7 +236,7 @@ nav.main a.on{color:var(--navy)}
 /* Meaning Making 101: companion video callout */
 .companion{background:var(--beige);border:2px solid var(--peach);border-left:8px solid var(--orange);border-radius:18px;padding:22px 24px;display:grid;gap:10px}
 .companion h2{margin:0;font-size:22px;font-weight:800;line-height:1.25}
-.companion .note{margin:0;color:var(--muted);font-size:14.5px}
+.companion .cnote{margin:0;color:var(--muted);font-size:14.5px}
 .mini-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-top:6px}
 .mini{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;transition:transform .18s ease, box-shadow .18s ease}
 .mini:hover{transform:translateY(-3px);box-shadow:0 14px 30px -18px rgba(5,65,91,.45)}
@@ -801,11 +821,16 @@ function renderLeaders(){
     <p>Curated starting points for the next staff meeting, coaching conversation, or system-level question.</p>
   </section>
   <section class="wrap lead-grid">${lead.map(c=>collectionHTML(c)).join("")}</section>
+  <section class="wrap results"><div><div class="eyebrow">Results from the field</div><h2>What educators say about Meaning Making 101</h2></div>
+    ${proofHTML()}
+    <div class="quote-grid">${FEEDBACK.quotes.slice(0,3).map(quoteCardHTML).join("")}</div>
+    <a class="open-res" href="#c-meaning-making-101" data-coll="meaning-making-101">Explore Meaning Making 101 →</a></section>
   <div class="wrap rows">
     ${rowHTML("lead-stories","Stories about leading the work","District and school stories, learning walks, and coaching", sysStories.map(cardHTML).join(""))}
     ${lRes.length?rowHTML("lead-res","Resources for leaders & coaches","", lRes.map(resourceHTML).join("")):""}
   </div>`;
   wireRows(app);
+  wireProof();
 }
 
 /* ---------- ABOUT ---------- */
@@ -862,9 +887,11 @@ function renderCollection(c){
   app.innerHTML = `<article class="wrap story">
     <a class="back" href="#stories" data-go="stories">← Back to the library</a>
     <div class="coll-hero tone-${c.tone}"><span class="coll-icon">${CICONS[c.icon]}</span><div><div class="eyebrow">${c.tag?esc(c.tag)+" · ":""}Curated Collection</div><h1>${esc(c.title)}</h1><p>${esc(c.blurb)}</p></div></div>
+    ${c.id==="meaning-making-101"?proofHTML():""}
     ${rlist.length?`<div class="tryit-grid">${rlist.map(resourceHTML).join("")}</div>`:""}
     ${list.length?`<div class="grid">${list.map(cardHTML).join("")}</div>`:""}
   </article>`;
+  wireProof();
 }
 function tagToFilter(t){
   const F = STORY_FILTERS;
@@ -932,6 +959,32 @@ function mountVideo(s){
    Keyed by tutorial title. Companion videos are matched to Exchange stories by their
    YouTube link, and open in a new tab so viewers keep their place in the tutorial. */
 const SERIES_NAME = "Meaning Making 101", SERIES_TOTAL = 5;
+/* Course feedback (FPS Meaning Making 101 Feedback form, 443 responses, "How valuable was the course?" 1 to 4) */
+const FEEDBACK = {n:443, pct:91, top:51, course:"Meaning Making 101",
+ quotes:[
+  "I used to think that meaning making required big shifts and a lot of work on the teacher\u2019s part, but now I think that small shifts and minimal work can actually have a great deal of impact.",
+  "I used to think this work would require me to redo old lessons, but now I think that I can use what I already have and make slight changes to make a big difference in my students\u2019 learning.",
+  "I used to think that a quiet, managed classroom was what visitors and administrators wanted to see. Now I think controlled chaos produces more learning.",
+  "I used to think meaning making could only apply in certain classes and lessons. Now I think it can be applied in every lesson in each and every classroom.",
+  "I used to think meaning making was just more educational jargon. Now I think it is necessary."
+ ]};
+const WHO = "Educator, Meaning Making 101 participant";
+let proofTimer;
+function proofHTML(){
+  const F = FEEDBACK;
+  return `<section class="proof"><div class="stat"><div class="big">${F.pct}%</div><div class="sub">of ${F.n} educators rated ${esc(F.course)} a 3 or 4 out of 4 for value</div></div>
+    <div><div class="eyebrow">What educators say</div><blockquote id="pq">\u201C${esc(F.quotes[0])}\u201D</blockquote><div class="who">${WHO}</div>
+    <div class="dots">${F.quotes.map((_,i)=>`<button type="button" aria-label="Quote ${i+1}" data-q="${i}" class="${i?"":"on"}"></button>`).join("")}</div></div></section>`;
+}
+function wireProof(){
+  const q = app.querySelector("#pq"); if(!q) return;
+  const dots = [...app.querySelectorAll(".proof .dots button")]; let i = 0;
+  const show = n => { i = n; q.classList.add("fade"); setTimeout(()=>{ q.textContent = "\u201C"+FEEDBACK.quotes[i]+"\u201D"; q.classList.remove("fade"); }, 300); dots.forEach((d,k)=>d.classList.toggle("on",k===i)); };
+  dots.forEach(d=>d.onclick=()=>{ clearInterval(proofTimer); show(+d.dataset.q); });
+  clearInterval(proofTimer); proofTimer = setInterval(()=>show((i+1)%FEEDBACK.quotes.length), 8000);
+}
+const statLineHTML = () => `<div class="stat-line"><b>${FEEDBACK.pct}%</b> of ${FEEDBACK.n} educators rated this course valuable (3 or 4 out of 4)</div>`;
+const quoteCardHTML = q => `<div class="quote-card"><q>${esc(q)}</q><div class="who">${WHO}</div></div>`;
 const SERIES_NOTE = `<b>A note on language:</b> This series was created with one district as a case study. That district calls its framework the Positioning Blueprint, which is the same as the Engagement Blueprint. Every example and idea applies to any school or classroom.<br><br><b>Make it yours:</b> When a reflection asks how an idea aligns with the district's profile of a lifelong learner, think about your own district's profile or portrait of a learner instead. If your district does not have one, reflect on your own vision for what school is, or what school should be.`;
 const SERIES = {
  "meaning making 101 - the why": {part:1, chapters:[["00:00","Introduction to Meaning Making 101"],["02:00","Lifelong Learner Profile Goals"],["04:00","Challenges in Student Engagement"],["06:01","Importance of Meaning Making"],["11:00","Reflection and Next Steps"]]},
@@ -965,7 +1018,7 @@ function companionHTML(sr){
       ${coverHTML(st)}<div class="mb"><div class="mt">${esc(st.title)}</div><div class="who">${esc(who)}</div><div class="nt">Opens in a new tab ↗</div></div></a>`;
   }).join("");
   if(!cards) return "";
-  return `<section class="companion"><div class="eyebrow orange">Companion ${sr.videos.length>1?"videos":"video"}</div><h2>${esc(sr.heading)}</h2>${sr.note?`<p class="note">${esc(sr.note)}</p>`:""}<div class="mini-grid">${cards}</div></section>`;
+  return `<section class="companion"><div class="eyebrow orange">Companion ${sr.videos.length>1?"videos":"video"}</div><h2>${esc(sr.heading)}</h2>${sr.note?`<p class="cnote">${esc(sr.note)}</p>`:""}<div class="mini-grid">${cards}</div></section>`;
 }
 /* Video resources (Loom or YouTube) play right on the page */
 function videoEmbed(link){
@@ -981,6 +1034,7 @@ function renderResource(r){
   app.innerHTML = `<article class="wrap story">
     <a class="back" href="#resources" data-go="resources">← Back to Resources</a>
     <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_NAME} · Part ${sr.part} of ${SERIES_TOTAL}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
+    ${sr?statLineHTML():""}
     ${embed?`<div class="player video"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`:""}
     <p class="desc">${esc(r.summary)}</p>
     ${chaptersHTML(sr, embed)}
@@ -989,6 +1043,7 @@ function renderResource(r){
     ${r.link&&!embed?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
     <div class="chips">${r.focus.map(t=>`<span class="chip static">${esc(t)}</span>`).join("")}</div>
     ${companionHTML(sr)}
+    ${sr?quoteCardHTML(FEEDBACK.quotes[(sr.part-1)%FEEDBACK.quotes.length]):""}
     ${seeIt.length?`<div class="next">${rowHTML("seeit","See it in practice","Stories that bring this work to life", seeIt.map(cardHTML).join(""))}</div>`:""}
   </article>`;
   wireRows(app);
@@ -1000,7 +1055,7 @@ const PAGES = {"":()=>renderLibrary("stories"), stories:()=>renderLibrary("stori
 const NAV_FOR = {"":"home", stories:"home", resources:"home", leaders:"leaders", about:"about"};
 function go(hash){ if(location.hash.slice(1)!==hash){ location.hash = hash; } else route(); }
 function route(){
-  clearInterval(hintTimer);
+  clearInterval(hintTimer); clearInterval(proofTimer);
   const h = location.hash.slice(1);
   const c = h.startsWith("c-") && COLLECTIONS.find(x=>"c-"+x.id===h);
   let navKey = NAV_FOR[h];
