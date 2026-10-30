@@ -191,6 +191,11 @@ nav.main a.on{color:var(--navy)}
 .res-top{display:flex;align-items:center;gap:10px}
 .res .res-cover{margin:-20px -20px 6px;width:calc(100% + 40px);max-width:none;border-radius:15px 15px 0 0}
 .res p.clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.chapters{display:grid;gap:8px}
+.chapters ol{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.chap{width:100%;display:flex;gap:14px;align-items:center;text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font:inherit;font-size:15.5px;color:var(--navy);cursor:pointer}
+.chap:hover,.chap.on{border-color:var(--blue);background:var(--sky)}
+.chap .ct{font-weight:800;color:var(--blue);min-width:52px;font-variant-numeric:tabular-nums}
 .series-note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55;color:var(--muted)}
 .series-note b{color:var(--navy)}
 .res-icon{width:44px;height:44px;border-radius:12px;background:var(--beige);color:var(--blue);display:grid;place-items:center;flex:none}
@@ -929,7 +934,7 @@ function mountVideo(s){
 const SERIES_NAME = "Meaning Making 101", SERIES_TOTAL = 5;
 const SERIES_NOTE = `<b>A note on language:</b> This series was created with one district as a case study. That district calls its framework the Positioning Blueprint, which is the same as the Engagement Blueprint. Every example and idea applies to any school or classroom.<br><br><b>Make it yours:</b> When a reflection asks how an idea aligns with the district's profile of a lifelong learner, think about your own district's profile or portrait of a learner instead. If your district does not have one, reflect on your own vision for what school is, or what school should be.`;
 const SERIES = {
- "meaning making 101 - the why": {part:1},
+ "meaning making 101 - the why": {part:1, chapters:[["00:00","Introduction to Meaning Making 101"],["02:00","Lifelong Learner Profile Goals"],["04:00","Challenges in Student Engagement"],["06:01","Importance of Meaning Making"],["11:00","Reflection and Next Steps"]]},
  "meaning making 101 - the how part 1": {part:2},
  "meaning making 101 - the how part iia": {part:3, heading:"Before Part 4: Watch this classroom", note:"See these ideas come to life in a high school science lesson.",
    videos:[["5Smjy0tjYVA","Nicole Daihl"]]},
@@ -938,6 +943,20 @@ const SERIES = {
  "meaning making 101 - leah's thinking": {part:5}
 };
 const seriesFor = r => SERIES[r.title.toLowerCase().replace(/[\u2018\u2019]/g,"'").replace(/\s+/g," ").trim()];
+const toSec = t => t.split(":").reduce((a,v)=>a*60+(+v),0);
+function chaptersHTML(sr, embed){
+  if(!sr || !sr.chapters || !embed) return "";
+  return `<section class="chapters"><div class="eyebrow">Chapters</div><ol>${sr.chapters.map(([t,label])=>
+    `<li><button type="button" class="chap" data-t="${toSec(t)}"><span class="ct">${esc(t)}</span><span>${esc(label)}</span></button></li>`).join("")}</ol></section>`;
+}
+function wireChapters(embed){
+  const frame = app.querySelector(".player.video iframe"); if(!frame) return;
+  app.querySelectorAll(".chap").forEach(b=>b.onclick=()=>{
+    frame.src = embed.replace(/([?&])t=\d+s?&?/,"$1") + (embed.includes("?")?"&":"?") + "t=" + b.dataset.t + "&autoplay=1";
+    app.querySelectorAll(".chap").forEach(x=>x.classList.toggle("on", x===b));
+    frame.scrollIntoView({behavior:"smooth", block:"center"});
+  });
+}
 function companionHTML(sr){
   if(!sr || !sr.videos) return "";
   const cards = sr.videos.map(([id,who])=>{
@@ -964,6 +983,7 @@ function renderResource(r){
     <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_NAME} · Part ${sr.part} of ${SERIES_TOTAL}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
     ${embed?`<div class="player video"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`:""}
     <p class="desc">${esc(r.summary)}</p>
+    ${chaptersHTML(sr, embed)}
     ${sr?`<div class="series-note">${SERIES_NOTE}</div>`:""}
     ${r.audience.length?`<div class="where">For ${esc(r.audience.join(", ").toLowerCase())}</div>`:""}
     ${r.link&&!embed?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
@@ -972,6 +992,7 @@ function renderResource(r){
     ${seeIt.length?`<div class="next">${rowHTML("seeit","See it in practice","Stories that bring this work to life", seeIt.map(cardHTML).join(""))}</div>`:""}
   </article>`;
   wireRows(app);
+  if(embed) wireChapters(embed);
 }
 
 /* ---------- routing ---------- */
