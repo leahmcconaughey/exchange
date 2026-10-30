@@ -1159,11 +1159,11 @@ route();
   const TO = "info@learning-works.org";
   const MAIL = {
     question: {subject:"Question from the LearningWorks Exchange", body:"Hi LearningWorks team,\n\nMy question:\n\n\nMy name, role, and school or district:\n\n"},
-    work: {subject:"Working with LearningWorks", body:"Hi LearningWorks team,\n\nI am interested in bringing this kind of change to my classrooms, school, or district.\n\nWhat I am hoping for:\n\n\nMy name, role, and school or district:\n\n"},
+    work: {subject:"Working with LearningWorks", body:"Dear LearningWorks team,\n\n", bare:true},
     resource: {subject:"Resource request from the LearningWorks Exchange", body:"Hi LearningWorks team,\n\nThe resource I am looking for:\n\n\nHow I would use it (grade level, subject, or purpose):\n\n\nMy name, role, and school or district:\n\n"}
   };
   const href = k => { const m = MAIL[k]; const page = document.title + " (" + location.href + ")";
-    return `mailto:${TO}?subject=${encodeURIComponent(m.subject)}&body=${encodeURIComponent(m.body + "Page I was on: " + page + "\n")}`; };
+    return `mailto:${TO}?subject=${encodeURIComponent(m.subject)}&body=${encodeURIComponent(m.bare ? m.body : m.body + "Page I was on: " + page + "\n")}`; };
   document.addEventListener("click", e => { const a = e.target.closest("[data-mail]"); if(a) a.href = href(a.dataset.mail); }, true);
   const dlg = document.getElementById("askDlg"), btn = document.getElementById("askBtn");
   if(btn && dlg) btn.addEventListener("click", ()=>{ if(dlg.showModal) dlg.showModal(); else location.href = href("question"); });
