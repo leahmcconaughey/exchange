@@ -602,7 +602,16 @@ try{
 }catch(e){}
 const save = ()=>{ try{ localStorage.setItem("lw-filters4", JSON.stringify(fState)); }catch(e){} };
 
-const textHit = (q, hay) => !q || q.toLowerCase().split(/\s+/).filter(Boolean).every(w=>hay.toLowerCase().includes(w));
+/* Search ignores small question words, so "What is meaning making?" finds meaning making */
+const STOP = new Set("a an the is are was were be what whats how do does did i can could should would to of for in on at about and or with my me we our you your it its this that these those between difference learn find show me tell use using".split(" "));
+const norm = s => s.toLowerCase().replace(/[’']/g,"").replace(/[-–—_/]+/g," ").replace(/[^a-z0-9 ]+/g," ");
+const textHit = (q, hay) => {
+  if(!q || !q.trim()) return true;
+  const all = norm(q).split(/\s+/).filter(Boolean);
+  const words = all.filter(w=>!STOP.has(w));
+  const H = norm(hay);
+  return (words.length ? words : all).every(w=>H.includes(w));
+};
 function storyMatch(s, st){
   if(st.grade.length && !s.gradeLevels.some(g=>st.grade.includes(g))) return false;
   if(st.subject && !s.subjects.includes(st.subject)) return false;
@@ -666,17 +675,19 @@ const SEARCH_ICON = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"
 const app = document.getElementById("app");
 
 /* rotating search examples (swap in Leah's list) */
-const HINTS = ["meaning making ideas for 4th grade math","fractions","student voice in high school","special education","unit design","authentic learning projects","middle school science","giving students ownership"];
+/* Rotating search examples: stories show the work in action; resources teach how to do it */
+const HINTS = ["meaning making ideas for 4th grade math","fractions","student voice in high school","special education","authentic learning projects","middle school science","giving students ownership"];
+const RES_HINTS = ["What is meaning making?","What are the components of mastery-based grading?","What is the difference between content and concept?","How do I plan a unit around big ideas?","How can I learn about meaning making?"];
 let hintTimer;
-function startHints(input){
+function startHints(input, list=HINTS){
   clearInterval(hintTimer);
   let i = 0;
   hintTimer = setInterval(()=>{
     if(!document.body.contains(input)){ clearInterval(hintTimer); return; }
     if(input.value || document.activeElement===input) return;
-    i = (i+1) % HINTS.length;
+    i = (i+1) % list.length;
     input.classList.add("swap");
-    setTimeout(()=>{ input.placeholder = `Try “${HINTS[i]}”`; input.classList.remove("swap"); }, 250);
+    setTimeout(()=>{ input.placeholder = `Try “${list[i]}”`; input.classList.remove("swap"); }, 250);
   }, 3200);
 }
 
@@ -754,7 +765,7 @@ function renderLibrary(tab){
       <p class="tab-desc">${tab==="stories" ? "The work brought to life. See it in classrooms, schools, and districts, and hear from the people doing it." : "How to do the work. Tools, templates, protocols, and tutorials you can use right away."}</p>
     </div>
     <div class="filters" role="search">
-      <div class="search">${SEARCH_ICON}<input id="q" type="search" placeholder="Try “${HINTS[0]}”" value="${esc(st.q)}" aria-label="Search ${tab}"></div>
+      <div class="search">${SEARCH_ICON}<input id="q" type="search" placeholder="Try “${(tab==="resources"?RES_HINTS:HINTS)[0]}”" value="${esc(st.q)}" aria-label="Search ${tab}"></div>
       <div class="selects" style="--cols:${keys.length}">
         ${keys.map(k=>F[k].multi ? gradePickerHTML(k, F[k], st[k]) : `<div class="field"><label for="f-${k}">${F[k].label}</label>
           <select id="f-${k}" data-key="${k}"><option value="">${F[k].all}</option>${F[k].opts.map(o=>`<option${st[k]===o?" selected":""}>${esc(o)}</option>`).join("")}</select></div>`).join("")}
@@ -762,7 +773,7 @@ function renderLibrary(tab){
     </div>
   </section>
   <div class="wrap rows"><div id="results"></div>${collRow()}</div>`;
-  const q = app.querySelector("#q"); startHints(q);
+  const q = app.querySelector("#q"); startHints(q, tab==="resources" ? RES_HINTS : HINTS);
   q.addEventListener("input",e=>{st.q=e.target.value;save();update();});
   app.querySelectorAll("select").forEach(sel=>sel.addEventListener("change",e=>{st[e.target.dataset.key]=e.target.value;save();update();}));
   app.querySelectorAll("details.multi").forEach(d=>{
