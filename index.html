@@ -345,6 +345,23 @@ details.multi.set>summary{border-color:var(--blue);background-color:#EEF7FE}
 .tabbar .tab-desc{margin:0 0 12px;max-width:50ch;font-size:19px;line-height:1.45;color:var(--muted);text-wrap:balance}
 @media (max-width:760px){.tabbar{flex-direction:column;align-items:stretch;gap:0;border-bottom:0}.tabbar .tabs{border-bottom:2px solid var(--line)}.tabbar .tab-desc{margin:12px 0 0;max-width:none}}
 nav.main .nav-sub{font-weight:400;opacity:.85}
+.ask-btn{display:inline-flex;align-items:center;gap:8px;background:var(--navy);color:#fff;border:0;border-radius:99px;padding:10px 16px;font:inherit;font-weight:700;font-size:14.5px;cursor:pointer;min-height:44px}
+.ask-btn:hover{background:var(--blue)}
+.ask-band{background:var(--sky);margin-top:56px}
+.ask-band .wrap{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;padding-block:28px}
+.ask-band b{display:block;font-size:19px}
+.ask-band span{color:var(--muted)}
+.ask-actions{display:flex;gap:12px;flex-wrap:wrap}
+.ask-dlg{border:0;border-radius:18px;padding:28px;max-width:440px;width:calc(100% - 32px);color:var(--navy);font-family:var(--font);box-shadow:0 30px 60px -20px rgba(5,65,91,.5)}
+.ask-dlg::backdrop{background:rgba(5,65,91,.45)}
+.ask-dlg h2{margin:4px 0 6px;font-size:26px;font-weight:800}
+.ask-dlg p{margin:0 0 16px;color:var(--muted);font-size:14.5px}
+.ask-opt{display:grid;gap:2px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;text-decoration:none;margin-top:10px}
+.ask-opt:hover{border-color:var(--blue);background:var(--sky)}
+.ask-opt b{font-size:16.5px}.ask-opt span{font-size:14px;color:var(--muted)}
+.ask-x{position:absolute;right:14px;top:10px;background:none;border:0;font-size:28px;line-height:1;color:var(--muted);cursor:pointer;width:44px;height:44px}
+.ask-dlg{position:fixed}
+@media (max-width:760px){header.site .wrap{gap:12px 16px}.ask-btn{order:2;margin-left:auto;padding:8px 14px}nav.main{order:3;width:100%;margin-left:0}}
 .coll-tag{justify-self:start;margin-top:8px;font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;background:var(--orange);color:var(--navy);border-radius:99px;padding:4px 11px}
 .coll-title.tagged{margin-top:0}
 </style>
@@ -354,10 +371,21 @@ nav.main .nav-sub{font-weight:400;opacity:.85}
   <div class="wrap">
     <a class="brand" href="#" data-go="" aria-label="LearningWorks Exchange home"><img src="logo.svg" alt="LearningWorks" class="logo"><span>EXCHANGE</span></a>
     <nav class="main"><a href="#" data-go="" data-nav="home">Home <span class="nav-sub">(Stories + Resources)</span></a><a href="#leaders" data-go="leaders" data-nav="leaders">For Leaders &amp; Coaches</a><a href="#about" data-go="about" data-nav="about">About</a></nav>
+    <button type="button" class="ask-btn" id="askBtn" aria-haspopup="dialog"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg>Questions?</button>
   </div>
 </header>
 <main id="app"></main>
-<footer class="site-foot"><div class="wrap">© LearningWorks · <a href="https://learning-works.org" target="_blank" rel="noopener">learning-works.org</a> · info@learning-works.org</div></footer>
+<section class="ask-band"><div class="wrap"><div><b>Have a question, or looking for something you do not see here?</b><span>We read every message and are happy to help.</span></div>
+  <div class="ask-actions"><a class="open-res" data-mail="question" href="mailto:info@learning-works.org">Ask a question</a><a class="open-res ghost" data-mail="resource" href="mailto:info@learning-works.org">Request a resource</a></div></div></section>
+<footer class="site-foot"><div class="wrap">© LearningWorks · <a href="https://learning-works.org" target="_blank" rel="noopener">learning-works.org</a> · <a href="mailto:info@learning-works.org">info@learning-works.org</a></div></footer>
+<dialog class="ask-dlg" id="askDlg" aria-labelledby="askTitle">
+  <form method="dialog"><button class="ask-x" aria-label="Close">×</button></form>
+  <div class="eyebrow">We are here to help</div>
+  <h2 id="askTitle">How can we help?</h2>
+  <p>Your email app will open with a message to info@learning-works.org, ready for you to fill in.</p>
+  <a class="ask-opt" data-mail="question" href="mailto:info@learning-works.org"><b>Ask a question</b><span>About a story, a resource, or bringing this work to your school</span></a>
+  <a class="ask-opt" data-mail="resource" href="mailto:info@learning-works.org"><b>Request a resource</b><span>Tell us what would help you, and we will look into creating it</span></a>
+</dialog>
 <script>
 /* ---------- tag sorting (case-insensitive, so spelling cleanup can wait) ---------- */
 const GRADES = {"elementary school":"Elementary","elementary":"Elementary","middle school":"Middle School","high school":"High School"};
@@ -1129,6 +1157,20 @@ window.addEventListener("hashchange",route);
 route();
 
 }
+/* ---------- questions and resource requests (opens the visitor's email app) ---------- */
+(function(){
+  const TO = "info@learning-works.org";
+  const MAIL = {
+    question: {subject:"Question from the LearningWorks Exchange", body:"Hi LearningWorks team,\n\nMy question:\n\n\nMy name, role, and school or district:\n\n"},
+    resource: {subject:"Resource request from the LearningWorks Exchange", body:"Hi LearningWorks team,\n\nThe resource I am looking for:\n\n\nHow I would use it (grade level, subject, or purpose):\n\n\nMy name, role, and school or district:\n\n"}
+  };
+  const href = k => { const m = MAIL[k]; const page = document.title + " (" + location.href + ")";
+    return `mailto:${TO}?subject=${encodeURIComponent(m.subject)}&body=${encodeURIComponent(m.body + "Page I was on: " + page + "\n")}`; };
+  document.addEventListener("click", e => { const a = e.target.closest("[data-mail]"); if(a) a.href = href(a.dataset.mail); }, true);
+  const dlg = document.getElementById("askDlg"), btn = document.getElementById("askBtn");
+  if(btn && dlg) btn.addEventListener("click", ()=>{ if(dlg.showModal) dlg.showModal(); else location.href = href("question"); });
+  if(dlg) dlg.addEventListener("click", e => { if(e.target === dlg) dlg.close(); });
+})();
 boot();
 </script>
 </body>
