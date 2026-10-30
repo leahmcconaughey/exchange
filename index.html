@@ -11,7 +11,7 @@
 /* Layout: brand header, stories grid with filter bar; story view = title, cover, description, related.
    Single light brand theme by choice (matches the live Exchange). */
 :root{
-  --navy:#05415B; --blue:#038FDD; --orange:#FF9C39; --beige:#FCF2E8;
+  --navy:#05415B; --blue:#038FDD; --orange:#F2A766; --beige:#FCF2E8;
   --page:#F8EFE6; --card:#FFFFFF; --line:#E6D9CB; --muted:#5E7480;
   --sky:#DDEEFA; --sage:#BFDCC2; --peach:#F8CFA3; --orangeDeep:#F2A04F;
   --font:"Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -141,9 +141,9 @@ nav.main a.on{color:var(--navy)}
 .coll-blurb{font-size:15px;opacity:.85}
 .coll-count{font-size:13.5px;font-weight:800;margin-top:8px}
 .tone-blue{--k-bg:#038FDD;--k-fg:#fff;--k-chip:rgba(255,255,255,.2);--k-icon:#fff}
-.tone-orange{--k-bg:#FF9C39;--k-fg:#05415B;--k-chip:rgba(255,255,255,.45);--k-icon:#05415B}
+.tone-orange{--k-bg:#F2A766;--k-fg:#05415B;--k-chip:rgba(255,255,255,.45);--k-icon:#05415B}
 .tone-sage{--k-bg:#BFDCC2;--k-fg:#05415B;--k-chip:#fff;--k-icon:#05415B}
-.tone-navy{--k-bg:#05415B;--k-fg:#fff;--k-chip:rgba(255,255,255,.15);--k-icon:#FF9C39}
+.tone-navy{--k-bg:#05415B;--k-fg:#fff;--k-chip:rgba(255,255,255,.15);--k-icon:#F2A766}
 .tone-peach{--k-bg:#F8CFA3;--k-fg:#05415B;--k-chip:#fff;--k-icon:#05415B}
 .tone-sky{--k-bg:#DDEEFA;--k-fg:#05415B;--k-chip:#fff;--k-icon:#038FDD}
 .coll-hero{display:flex;gap:18px;align-items:center;padding:26px;border-radius:18px;background:var(--k-bg);color:var(--k-fg)}
@@ -411,14 +411,14 @@ function pickIcon(subj, focus, pathway){
 /* stand-in pictures (the real site uses your ChatGPT illustrations) */
 const N="#05415B", S='stroke="#05415B" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"';
 const ICONS = {
- flask:`<svg viewBox="0 0 100 100"><path d="M40 12h20M43 12v26L22 78a8 8 0 0 0 7 12h42a8 8 0 0 0 7-12L57 38V12" fill="#fff" ${S}/><path d="M31 64h38l9 14a8 8 0 0 1-7 12H29a8 8 0 0 1-7-12z" fill="#038FDD" ${S}/><circle cx="44" cy="76" r="5" fill="#FF9C39"/><circle cx="58" cy="70" r="3.5" fill="#FCF2E8"/></svg>`,
- chart:`<svg viewBox="0 0 100 100"><path d="M14 86h74" fill="none" ${S}/><rect x="20" y="52" width="14" height="34" rx="3" fill="#BFDCC2" ${S}/><rect x="42" y="36" width="14" height="50" rx="3" fill="#FF9C39" ${S}/><rect x="64" y="18" width="14" height="68" rx="3" fill="#038FDD" ${S}/></svg>`,
+ flask:`<svg viewBox="0 0 100 100"><path d="M40 12h20M43 12v26L22 78a8 8 0 0 0 7 12h42a8 8 0 0 0 7-12L57 38V12" fill="#fff" ${S}/><path d="M31 64h38l9 14a8 8 0 0 1-7 12H29a8 8 0 0 1-7-12z" fill="#038FDD" ${S}/><circle cx="44" cy="76" r="5" fill="#F2A766"/><circle cx="58" cy="70" r="3.5" fill="#FCF2E8"/></svg>`,
+ chart:`<svg viewBox="0 0 100 100"><path d="M14 86h74" fill="none" ${S}/><rect x="20" y="52" width="14" height="34" rx="3" fill="#BFDCC2" ${S}/><rect x="42" y="36" width="14" height="50" rx="3" fill="#F2A766" ${S}/><rect x="64" y="18" width="14" height="68" rx="3" fill="#038FDD" ${S}/></svg>`,
  book:`<svg viewBox="0 0 100 100"><path d="M50 26C40 18 24 18 12 22v58c12-4 28-4 38 4 10-8 26-8 38-4V22c-12-4-28-4-38 4z" fill="#fff" ${S}/><path d="M50 26v58" fill="none" ${S}/><path d="M20 36c8-2 16-2 22 1M20 48c8-2 16-2 22 1M58 37c6-3 14-3 22-1M58 49c6-3 14-3 22-1" fill="none" stroke="#038FDD" stroke-width="3.5" stroke-linecap="round"/></svg>`,
- photos:`<svg viewBox="0 0 100 100"><rect x="26" y="14" width="54" height="62" rx="4" transform="rotate(10 53 45)" fill="#F8CFA3" ${S}/><rect x="18" y="24" width="54" height="62" rx="4" fill="#fff" ${S}/><rect x="25" y="31" width="40" height="34" fill="#DDEEFA" stroke="#05415B" stroke-width="3"/><path d="M25 60l12-12 9 9 7-6 12 12" fill="#BFDCC2" stroke="#05415B" stroke-width="3" stroke-linejoin="round"/><circle cx="55" cy="41" r="4" fill="#FF9C39"/></svg>`,
- talk:`<svg viewBox="0 0 100 100"><path d="M12 22h46a6 6 0 0 1 6 6v24a6 6 0 0 1-6 6H32l-12 10V58h-8a6 6 0 0 1-6-6V28a6 6 0 0 1 6-6z" fill="#038FDD" ${S}/><path d="M88 40H52a6 6 0 0 0-6 6v22a6 6 0 0 0 6 6h22l12 10V74h2a6 6 0 0 0 6-6V46a6 6 0 0 0-6-6z" fill="#FF9C39" ${S}/><path d="M56 54h26M56 63h18" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>`,
- door:`<svg viewBox="0 0 100 100"><rect x="22" y="12" width="56" height="78" rx="3" fill="#FCF2E8" ${S}/><path d="M30 18l32 8v62l-32-8z" fill="#FF9C39" ${S}/><circle cx="54" cy="56" r="3" fill="${N}"/><path d="M70 30l10-6M72 44h12" stroke="#038FDD" stroke-width="4" stroke-linecap="round"/></svg>`,
- puzzle:`<svg viewBox="0 0 100 100"><rect x="14" y="14" width="34" height="34" rx="4" fill="#038FDD" ${S}/><rect x="52" y="14" width="34" height="34" rx="4" fill="#FF9C39" ${S}/><rect x="14" y="52" width="34" height="34" rx="4" fill="#BFDCC2" ${S}/><rect x="52" y="52" width="34" height="34" rx="4" fill="#F8CFA3" ${S}/><circle cx="50" cy="31" r="6" fill="#038FDD" ${S}/><circle cx="69" cy="50" r="6" fill="#FF9C39" ${S}/></svg>`,
- school:`<svg viewBox="0 0 100 100"><path d="M50 8v18" ${S}/><path d="M50 9h18v10H50" fill="#038FDD" ${S}/><path d="M14 46l36-22 36 22" fill="#FF9C39" ${S}/><rect x="18" y="44" width="64" height="44" fill="#FCF2E8" ${S}/><path d="M42 88V70a8 8 0 0 1 16 0v18" fill="#038FDD" ${S}/><rect x="25" y="54" width="10" height="10" fill="#DDEEFA" stroke="#05415B" stroke-width="3"/><rect x="65" y="54" width="10" height="10" fill="#DDEEFA" stroke="#05415B" stroke-width="3"/><circle cx="50" cy="52" r="6" fill="#DDEEFA" stroke="#05415B" stroke-width="3"/></svg>`
+ photos:`<svg viewBox="0 0 100 100"><rect x="26" y="14" width="54" height="62" rx="4" transform="rotate(10 53 45)" fill="#F8CFA3" ${S}/><rect x="18" y="24" width="54" height="62" rx="4" fill="#fff" ${S}/><rect x="25" y="31" width="40" height="34" fill="#DDEEFA" stroke="#05415B" stroke-width="3"/><path d="M25 60l12-12 9 9 7-6 12 12" fill="#BFDCC2" stroke="#05415B" stroke-width="3" stroke-linejoin="round"/><circle cx="55" cy="41" r="4" fill="#F2A766"/></svg>`,
+ talk:`<svg viewBox="0 0 100 100"><path d="M12 22h46a6 6 0 0 1 6 6v24a6 6 0 0 1-6 6H32l-12 10V58h-8a6 6 0 0 1-6-6V28a6 6 0 0 1 6-6z" fill="#038FDD" ${S}/><path d="M88 40H52a6 6 0 0 0-6 6v22a6 6 0 0 0 6 6h22l12 10V74h2a6 6 0 0 0 6-6V46a6 6 0 0 0-6-6z" fill="#F2A766" ${S}/><path d="M56 54h26M56 63h18" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>`,
+ door:`<svg viewBox="0 0 100 100"><rect x="22" y="12" width="56" height="78" rx="3" fill="#FCF2E8" ${S}/><path d="M30 18l32 8v62l-32-8z" fill="#F2A766" ${S}/><circle cx="54" cy="56" r="3" fill="${N}"/><path d="M70 30l10-6M72 44h12" stroke="#038FDD" stroke-width="4" stroke-linecap="round"/></svg>`,
+ puzzle:`<svg viewBox="0 0 100 100"><rect x="14" y="14" width="34" height="34" rx="4" fill="#038FDD" ${S}/><rect x="52" y="14" width="34" height="34" rx="4" fill="#F2A766" ${S}/><rect x="14" y="52" width="34" height="34" rx="4" fill="#BFDCC2" ${S}/><rect x="52" y="52" width="34" height="34" rx="4" fill="#F8CFA3" ${S}/><circle cx="50" cy="31" r="6" fill="#038FDD" ${S}/><circle cx="69" cy="50" r="6" fill="#F2A766" ${S}/></svg>`,
+ school:`<svg viewBox="0 0 100 100"><path d="M50 8v18" ${S}/><path d="M50 9h18v10H50" fill="#038FDD" ${S}/><path d="M14 46l36-22 36 22" fill="#F2A766" ${S}/><rect x="18" y="44" width="64" height="44" fill="#FCF2E8" ${S}/><path d="M42 88V70a8 8 0 0 1 16 0v18" fill="#038FDD" ${S}/><rect x="25" y="54" width="10" height="10" fill="#DDEEFA" stroke="#05415B" stroke-width="3"/><rect x="65" y="54" width="10" height="10" fill="#DDEEFA" stroke="#05415B" stroke-width="3"/><circle cx="50" cy="52" r="6" fill="#DDEEFA" stroke="#05415B" stroke-width="3"/></svg>`
 };
 
 const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
