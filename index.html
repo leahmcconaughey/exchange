@@ -189,6 +189,10 @@ nav.main a.on{color:var(--navy)}
 .res{display:grid;align-content:start;gap:10px;padding:20px;background:#fff;border:1px solid var(--line);border-radius:16px;text-decoration:none;min-height:230px;transition:transform .18s}
 .res:hover{transform:translateY(-2px);border-color:var(--blue)}
 .res-top{display:flex;align-items:center;gap:10px}
+.res .res-cover{margin:-20px -20px 6px;width:calc(100% + 40px);max-width:none;border-radius:15px 15px 0 0}
+.res p.clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.series-note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55;color:var(--muted)}
+.series-note b{color:var(--navy)}
 .res-icon{width:44px;height:44px;border-radius:12px;background:var(--beige);color:var(--blue);display:grid;place-items:center;flex:none}
 .res-icon svg{width:24px;height:24px}
 .res-icon.big{width:64px;height:64px;background:#fff}
@@ -535,9 +539,10 @@ const RES_TYPE_ICON = {"Tutorial":"play","Tutorial Video":"play","Video":"play",
 const resBySlug = Object.fromEntries(resources.map(r=>[r.slug,r]));
 function resourceHTML(r){
   return `<a class="res" href="#${r.slug}" data-res="${r.slug}">
+    ${r.img?`<div class="cover real res-cover"><img src="${r.img}" alt="" loading="lazy"></div>`:""}
     <div class="res-top"><span class="res-icon">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><span class="res-type">${esc(r.type)}</span></div>
     <h3>${esc(r.title)}</h3>
-    <p>${esc(r.summary)}</p>
+    <p${r.img?' class="clamp"':""}>${esc(r.summary)}</p>
     ${r.audience.length?`<div class="res-for">For ${esc(r.audience.join(", ").toLowerCase())}</div>`:""}
   </a>`;
 }
@@ -917,6 +922,7 @@ function mountVideo(s){
    Keyed by tutorial title. Companion videos are matched to Exchange stories by their
    YouTube link, and open in a new tab so viewers keep their place in the tutorial. */
 const SERIES_NAME = "Meaning Making 101", SERIES_TOTAL = 5;
+const SERIES_NOTE = `<b>A note on language:</b> This series was created with one district as a case study. That district calls its framework the Positioning Blueprint, which is the same as the Engagement Blueprint. Every example and idea applies to any school or classroom.`;
 const SERIES = {
  "meaning making 101 - the why": {part:1},
  "meaning making 101 - the how part 1": {part:2},
@@ -953,6 +959,7 @@ function renderResource(r){
     <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_NAME} · Part ${sr.part} of ${SERIES_TOTAL}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
     ${embed?`<div class="player video"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`:""}
     <p class="desc">${esc(r.summary)}</p>
+    ${sr?`<div class="series-note">${SERIES_NOTE}</div>`:""}
     ${r.audience.length?`<div class="where">For ${esc(r.audience.join(", ").toLowerCase())}</div>`:""}
     ${r.link&&!embed?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
     <div class="chips">${r.focus.map(t=>`<span class="chip static">${esc(t)}</span>`).join("")}</div>
