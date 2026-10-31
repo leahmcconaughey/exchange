@@ -391,8 +391,8 @@ nav.main .nav-sub{font-weight:400;opacity:.85}
 <script>
 /* ---------- tag sorting (case-insensitive, so spelling cleanup can wait) ---------- */
 const GRADES = {"elementary school":"Elementary","elementary":"Elementary","middle school":"Middle School","high school":"High School"};
-const SUBJECTS = ["math","science","biology","chemistry","ela","writing","history","social studies","spanish","economics","special education"];
-const SPECIFIC = ["chemistry","biology"];
+const SUBJECTS = ["math","science","biology","chemistry","ela","writing","history","social studies","spanish","economics","special education","art","music","agricultural science"];
+const SPECIFIC = ["chemistry","biology","agricultural science"];
 const SPECIAL = {"ela":"ELA"};
 const nice = t => SPECIAL[t] || t.replace(/\b\w/g,c=>c.toUpperCase());
 const slug = t => t.toLowerCase().replace(/[’']/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
