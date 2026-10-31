@@ -378,6 +378,7 @@ nav.main .nav-sub{font-weight:400;opacity:.85}
 @media (max-width:760px){header.site .wrap{gap:12px 16px}.ask-btn{order:2;margin-left:auto;padding:8px 14px}nav.main{order:3;width:100%;margin-left:0}}
 .coll-tag{justify-self:start;margin-top:8px;font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;background:var(--orange);color:var(--navy);border-radius:99px;padding:4px 11px}
 .coll-title.tagged{margin-top:0}
+.testi-grid.three{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
 </style>
 </head>
 <body>
@@ -915,7 +916,7 @@ function renderLeaders(){
   <section class="wrap results"><div><div class="eyebrow">Results from the field</div><h2>What educators say about Meaning Making 101</h2></div>
     ${proofHTML(FEEDBACK["101"])}
     <div class="quote-grid">${FEEDBACK["101"].quotes.slice(0,3).map(q=>quoteCardHTML(q,FEEDBACK["101"])).join("")}</div>
-    ${TESTIMONIALS.length?`<div class="testi-grid">${TESTIMONIALS.filter(t=>t.lead).slice(0,2).map(t=>testimonialHTML(t,true)).join("")}</div><a class="more-voices" href="#voices" data-go="voices">Read more from educators →</a>`:""}
+    ${TESTIMONIALS.length?`<div class="testi-grid three">${TESTIMONIALS.filter(t=>t.lead).slice(0,3).map(t=>testimonialHTML(t,true)).join("")}</div><a class="more-voices" href="#voices" data-go="voices">Read more from educators →</a>`:""}
     <a class="open-res" href="#c-meaning-making-101" data-coll="meaning-making-101">Explore Meaning Making 101 →</a></section>
   <div class="wrap rows">
     ${rowHTML("lead-stories","Stories about leading the work","District and school stories, learning walks, and coaching", sysStories.map(cardHTML).join(""))}
@@ -975,6 +976,7 @@ function renderCollection(c){
     <a class="back" href="#stories" data-go="stories">← Back to the library</a>
     <div class="coll-hero tone-${c.tone}"><span class="coll-icon">${CICONS[c.icon]}</span><div><div class="eyebrow">${c.tag?esc(c.tag)+" · ":""}Curated Collection</div><h1>${esc(c.title)}</h1><p>${esc(c.blurb)}</p></div></div>
     ${c.fb?proofHTML(FEEDBACK[c.fb]):""}
+    ${TESTIMONIALS.some(t=>(t.colls||[]).includes(c.id))?`<div class="testi-grid">${TESTIMONIALS.filter(t=>(t.colls||[]).includes(c.id)).map(t=>testimonialHTML(t,true)).join("")}</div>`:""}
     ${rlist.length?`<div class="tryit-grid">${rlist.map(resourceHTML).join("")}</div>`:""}
     ${list.length?`<div class="grid">${list.map(cardHTML).join("")}</div>`:""}
   </article>`;
@@ -1197,7 +1199,7 @@ const TESTIMONIALS = [
  {name:"Kristi", org:"Farmington Public Schools",
   headline:"You have really changed the way I think about my kids\u2019 learning.",
   body:"It has fit perfectly with how I love to teach to the whole student. The way you\u2019re able to pull out everyone\u2019s best thinking is such a gift."},
- {name:"Angelina", org:"Farmington Public Schools",
+ {name:"Angelina", org:"Farmington Public Schools", lead:true, colls:["professional-learning"],
   headline:"I couldn\u2019t have asked for a better professional learning opportunity.",
   body:"Thank you for the past three years of getting to learn from and with you! From our first year Pollinator Project to helping my students improve their behaviors at lunch and recess this year... Being able to intentionally collaborate with colleagues in a way that is mindful and impactful on student needs is unmatched! I can\u2019t wait to fully transfer the learning I have done into my own daily practice in my classroom."}
 ];
