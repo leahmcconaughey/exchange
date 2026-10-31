@@ -536,11 +536,12 @@ function buildData(rows){
     } else {
       const i = S.length, pathway = get(r,"Pathway") || "Classroom";
       const coaching = focusRaw.includes("coaching");
+      const student = focusRaw.includes("student voice");
       let gLine = grades[0] || (pathway==="District" ? "District" : pathway);
       const spec = subjectsRaw.find(s=>SPECIFIC.includes(s));
       let sLine = spec ? nice(spec) : subjectsRaw.slice(0,2).map(nice).join(" & ");
-      if(!sLine){ const f = focusRaw.find(x=>x!=="meaning making" && x!=="engagement blueprint"); sLine = f ? nice(f) : "Leadership"; }
-      S.push({...base, pathway, slug:slug(base.title), label: coaching?"COACHING STORY":pathway.toUpperCase()+" STORY",
+      if(!sLine){ const f = focusRaw.find(x=>!["meaning making","engagement blueprint","student voice"].includes(x)); sLine = f ? nice(f) : "Leadership"; }
+      S.push({...base, pathway, slug:slug(base.title), label: student?"STUDENT VOICE":coaching?"COACHING STORY":pathway.toUpperCase()+" STORY",
         gLine, sLine, template:TEMPLATES[i%TEMPLATES.length], icon:pickIcon(subjectsRaw, focusRaw, pathway), video:ytId(base.link),
         allTags:[...grades,...base.subjects,...base.focus]});
     }
