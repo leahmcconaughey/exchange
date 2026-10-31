@@ -225,6 +225,15 @@ nav.main a.on{color:var(--navy)}
 .bp-link span{font-size:14px;font-weight:700;color:var(--blue)}
 .precheck{background:#fff;border:1px solid var(--line);border-left:6px solid var(--blue);border-radius:14px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
 .precheck p{margin:4px 0 0;max-width:640px}
+.testi{margin:0;background:#fff;border:1px solid var(--line);border-top:6px solid var(--orange);border-radius:18px;padding:26px 28px;display:grid;gap:14px;position:relative}
+.testi blockquote{margin:0;display:grid;gap:10px}
+.testi blockquote p{margin:0;line-height:1.6}
+.testi .th{font-size:22px;font-weight:800;line-height:1.35}
+.testi figcaption{font-size:14.5px;font-weight:700;color:var(--muted)}
+.testi figcaption a{color:var(--blue);text-decoration:none}
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:18px}
+.voices{display:grid;gap:12px;padding-bottom:20px;margin-top:20px}
+.more-voices{font-weight:800;color:var(--blue);text-decoration:none;justify-self:start}
 .series-note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55;color:var(--muted)}
 .series-note b{color:var(--navy)}
 .res-icon{width:44px;height:44px;border-radius:12px;background:var(--beige);color:var(--blue);display:grid;place-items:center;flex:none}
@@ -374,7 +383,7 @@ nav.main .nav-sub{font-weight:400;opacity:.85}
 <header class="site">
   <div class="wrap">
     <a class="brand" href="#" data-go="" aria-label="LearningWorks Exchange home"><img src="logo.svg" alt="LearningWorks" class="logo"><span>EXCHANGE</span></a>
-    <nav class="main"><a href="#" data-go="" data-nav="home">Home <span class="nav-sub">(Stories + Resources)</span></a><a href="#leaders" data-go="leaders" data-nav="leaders">For Leaders &amp; Coaches</a><a href="#about" data-go="about" data-nav="about">About</a></nav>
+    <nav class="main"><a href="#" data-go="" data-nav="home">Home <span class="nav-sub">(Stories + Resources)</span></a><a href="#leaders" data-go="leaders" data-nav="leaders">For Leaders &amp; Coaches</a><a href="#voices" data-go="voices" data-nav="voices">What Educators Say</a><a href="#about" data-go="about" data-nav="about">About</a></nav>
     <button type="button" class="ask-btn" id="askBtn" aria-haspopup="dialog"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg>Questions?</button>
   </div>
 </header>
@@ -899,6 +908,7 @@ function renderLeaders(){
   <section class="wrap results"><div><div class="eyebrow">Results from the field</div><h2>What educators say about Meaning Making 101</h2></div>
     ${proofHTML(FEEDBACK["101"])}
     <div class="quote-grid">${FEEDBACK["101"].quotes.slice(0,3).map(q=>quoteCardHTML(q,FEEDBACK["101"])).join("")}</div>
+    ${TESTIMONIALS.length?`<div class="testi-grid">${TESTIMONIALS.slice(0,2).map(t=>testimonialHTML(t,true)).join("")}</div><a class="more-voices" href="#voices" data-go="voices">Read more from educators →</a>`:""}
     <a class="open-res" href="#c-meaning-making-101" data-coll="meaning-making-101">Explore Meaning Making 101 →</a></section>
   <div class="wrap rows">
     ${rowHTML("lead-stories","Stories about leading the work","District and school stories, learning walks, and coaching", sysStories.map(cardHTML).join(""))}
@@ -991,6 +1001,7 @@ function renderStory(s){
     <div class="where">${esc(s.places.slice().reverse().join(" · "))}</div>
     ${s.allTags.length?`<div class="chips">${s.allTags.map(t=>`<button class="chip" data-tag="${esc(t)}">${esc(t)}</button>`).join("")}</div>`:""}
     ${inColls.length?`<div class="chips">${inColls.map(c=>`<a class="chip coll-chip" href="#c-${c.id}" data-coll="${c.id}">In collection: ${esc(c.title)}</a>`).join("")}</div>`:""}
+    ${testimonialsFor(s).map(t=>testimonialHTML(t,false)).join("")}
     ${paired.length?`<section class="paired"><div class="eyebrow orange">Part of the same story</div><h2>${paired.length>1?"Watch these too":"Watch this one too"}</h2><div class="mini-grid">${paired.map(o=>`<a class="mini" href="#${o.slug}" data-story="${o.slug}">${coverHTML(o)}<div class="mb"><div class="mt">${esc(o.title)}</div><div class="who">${esc(o.places.slice().reverse().join(" · "))}</div></div></a>`).join("")}</div></section>`:""}
     ${tryIt.length?`<section class="tryit"><div class="eyebrow">Your next step</div><h2>Try it yourself</h2><div class="tryit-grid">${tryIt.map(resourceHTML).join("")}</div></section>`:""}
     <div class="next">${rowHTML("related","More stories like this","", related.map(cardHTML).join(""))}</div>
@@ -1157,9 +1168,42 @@ function renderResource(r){
   if(embed) wireChapters(embed);
 }
 
+/* ---------- testimonials (shared with permission) ----------
+   "story" finds the matching Exchange story so the quote also shows on that story's page. */
+const TESTIMONIALS = [
+ {name:"Ty", role:"Music Teacher", org:"Perry Public Schools",
+  headline:"Today I experienced my best teaching class period in all of my 18 years of teaching.",
+  body:"I have taught recorder units every year since teaching, but never before have I felt like it was the students driving their own learning and being responsible for their own growth... until now! The kids were excited about our team challenges and about the challenge to grow as learners. Thank you again for challenging our way of thinking as teachers, and for pushing us to always want more from our kids (and ourselves).",
+  story: s => s.subjects.includes("Music") && /perry upper/i.test(s.school)}
+];
+const testimonialsFor = s => TESTIMONIALS.filter(t => t.story && t.story(s));
+const storyFor = t => t.story ? stories.find(t.story) : null;
+const credit = t => [t.name, t.role, t.org].filter(Boolean).join(", ");
+function testimonialHTML(t, withLink){
+  const st = withLink ? storyFor(t) : null;
+  return `<figure class="testi"><blockquote><p class="th">\u201C${esc(t.headline)}\u201D</p>${t.body?`<p>${esc(t.body)}</p>`:""}</blockquote>
+    <figcaption>${esc(credit(t))}${st?` · <a href="#${st.slug}" data-story="${st.slug}">Watch the story →</a>`:""}</figcaption></figure>`;
+}
+function renderVoices(){
+  const F = FEEDBACK;
+  app.innerHTML = `
+  <section class="wrap intro">
+    <div class="eyebrow orange">LearningWorks Exchange</div>
+    <h1>What educators say</h1>
+    <p>In their own words: teachers and leaders on what changed when students started doing the thinking.</p>
+  </section>
+  <div class="wrap voices">
+    <div class="testi-grid">${TESTIMONIALS.map(t=>testimonialHTML(t,true)).join("")}</div>
+    <section class="results"><div><div class="eyebrow">Course feedback</div><h2>Meaning Making 101 and 201</h2></div>
+      ${proofHTML(F["101"])}
+      <div class="quote-grid">${[...F["101"].quotes.slice(0,2).map(q=>quoteCardHTML(q,F["101"])), ...F["201"].quotes.slice(0,2).map(q=>quoteCardHTML(q,F["201"]))].join("")}</div></section>
+  </div>`;
+  wireProof();
+}
+
 /* ---------- routing ---------- */
-const PAGES = {"":()=>renderLibrary("stories"), stories:()=>renderLibrary("stories"), resources:()=>renderLibrary("resources"), leaders:renderLeaders, about:renderAbout};
-const NAV_FOR = {"":"home", stories:"home", resources:"home", leaders:"leaders", about:"about"};
+const PAGES = {"":()=>renderLibrary("stories"), stories:()=>renderLibrary("stories"), resources:()=>renderLibrary("resources"), leaders:renderLeaders, voices:renderVoices, about:renderAbout};
+const NAV_FOR = {"":"home", stories:"home", resources:"home", leaders:"leaders", voices:"voices", about:"about"};
 function go(hash){ if(location.hash.slice(1)!==hash){ location.hash = hash; } else route(); }
 function route(){
   clearInterval(hintTimer); clearInterval(proofTimer);
