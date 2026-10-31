@@ -623,7 +623,7 @@ const STORY_FILTERS = {
   grade: {label:"Grade level", all:"All grades", multi:true, opts:GRADE_ORDER.filter(g=>BANDS["K–12"].includes(g) || stories.some(s=>s.gradeLevels.includes(g)))},
   subject: {label:"Subject", all:"All subjects", opts:uniq(stories.flatMap(s=>s.subjects))},
   focus: {label:"Focus", all:"All focus areas", opts:uniq(stories.flatMap(s=>s.focus))},
-  place: {label:"School / District", all:"All schools & districts", opts:uniq(stories.flatMap(s=>s.places))},
+  place: {label:"District", all:"All districts", opts:uniq(stories.map(s=>s.org).filter(Boolean))},
   level: {label:"Where it happens", all:"Anywhere", opts:["Classroom","School","District"]}
 };
 const RES_FILTERS = {
@@ -641,6 +641,7 @@ try{
   if(saved) fState = {stories:{...fState.stories,...saved.stories}, resources:{...fState.resources,...saved.resources}};
   ["stories","resources"].forEach(t=>{ if(!Array.isArray(fState[t].grade)) fState[t].grade = []; });
 }catch(e){}
+if(fState.stories.place && !STORY_FILTERS.place.opts.includes(fState.stories.place)) fState.stories.place = "";
 const save = ()=>{ try{ localStorage.setItem("lw-filters4", JSON.stringify(fState)); }catch(e){} };
 
 /* Search ignores small question words, so "What is meaning making?" finds meaning making */
@@ -657,7 +658,7 @@ function storyMatch(s, st){
   if(st.grade.length && !s.gradeLevels.some(g=>st.grade.includes(g))) return false;
   if(st.subject && !s.subjects.includes(st.subject)) return false;
   if(st.focus && !s.focus.includes(st.focus)) return false;
-  if(st.place && !s.places.includes(st.place)) return false;
+  if(st.place && s.org!==st.place) return false;
   if(st.level && s.pathway!==st.level) return false;
   return textHit(st.q, s.title+" "+s.summary+" "+s.allTags.join(" ")+" "+s.places.join(" ")+" "+gradeWords(s.gradeLevels));
 }
