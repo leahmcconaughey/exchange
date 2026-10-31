@@ -578,6 +578,8 @@ const COLLECTIONS = [
   stories:[], resources:["r-meaning-making-101-the-why","r-meaning-making-101-the-how-part-1","r-meaning-making-101-the-how-part-iia","r-meaning-making-101-the-how-part-iib","r-meaning-making-101-leahs-thinking"]},
  {id:"meaning-making-201", title:"Meaning Making 201", tag:"Video Series", blurb:"Go deeper: analyze real lessons and discover what every lesson needs for students to make meaning", tone:"peach", icon:"play", series:true, fb:"201",
   stories:[], resources:["r-meaning-making-201-the-why","r-meaning-making-201-the-how","r-meaning-making-201-the-what","r-meaning-making-201-leahs-thinking"]},
+ {id:"student-voice", title:"Student Voice", tag:"Hear It from Students", blurb:"What meaningful learning feels like, in students\u2019 own words", tone:"orange", icon:"chat", byTag:"Student Voice",
+  stories:[]},
  {id:"use-tomorrow", title:"Use Tomorrow", blurb:"Ready-to-use ideas", tone:"blue", icon:"spark",
   stories:["a-small-shift-that-gets-students-thinking","less-telling-more-thinking","looking-beyond-the-surface","they-already-knew-more-than-i-thought","rethinking-needs-and-wants","same-story-different-truths"]},
  {id:"staff-meeting-ready", title:"Staff Meeting Ready", blurb:"Short, practical prompts for teams to use together", tone:"orange", icon:"people", leaders:true,
@@ -613,6 +615,7 @@ const bySlug = Object.fromEntries(stories.map(s=>[s.slug,s]));
 
 const RES_TYPE_ICON = {"Tutorial":"play","Tutorial Video":"play","Video":"play","Template":"doc","Protocol":"list","Guide":"bookicon"};
 const resBySlug = Object.fromEntries(resources.map(r=>[r.slug,r]));
+COLLECTIONS.forEach(c=>{ if(c.byTag) c.stories = [...new Set([...c.stories, ...stories.filter(s=>s.focus.includes(c.byTag)).map(s=>s.slug)])]; });
 function resourceHTML(r){
   return `<a class="res" href="#${r.slug}" data-res="${r.slug}">
     ${r.img?`<div class="cover real res-cover"><img src="${r.img}" alt="" loading="lazy"></div>`:""}
