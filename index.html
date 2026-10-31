@@ -1091,10 +1091,10 @@ function videoEmbed(link){
 }
 const isPdf = l => /\.pdf(\?|#|$)/i.test(l||"");
 const BLUEPRINT_PDF = "docs/Engagement-Blueprint.pdf";
-const CLASSVOICE_URL = "https://classvoice.net", PRECHECK_PDF = ""; /* add "docs/Pre-Check-Guide.pdf" once uploaded */
+const CLASSVOICE_URL = "https://classvoice.net", PRECHECK_PDF = "docs/Pre-Check-Guide.pdf";
 const precheckHTML = () => `<section class="precheck"><div><div class="eyebrow">Get feedback on your lesson</div>
   <p>Run your lesson through <b>Pre-Check in ClassVoice</b> to see which Engagement Blueprint components are present and what to strengthen.</p></div>
-  <div class="pdf-actions"><a class="open-res" href="${CLASSVOICE_URL}" target="_blank" rel="noopener">Open ClassVoice ↗</a>${PRECHECK_PDF?`<a class="open-res ghost" href="${PRECHECK_PDF}" target="_blank" rel="noopener">Pre-Check Guide (PDF) ↗</a>`:""}</div></section>`;
+  <div class="pdf-actions"><a class="open-res" href="${CLASSVOICE_URL}" target="_blank" rel="noopener">Open ClassVoice ↗</a>${PRECHECK_PDF&&!/pre-check/i.test(location.hash)?`<a class="open-res ghost" href="${PRECHECK_PDF}" target="_blank" rel="noopener">Pre-Check Guide ↗</a>`:""}</div></section>`;
 function renderResource(r){
   const sr = seriesFor(r);
   const embed = videoEmbed(r.link) || videoEmbed(r.related);
