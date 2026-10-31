@@ -523,10 +523,15 @@ function buildData(rows){
   approved.forEach(r=>{
     const type = get(r,"Content Type").toLowerCase();
     const {grades, subjectsRaw, focusRaw} = splitTags(get(r,"Tags"));
-    const parts = get(r,"Organization / School").split(",").map(s=>s.trim()).filter(Boolean);
+    let parts = get(r,"Organization / School").split(",").map(s=>s.trim()).filter(Boolean);
+    const joined = parts[0] && parts[0].match(/^(nyc\s*doe|nyc\s*ps|nyc|new york city public schools)\s*(?:community school\s*)?(?:district|d)\s*#?\s*(\d+)$/i);
+    if(joined) parts = [joined[1], "District "+(+joined[2]), ...parts.slice(1)];
     if(parts[0]) parts[0] = ORG_ALIASES[parts[0].toLowerCase().replace(/[\s.]+/g,"")] || parts[0];
+    let subDistrict = "";
+    parts = parts.map((x,i)=>{ const m = i>0 && x.match(/^(?:community school\s*)?(?:district|d)\s*#?\s*(\d+)$/i); if(m){ subDistrict = "District "+(+m[1]); return subDistrict; } return x; });
+    const schoolName = parts.slice(1).find(x=>x!==subDistrict) || "";
     const base = {title:get(r,"Title"), link:get(r,"Primary Link"), related:get(r,"Related Content"), summary:get(r,"Short Summary"),
-      grades, subjects:subjectsRaw.map(nice), focus:focusRaw.map(nice), places:parts, org:parts[0]||"", school:parts[1]||"",
+      grades, subjects:subjectsRaw.map(nice), focus:focusRaw.map(nice), places:parts, org:parts[0]||"", school:schoolName, subDistrict: subDistrict ? `${parts[0]==="New York City Public Schools"?"NYC ":""}${subDistrict}` : "",
       img: imgPath(get(r,"Featured Image URL")),
       gradeLevels: parseGrades(get(r,"Grade Level"))};
     if(type==="resource"){
@@ -624,7 +629,7 @@ const STORY_FILTERS = {
   grade: {label:"Grade level", all:"All grades", multi:true, opts:GRADE_ORDER.filter(g=>BANDS["K–12"].includes(g) || stories.some(s=>s.gradeLevels.includes(g)))},
   subject: {label:"Subject", all:"All subjects", opts:uniq(stories.flatMap(s=>s.subjects))},
   focus: {label:"Focus", all:"All focus areas", opts:uniq(stories.flatMap(s=>s.focus))},
-  place: {label:"District", all:"All districts", opts:uniq(stories.map(s=>s.org).filter(Boolean))},
+  place: {label:"District", all:"All districts", opts:uniq(stories.map(s=>s.org).filter(Boolean)), subs:uniq(stories.map(s=>s.subDistrict).filter(Boolean)).sort((a,b)=>(+a.replace(/\D/g,""))-(+b.replace(/\D/g,"")))},
   level: {label:"Where it happens", all:"Anywhere", opts:["Classroom","School","District"]}
 };
 const RES_FILTERS = {
@@ -642,7 +647,7 @@ try{
   if(saved) fState = {stories:{...fState.stories,...saved.stories}, resources:{...fState.resources,...saved.resources}};
   ["stories","resources"].forEach(t=>{ if(!Array.isArray(fState[t].grade)) fState[t].grade = []; });
 }catch(e){}
-if(fState.stories.place && !STORY_FILTERS.place.opts.includes(fState.stories.place)) fState.stories.place = "";
+if(fState.stories.place && ![...STORY_FILTERS.place.opts, ...STORY_FILTERS.place.subs].includes(fState.stories.place)) fState.stories.place = "";
 const save = ()=>{ try{ localStorage.setItem("lw-filters4", JSON.stringify(fState)); }catch(e){} };
 
 /* Search ignores small question words, so "What is meaning making?" finds meaning making */
@@ -659,7 +664,7 @@ function storyMatch(s, st){
   if(st.grade.length && !s.gradeLevels.some(g=>st.grade.includes(g))) return false;
   if(st.subject && !s.subjects.includes(st.subject)) return false;
   if(st.focus && !s.focus.includes(st.focus)) return false;
-  if(st.place && s.org!==st.place) return false;
+  if(st.place && s.org!==st.place && s.subDistrict!==st.place) return false;
   if(st.level && s.pathway!==st.level) return false;
   return textHit(st.q, s.title+" "+s.summary+" "+s.allTags.join(" ")+" "+s.places.join(" ")+" "+gradeWords(s.gradeLevels));
 }
@@ -790,6 +795,16 @@ function gradePickerHTML(k, f, v){
       </div>
     </details></div>`;
 }
+/* District dropdown: each district, with NYC's community school districts grouped under New York City */
+function placeOptions(f, cur){
+  const opt = (v,label) => `<option value="${esc(v)}"${cur===v?" selected":""}>${esc(label)}</option>`;
+  const NYC = "New York City Public Schools";
+  let html = f.opts.filter(o=>o!==NYC).map(o=>opt(o,o)).join("");
+  if(f.opts.includes(NYC)){
+    html += `<optgroup label="New York City Public Schools">${opt(NYC,"All NYC districts")}${f.subs.filter(s=>s.startsWith("NYC ")).map(s=>opt(s, s.replace(/^NYC /,""))).join("")}</optgroup>`;
+  }
+  return html;
+}
 function renderLibrary(tab){
   const F = tab==="stories" ? STORY_FILTERS : RES_FILTERS;
   const st = fState[tab];
@@ -811,7 +826,7 @@ function renderLibrary(tab){
       <div class="search">${SEARCH_ICON}<input id="q" type="search" placeholder="Try “${(tab==="resources"?RES_HINTS:HINTS)[0]}”" value="${esc(st.q)}" aria-label="Search ${tab}"></div>
       <div class="selects" style="--cols:${keys.length}">
         ${keys.map(k=>F[k].multi ? gradePickerHTML(k, F[k], st[k]) : `<div class="field"><label for="f-${k}">${F[k].label}</label>
-          <select id="f-${k}" data-key="${k}"><option value="">${F[k].all}</option>${F[k].opts.map(o=>`<option${st[k]===o?" selected":""}>${esc(o)}</option>`).join("")}</select></div>`).join("")}
+          <select id="f-${k}" data-key="${k}"><option value="">${F[k].all}</option>${k==="place" ? placeOptions(F[k], st[k]) : F[k].opts.map(o=>`<option${st[k]===o?" selected":""}>${esc(o)}</option>`).join("")}</select></div>`).join("")}
       </div>
     </div>
   </section>
