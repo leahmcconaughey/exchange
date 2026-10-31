@@ -303,6 +303,9 @@ nav.main a.on{color:var(--navy)}
 .player{border:0;padding:0;width:100%;cursor:pointer;background:none;font:inherit}
 .player.video{aspect-ratio:16/9;background:#000;max-width:100%}
 .player.video iframe{width:100%;height:100%;border:0;display:block}
+.player.slides{aspect-ratio:1920/1109;background:#05415B;cursor:default}
+.player.slides iframe{width:100%;height:100%;border:0;display:block}
+.slide-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
 .loading{padding-block:80px;text-align:center;color:var(--muted);font-size:17px}
 .loading b{color:var(--navy)}
 .open-res{justify-self:start;background:var(--navy);color:#fff;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:12px}
@@ -629,7 +632,7 @@ const CICONS = {
 };
 const bySlug = Object.fromEntries(stories.map(s=>[s.slug,s]));
 
-const RES_TYPE_ICON = {"Tutorial":"play","Tutorial Video":"play","Video":"play","Template":"doc","Protocol":"list","Guide":"bookicon"};
+const RES_TYPE_ICON = {"Slideshow":"bookicon","Slides":"bookicon","Tutorial":"play","Tutorial Video":"play","Video":"play","Template":"doc","Protocol":"list","Guide":"bookicon"};
 const resBySlug = Object.fromEntries(resources.map(r=>[r.slug,r]));
 COLLECTIONS.forEach(c=>{ if(c.byGrades) c.stories = [...new Set([...c.stories, ...stories.filter(s=>s.grades.includes("Elementary") || s.gradeLevels.some(g=>c.byGrades.includes(g))).map(s=>s.slug)])]; });
 COLLECTIONS.forEach(c=>{ if(c.byTag){ const tags = [].concat(c.byTag); c.stories = [...new Set([...c.stories, ...stories.filter(s=>s.focus.some(f=>tags.includes(f))).map(s=>s.slug)])]; } });
@@ -1141,6 +1144,19 @@ function videoEmbed(link){
   const yt = ytId(link);
   return yt ? `https://www.youtube-nocookie.com/embed/${yt}?rel=0&playsinline=1` : "";
 }
+/* Google Slides decks play right on the page. Primary Link can be the "Publish to web" link
+   (…/d/e/2PACX…/pub or /pubembed) or a regular share link (…/d/<id>/edit). */
+const SLIDE_EMBEDS = {
+  "The Case for Authenticity": "https://docs.google.com/presentation/d/e/2PACX-1vRCQSYIRRkGy2047D83YQ7fKkAMlm6PfjS_hldkLtqj-n1vquSEwxPhD5aTwtMb7Q/pubembed?start=false&loop=false&delayms=3000"
+};
+const slidesFull = u => u.includes("/pubembed") ? u.replace("/pubembed","/pub") : u.replace("/embed","/present");
+function slidesEmbed(r){
+  const pub = (r.link||"").match(/docs\.google\.com\/presentation\/d\/e\/([\w-]+)\/pub/i);
+  if(pub) return `https://docs.google.com/presentation/d/e/${pub[1]}/pubembed?start=false&loop=false&delayms=3000`;
+  if(SLIDE_EMBEDS[r.title]) return SLIDE_EMBEDS[r.title];
+  const id = (r.link||"").match(/docs\.google\.com\/presentation\/d\/([\w-]{20,})/i);
+  return id ? `https://docs.google.com/presentation/d/${id[1]}/embed?start=false&loop=false&delayms=3000` : "";
+}
 const isPdf = l => /\.pdf(\?|#|$)/i.test(l||"");
 const BLUEPRINT_PDF = "docs/Engagement-Blueprint.pdf";
 const CLASSVOICE_URL = "https://classvoice.net", PRECHECK_PDF = "docs/Pre-Check-Guide.pdf";
@@ -1152,12 +1168,15 @@ function renderResource(r){
   const embed = videoEmbed(r.link) || videoEmbed(r.related);
   const pdfLink = isPdf(r.link) ? r.link : (isPdf(r.related) ? r.related : "");
   const pdf = !!pdfLink;
+  const slides = slidesEmbed(r);
   const seeIt = stories.filter(s=>s.focus.some(f=>r.focus.includes(f))).slice(0,8);
   app.innerHTML = `<article class="wrap story">
     <a class="back" href="#resources" data-go="resources">← Back to Resources</a>
     <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_META[sr.s].name} · Part ${sr.part} of ${SERIES_META[sr.s].total}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
     ${sr?statLineHTML(FEEDBACK[sr.s]):""}
     ${embed?`<div class="player video"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`:""}
+    ${slides?`<div class="player slides"><iframe src="${esc(slides)}" title="${esc(r.title)} slideshow" allowfullscreen loading="lazy"></iframe></div>
+      <div class="slide-actions"><a class="open-res ghost" href="${esc(slidesFull(slides))}" target="_blank" rel="noopener">Open full screen ↗</a></div>`:""}
     <p class="desc">${esc(r.summary)}</p>
     ${sr&&sr.blueprint?`<a class="bp-link" href="${BLUEPRINT_PDF}" target="_blank" rel="noopener"><b>Keep the Engagement Blueprint open while you watch</b><span>Opens the PDF in a new tab ↗</span></a>`:""}
     ${chaptersHTML(sr, embed)}
@@ -1167,7 +1186,7 @@ function renderResource(r){
     ${pdf?`${embed?`<h2 class="pdf-h">The guide</h2>`:""}<div class="pdf-view"><iframe src="${esc(pdfLink)}#view=FitH" title="${esc(r.title)}" loading="lazy"></iframe></div>
       <div class="pdf-actions"><a class="open-res" href="${esc(pdfLink)}" download>Download PDF ↓</a><a class="open-res ghost" href="${esc(pdfLink)}" target="_blank" rel="noopener">Open in a new tab ↗</a></div>`:""}
     ${/engagement blueprint|pre-check/i.test(r.title)?precheckHTML():""}
-    ${r.link&&!embed&&!pdf?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
+    ${r.link&&!embed&&!pdf&&!slides?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
     <div class="chips">${r.focus.map(t=>`<span class="chip static">${esc(t)}</span>`).join("")}</div>
     ${companionHTML(sr)}
     ${sr?quoteCardHTML(FEEDBACK[sr.s].quotes[(sr.part-1)%FEEDBACK[sr.s].quotes.length],FEEDBACK[sr.s]):""}
