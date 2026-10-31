@@ -904,7 +904,7 @@ function renderLibrary(tab){
 /* ---------- LEADERS & COACHES ---------- */
 function renderLeaders(){
   const lead = COLLECTIONS.filter(c=>c.leaders);
-  const sysStories = stories.filter(s=>s.pathway!=="Classroom" || s.focus.some(f=>["Learning Walks","Coaching","Collective Practice"].includes(f)));
+  const sysStories = stories.filter(s=>s.pathway!=="Classroom" || s.focus.some(f=>["Leadership","Learning Walks","Coaching","Collective Practice"].includes(f)));
   const lRes = resources.filter(r=>r.audience.some(a=>/^(lead|coach|admin|principal)/i.test(a)));
   app.innerHTML = `
   <section class="wrap intro">
