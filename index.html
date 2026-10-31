@@ -244,6 +244,8 @@ nav.main a.on{color:var(--navy)}
 .tryit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
 /* Meaning Making 101: companion video callout */
 .companion{background:var(--beige);border:2px solid var(--peach);border-left:8px solid var(--orange);border-radius:18px;padding:22px 24px;display:grid;gap:10px}
+.paired{background:var(--beige);border:2px solid var(--peach);border-radius:18px;padding:22px 24px;display:grid;gap:8px}
+.paired h2{margin:0;font-size:22px;font-weight:800}
 .companion h2{margin:0;font-size:22px;font-weight:800;line-height:1.25}
 .companion .cnote{margin:0;color:var(--muted);font-size:14.5px}
 .mini-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-top:6px}
@@ -947,8 +949,17 @@ function tagToFilter(t){
   const k = F.subject.opts.includes(t)?"subject":"focus";
   fState.stories = {...blank(F),[k]:t}; save(); go("stories");
 }
+/* Paired stories: a story's "Related Content" cell can name another story by its title
+   or video link. The pairing works both ways, so either page shows the other. */
+function pairedFor(s){
+  const keyOf = v => { const id = ytId(v); return id ? "yt:"+id : "t:"+slug(v); };
+  const matches = (o, v) => v && (keyOf(v)==="yt:"+o.video || keyOf(v)==="t:"+o.slug);
+  const mine = (s.related||"").split(/[\n;|]+/).map(x=>x.trim()).filter(Boolean);
+  return stories.filter(o => o!==s && (mine.some(v=>matches(o,v)) || (o.related||"").split(/[\n;|]+/).map(x=>x.trim()).some(v=>matches(s,v))));
+}
 function renderStory(s){
-  const related = stories.filter(o=>o!==s).map(o=>({o,n:o.allTags.filter(t=>s.allTags.includes(t)&&t!=="Meaning Making"&&t!=="Engagement Blueprint").length + (o.pathway===s.pathway?0.5:0)}))
+  const paired = pairedFor(s);
+  const related = stories.filter(o=>o!==s && !paired.includes(o)).map(o=>({o,n:o.allTags.filter(t=>s.allTags.includes(t)&&t!=="Meaning Making"&&t!=="Engagement Blueprint").length + (o.pathway===s.pathway?0.5:0)}))
     .sort((a,b)=>b.n-a.n).slice(0,8).map(x=>x.o);
   const tryIt = resources.filter(r=>r.focus.some(f=>s.focus.includes(f)));
   const inColls = COLLECTIONS.filter(c=>c.stories.includes(s.slug));
@@ -960,6 +971,7 @@ function renderStory(s){
     <div class="where">${esc(s.places.slice().reverse().join(" · "))}</div>
     ${s.allTags.length?`<div class="chips">${s.allTags.map(t=>`<button class="chip" data-tag="${esc(t)}">${esc(t)}</button>`).join("")}</div>`:""}
     ${inColls.length?`<div class="chips">${inColls.map(c=>`<a class="chip coll-chip" href="#c-${c.id}" data-coll="${c.id}">In collection: ${esc(c.title)}</a>`).join("")}</div>`:""}
+    ${paired.length?`<section class="paired"><div class="eyebrow orange">Part of the same story</div><h2>${paired.length>1?"Watch these too":"Watch this one too"}</h2><div class="mini-grid">${paired.map(o=>`<a class="mini" href="#${o.slug}" data-story="${o.slug}">${coverHTML(o)}<div class="mb"><div class="mt">${esc(o.title)}</div><div class="who">${esc(o.places.slice().reverse().join(" · "))}</div></div></a>`).join("")}</div></section>`:""}
     ${tryIt.length?`<section class="tryit"><div class="eyebrow">Your next step</div><h2>Try it yourself</h2><div class="tryit-grid">${tryIt.map(resourceHTML).join("")}</div></section>`:""}
     <div class="next">${rowHTML("related","More stories like this","", related.map(cardHTML).join(""))}</div>
   </article>`;
