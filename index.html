@@ -1147,15 +1147,19 @@ function videoEmbed(link){
 /* Google Slides decks play right on the page. Primary Link can be the "Publish to web" link
    (…/d/e/2PACX…/pub or /pubembed) or a regular share link (…/d/<id>/edit). */
 const SLIDE_EMBEDS = {
-  "The Case for Authenticity": "https://docs.google.com/presentation/d/e/2PACX-1vRCQSYIRRkGy2047D83YQ7fKkAMlm6PfjS_hldkLtqj-n1vquSEwxPhD5aTwtMb7Q/pubembed?start=false&loop=false&delayms=3000"
+  "The Case for Authenticity": "https://docs.google.com/presentation/d/e/2PACX-1vRCQSYIRRkGy2047D83YQ7fKkAMlm6PfjS_hldkLtqj-n1vquSEwxPhD5aTwtMb7Q/pubembed?start=false&loop=false&delayms=60000"
 };
-const slidesFull = u => u.includes("/pubembed") ? u.replace("/pubembed","/pub") : u.replace("/embed","/present");
+const slidesFull = u => u.includes("/preview") ? u.replace("/preview","/view") : u.includes("/pubembed") ? u.replace("/pubembed","/pub") : u.replace("/embed","/present");
 function slidesEmbed(r){
   const pub = (r.link||"").match(/docs\.google\.com\/presentation\/d\/e\/([\w-]+)\/pub/i);
-  if(pub) return `https://docs.google.com/presentation/d/e/${pub[1]}/pubembed?start=false&loop=false&delayms=3000`;
+  if(pub) return `https://docs.google.com/presentation/d/e/${pub[1]}/pubembed?start=false&loop=false&delayms=60000`;
   if(SLIDE_EMBEDS[r.title]) return SLIDE_EMBEDS[r.title];
+  /* A PowerPoint uploaded to Drive (…/presentation/d/<id>/edit?rtpof=true, or drive.google.com/file/d/<id>)
+     plays through Drive's previewer, which shows every slide exactly as exported. */
+  const drive = (r.link||"").match(/drive\.google\.com\/file\/d\/([\w-]{20,})/i) || (/rtpof=true/i.test(r.link||"") && (r.link||"").match(/presentation\/d\/([\w-]{20,})/i));
+  if(drive) return `https://drive.google.com/file/d/${drive[1]}/preview`;
   const id = (r.link||"").match(/docs\.google\.com\/presentation\/d\/([\w-]{20,})/i);
-  return id ? `https://docs.google.com/presentation/d/${id[1]}/embed?start=false&loop=false&delayms=3000` : "";
+  return id ? `https://docs.google.com/presentation/d/${id[1]}/embed?start=false&loop=false&delayms=60000` : "";
 }
 const isPdf = l => /\.pdf(\?|#|$)/i.test(l||"");
 const BLUEPRINT_PDF = "docs/Engagement-Blueprint.pdf";
