@@ -1220,7 +1220,11 @@ const TESTIMONIALS = [
   body:"It has fit perfectly with how I love to teach to the whole student. The way you\u2019re able to pull out everyone\u2019s best thinking is such a gift."},
  {name:"Angelina", org:"Farmington Public Schools", lead:true, colls:["professional-learning"],
   headline:"I couldn\u2019t have asked for a better professional learning opportunity.",
-  body:"Thank you for the past three years of getting to learn from and with you! From our first year Pollinator Project to helping my students improve their behaviors at lunch and recess this year... Being able to intentionally collaborate with colleagues in a way that is mindful and impactful on student needs is unmatched! I can\u2019t wait to fully transfer the learning I have done into my own daily practice in my classroom."}
+  body:"Thank you for the past three years of getting to learn from and with you! From our first year Pollinator Project to helping my students improve their behaviors at lunch and recess this year... Being able to intentionally collaborate with colleagues in a way that is mindful and impactful on student needs is unmatched! I can\u2019t wait to fully transfer the learning I have done into my own daily practice in my classroom."},
+ {name:"Dawn", org:"Perry Public Schools", colls:["engagement-blueprint"],
+  headline:"I am working on removing scaffolding and giving students the opportunity to experience math.",
+  body:"I am loving working with Class Voice precheck to increase student engagement and help me to develop high-cognitive prompts... Tomorrow, we will be working in small groups and reifying as a large group! I love this work:) I have been enjoying working on opportunities to engage students in their learning - a lot of white board work, sort activities, reifying learning...",
+  story: s => s.slug==="the-20-minute-pivot"}
 ];
 const testimonialsFor = s => TESTIMONIALS.filter(t => t.story && t.story(s));
 const storyFor = t => t.story ? stories.find(t.story) : null;
