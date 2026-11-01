@@ -919,7 +919,7 @@ function renderLeaders(){
   <section class="wrap results"><div><div class="eyebrow">Results from the field</div><h2>What educators say about Meaning Making 101</h2></div>
     ${proofHTML(FEEDBACK["101"])}
     <div class="quote-grid">${FEEDBACK["101"].quotes.slice(0,3).map(q=>quoteCardHTML(q,FEEDBACK["101"])).join("")}</div>
-    ${TESTIMONIALS.length?`<div class="testi-grid three">${TESTIMONIALS.filter(t=>t.lead).slice(0,3).map(t=>testimonialHTML(t,true)).join("")}</div><a class="more-voices" href="#voices" data-go="voices">Read more from educators →</a>`:""}
+    ${TESTIMONIALS.length?`<div class="testi-grid three">${pickThree(TESTIMONIALS.filter(t=>t.lead)).map(t=>testimonialHTML(t,true)).join("")}</div><a class="more-voices" href="#voices" data-go="voices">Read more from educators →</a>`:""}
     <a class="open-res" href="#c-meaning-making-101" data-coll="meaning-making-101">Explore Meaning Making 101 →</a></section>
   <div class="wrap rows">
     ${rowHTML("lead-stories","Stories about leading the work","District and school stories, learning walks, and coaching", sysStories.map(cardHTML).join(""))}
@@ -1206,26 +1206,28 @@ const TESTIMONIALS = [
  {name:"Jennifer", org:"New York City Public Schools, District 31", lead:true,
   headline:"Creating a building where both students and teachers are encouraged to think, reflect, and grow makes a real difference for student success.",
   body:"I appreciate that you consistently keep the focus on helping teachers think deeply about their practice so we can do what\u2019s best for our students. Thank you for showing up with care, professionalism, and respect for the work we do every day."},
- {name:"Katie", org:"Perry Public Schools",
+ {name:"Katie", org:"Perry Public Schools", lead:true,
   headline:"I removed myself from the discussion and told them I was just going to take notes.",
   body:"I adjusted my lesson by changing how we do discussions after reading a scene of Hamlet. I came up with some higher level questions, put them into groups to discuss, then we came back together as a class. Even though I asked them to go slowly for me, they were all excitedly talking at once... They were super engaged the whole time. I definitely underestimated how much room I would need for notes.",
   img:"covers/testimonial-katie-hamlet.jpg", imgAlt:"Class discussion notes on Hamlet, Act 3, Scene 4, filling the classroom board",
   story: s => s.slug==="beyond-the-essay"},
- {name:"Bailey", org:"Farmington Public Schools",
+ {name:"Bailey", org:"Farmington Public Schools", lead:true,
   headline:"Thank you for modeling what truly transformative teaching looks like.",
   body:"I\u2019ve walked away from every session with not just strategies, but a clearer sense of the kind of teacher I want to continue becoming. You\u2019ve made me rethink what\u2019s possible in this profession in the best way and reignited my passion.",
   story: s => s.video==="fY1pT2msfhM"},
- {name:"Kristi", org:"Farmington Public Schools",
+ {name:"Kristi", org:"Farmington Public Schools", lead:true,
   headline:"You have really changed the way I think about my kids\u2019 learning.",
   body:"It has fit perfectly with how I love to teach to the whole student. The way you\u2019re able to pull out everyone\u2019s best thinking is such a gift."},
  {name:"Angelina", org:"Farmington Public Schools", lead:true, colls:["professional-learning"],
   headline:"I couldn\u2019t have asked for a better professional learning opportunity.",
   body:"Thank you for the past three years of getting to learn from and with you! From our first year Pollinator Project to helping my students improve their behaviors at lunch and recess this year... Being able to intentionally collaborate with colleagues in a way that is mindful and impactful on student needs is unmatched! I can\u2019t wait to fully transfer the learning I have done into my own daily practice in my classroom."},
- {name:"Dawn", org:"Perry Public Schools", colls:["engagement-blueprint"],
+ {name:"Dawn", org:"Perry Public Schools", lead:true, colls:["engagement-blueprint"],
   headline:"I am working on removing scaffolding and giving students the opportunity to experience math.",
   body:"I am loving working with Class Voice precheck to increase student engagement and help me to develop high-cognitive prompts... Tomorrow, we will be working in small groups and reifying as a large group! I love this work:) I have been enjoying working on opportunities to engage students in their learning - a lot of white board work, sort activities, reifying learning...",
   story: s => s.slug==="the-20-minute-pivot"}
 ];
+/* Leaders page: three random picks from the lead:true pool on each visit */
+const pickThree = arr => { const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a.slice(0,3); };
 const testimonialsFor = s => TESTIMONIALS.filter(t => t.story && t.story(s));
 const storyFor = t => t.story ? stories.find(t.story) : null;
 const credit = t => [t.name, t.role, t.org].filter(Boolean).join(", ");
