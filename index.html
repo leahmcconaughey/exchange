@@ -1119,7 +1119,7 @@ function mountVideo(s){
           ready = true; wrap.classList.add("ready");
           if(wantPlay){ try{ player.playVideo(); }catch(e){} ensurePlaying(); }
         },
-        onStateChange: e=>{ state = e.data; if(e.data===1 || e.data===3) wrap.classList.add("playing"); },
+        onStateChange: e=>{ state = e.data; if(e.data===1) wrap.classList.add("playing"); },  /* resize only once actually playing (Safari can cancel a start if the player resizes while loading) */
         onError: ()=>{ wrap.classList.add("playing"); }
       }
     });
