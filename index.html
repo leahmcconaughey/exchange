@@ -1212,6 +1212,11 @@ const SERIES = {
 };
 const seriesFor = r => SERIES[r.title.toLowerCase().replace(/[\u2018\u2019]/g,"'").replace(/\s+/g," ").trim()];
 const toSec = t => t.split(":").reduce((a,v)=>a*60+(+v),0);
+/* Chapters for videos outside a series, keyed by title (apostrophes and spacing ignored) */
+const chapKey = t => (t||"").toLowerCase().replace(/[\u2018\u2019'"\u201C\u201D]/g,"").replace(/[^a-z0-9]+/g," ").trim();
+const CHAPTERS = {
+ [chapKey("Clarifying the 3 C's")]: [["00:00","Three Cs quick recap"],["03:02","Dots become content and concepts"],["05:13","Context and situation meaning"],["08:03","Competency and real contexts"],["10:32","Brain patterns and why it matters"]]
+};
 function chaptersHTML(sr, embed){
   if(!sr || !sr.chapters || !embed) return "";
   return `<section class="chapters"><div class="eyebrow">Chapters</div><ol>${sr.chapters.map(([t,label])=>
@@ -1309,7 +1314,7 @@ function renderResource(r){
     <p class="desc">${esc(r.summary)}</p>
     ${rs?`<div class="rs-credit">${RS_CREDIT}${rs.wiggins?`<br><br>${WIGGINS_CREDIT}`:""}</div>`:""}
     ${sr&&sr.blueprint?`<a class="bp-link" href="${BLUEPRINT_PDF}" target="_blank" rel="noopener"><b>Keep the Engagement Blueprint open while you watch</b><span>Opens the PDF in a new tab ↗</span></a>`:""}
-    ${chaptersHTML(sr, embed)}
+    ${chaptersHTML(sr || (CHAPTERS[chapKey(r.title)] ? {chapters:CHAPTERS[chapKey(r.title)]} : null), embed)}
     ${sr&&sr.blueprint?precheckHTML():""}
     ${sr?`<div class="series-note">${SERIES_NOTE}</div>`:""}
     ${r.audience.length?`<div class="where">For ${esc(r.audience.join(", ").toLowerCase())}</div>`:""}
