@@ -842,7 +842,7 @@ function gradePickerHTML(k, f, v){
     <details class="multi${v.length?" set":""}" data-key="${k}">
       <summary aria-labelledby="lab-${k}"><span>${gradeSummary(v,f)}</span></summary>
       <div class="multi-pop" role="group" aria-label="${f.label}">
-        <div class="bands">${Object.keys(BANDS).map(b=>`<button type="button" class="band" data-band="${b}">${b==="K–12"?"All K–12":b}</button>`).join("")}</div>
+        <div class="bands">${Object.keys(BANDS).filter(b=>b!=="K–12").map(b=>`<button type="button" class="band" data-band="${b}">${b}</button>`).join("")}</div>
         <div class="grade-grid">${f.opts.map(g=>{ const n=count(g); return `<label class="gchk${n?"":" none"}" title="${n} ${n===1?"story":"stories"}"><input type="checkbox" value="${esc(g)}"${v.includes(g)?" checked":""}><span>${esc(g)}</span></label>`; }).join("")}</div>
         <div class="multi-foot"><button type="button" class="multi-clear">Clear</button><button type="button" class="multi-done">Done</button></div>
       </div>
