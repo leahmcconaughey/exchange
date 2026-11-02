@@ -396,7 +396,6 @@ nav.main .nav-sub{font-weight:400;opacity:.85}
 .coll-tag{justify-self:start;margin-top:8px;font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;background:var(--orange);color:var(--navy);border-radius:99px;padding:4px 11px}
 .coll-title.tagged{margin-top:0}
 .testi-grid.three{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
-.yt-wrap.waiting .yt-cover{cursor:progress}
 </style>
 </head>
 <body>
@@ -1085,42 +1084,19 @@ function loadYT(){
 }
 function mountVideo(s){
   const wrap = document.getElementById("ytwrap");
-  let player = null, ready = false, wantPlay = false, state = -1;
   const fallback = ()=>{
     if(!document.body.contains(wrap)) return;
     wrap.outerHTML = `<a class="player" href="${esc(s.link)}" target="_blank" rel="noopener">${coverHTML(s)}</a>`;
   };
-  /* Safety net: if a click did not start the video (a browser blocked it), fade the cover
-     so YouTube's own play button is right there, then try to start it anyway. */
-  const ensurePlaying = ()=>setTimeout(()=>{
-    if(!document.body.contains(wrap) || state===1 || state===3) return;
-    wrap.classList.add("playing");
-    try{ player && player.playVideo(); }catch(e){}
-  }, 1200);
-  /* A click on the cover before the player has loaded is remembered, not lost */
-  wrap.querySelector(".yt-cover").addEventListener("click", ()=>{
-    if(ready) return;
-    wantPlay = true; wrap.classList.add("waiting");
-  });
-  /* A click that lands on the YouTube player itself moves focus into it; watch for that */
-  const onBlur = ()=>{
-    if(!document.body.contains(wrap)){ window.removeEventListener("blur", onBlur); return; }
-    if(document.activeElement && wrap.contains(document.activeElement)) ensurePlaying();
-  };
-  window.addEventListener("blur", onBlur);
   loadYT().then(YT=>{
     if(!document.body.contains(wrap)) return;
-    player = new YT.Player("yt", {
+    new YT.Player("yt", {
       host: "https://www.youtube-nocookie.com",
       videoId: s.video, width: "100%", height: "100%",
       playerVars: {rel:0, playsinline:1, modestbranding:1},
       events: {
-        onReady: ()=>{
-          ready = true; wrap.classList.add("ready");
-          if(wantPlay){ try{ player.playVideo(); }catch(e){} ensurePlaying(); }
-        },
-        onStateChange: e=>{ state = e.data; if(e.data===1 || e.data===3) wrap.classList.add("playing"); },
-        onError: ()=>{ wrap.classList.add("playing"); }
+        onReady: ()=>wrap.classList.add("ready"),
+        onStateChange: e=>{ if(e.data===1 || e.data===3) wrap.classList.add("playing"); }
       }
     });
   }).catch(fallback);
