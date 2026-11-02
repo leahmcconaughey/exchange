@@ -312,6 +312,22 @@ nav.main a.on{color:var(--navy)}
 .rs-nav .k{font-size:12.5px;font-weight:800;color:var(--blue)}
 .rs-nav b{font-size:15.5px;line-height:1.25}
 .rs-nav .next-p{text-align:right}
+/* Ordered series: compact part strip at the top, one Next button under the video */
+.series-strip{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13.5px;font-weight:700;color:var(--muted)}
+.series-strip .sn{text-decoration:none;color:var(--navy);margin-right:4px}
+.series-strip .sn:hover{color:var(--blue)}
+.series-strip ol{list-style:none;display:flex;gap:6px;margin:0;padding:0;flex-wrap:wrap}
+.series-strip ol a{display:grid;place-items:center;min-width:34px;height:34px;padding:0 10px;border-radius:99px;border:1.5px solid var(--line);background:#fff;color:var(--navy);text-decoration:none;font-weight:800}
+.series-strip ol a:hover{border-color:var(--blue)}
+.series-strip ol a[aria-current]{background:var(--navy);border-color:var(--navy);color:#fff}
+.next-up{display:flex;align-items:center;justify-content:space-between;gap:14px;text-decoration:none;background:var(--navy);color:#fff;border-radius:14px;padding:14px 20px}
+.next-up:hover{background:#06506f}
+.next-up .k{font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--orange)}
+.next-up b{display:block;font-size:17px;line-height:1.3;margin-top:2px}
+.next-up .ar{font-size:24px;flex:none}
+.next-up.done{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.next-up.done:hover{border-color:var(--blue);background:#fff}
+.next-up.done .k{color:var(--blue)}
 .rs-part{font-size:12.5px;font-weight:800;color:var(--orange-ink,#8A4B1C);margin-left:auto}
 .research{background:#05415B;color:#fff;border-radius:18px;padding:24px;display:grid;gap:12px}
 .research .eyebrow{color:#F2A766}
@@ -1208,22 +1224,42 @@ const CLASSVOICE_URL = "https://classvoice.net", PRECHECK_PDF = "docs/Pre-Check-
 const precheckHTML = () => `<section class="precheck"><div><div class="eyebrow">Get feedback on your lesson</div>
   <p>Run your lesson through <b>Pre-Check in ClassVoice</b> to see which Engagement Blueprint components are present and what to strengthen.</p></div>
   <div class="pdf-actions"><a class="open-res" href="${CLASSVOICE_URL}" target="_blank" rel="noopener">Open ClassVoice ↗</a>${PRECHECK_PDF&&!/pre-check/i.test(location.hash)?`<a class="open-res ghost" href="${PRECHECK_PDF}" target="_blank" rel="noopener">Pre-Check Guide ↗</a>`:""}</div></section>`;
+/* Ordered series (any collection marked series:true): where a resource sits, and what comes next */
+function seqFor(r){
+  const c = COLLECTIONS.find(x=>x.series && (x.resources||[]).includes(r.slug)); if(!c) return null;
+  const list = c.resources.map(x=>resBySlug[x]).filter(Boolean);
+  const i = list.findIndex(x=>x.slug===r.slug);
+  return {c, list, i, next:list[i+1]};
+}
+function seriesStripHTML(q){
+  if(!q || q.list.length<2) return "";
+  return `<nav class="series-strip" aria-label="${esc(q.c.title)} parts"><a class="sn" href="#c-${q.c.id}" data-coll="${q.c.id}">${esc(q.c.title)}</a>
+    <ol>${q.list.map((x,k)=>`<li><a href="#${x.slug}" data-res="${x.slug}" title="Part ${k+1}: ${esc(x.title)}"${k===q.i?' aria-current="page"':""}>${k+1}</a></li>`).join("")}</ol></nav>`;
+}
+function nextUpHTML(q){
+  if(!q || q.list.length<2) return "";
+  return q.next
+    ? `<a class="next-up" href="#${q.next.slug}" data-res="${q.next.slug}"><span><span class="k">Next: Part ${q.i+2} of ${q.list.length}</span><b>${esc(q.next.title)}</b></span><span class="ar" aria-hidden="true">→</span></a>`
+    : `<a class="next-up done" href="#c-${q.c.id}" data-coll="${q.c.id}"><span><span class="k">You finished the series</span><b>Back to ${esc(q.c.title)}</b></span><span class="ar" aria-hidden="true">→</span></a>`;
+}
 function renderResource(r){
   const sr = seriesFor(r);
+  const q = seqFor(r);
   const embed = videoEmbed(r.link) || videoEmbed(r.related);
   const pdfLink = isPdf(r.link) ? r.link : (isPdf(r.related) ? r.related : "");
   const pdf = !!pdfLink;
   const slides = slidesEmbed(r);
   const rs = researchFor(r);
   const seeIt = rs ? rs.storySlugs.map(x=>bySlug[x]).filter(Boolean) : stories.filter(s=>s.focus.some(f=>r.focus.includes(f))).slice(0,8);
-  const prev = rs && RESEARCH[rs.part-2], nxt = rs && RESEARCH[rs.part];
   app.innerHTML = `<article class="wrap story">
-    <a class="back" href="#resources" data-go="resources">← Back to Resources</a>
+    ${q?`<a class="back" href="#c-${q.c.id}" data-coll="${q.c.id}">← Back to ${esc(q.c.title)}</a>`:`<a class="back" href="#resources" data-go="resources">← Back to Resources</a>`}
     <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_META[sr.s].name} · Part ${sr.part} of ${SERIES_META[sr.s].total}`:rs?`Research Series · Part ${rs.part} of ${RESEARCH.length}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
+    ${seriesStripHTML(q)}
     ${sr?statLineHTML(FEEDBACK[sr.s]):""}
     ${embed?`<div class="player video"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`:""}
     ${slides?`<div class="player slides"><iframe src="${esc(slides)}" title="${esc(r.title)} slideshow" allowfullscreen loading="lazy"></iframe></div>
       <div class="slide-actions"><a class="open-res ghost" href="${esc(slidesFull(slides))}" target="_blank" rel="noopener">Open full screen ↗</a></div>`:""}
+    ${(embed||slides)?nextUpHTML(q):""}
     <p class="desc">${esc(r.summary)}</p>
     ${rs?`<div class="rs-credit">${RS_CREDIT}${rs.wiggins?`<br><br>${WIGGINS_CREDIT}`:""}</div>`:""}
     ${sr&&sr.blueprint?`<a class="bp-link" href="${BLUEPRINT_PDF}" target="_blank" rel="noopener"><b>Keep the Engagement Blueprint open while you watch</b><span>Opens the PDF in a new tab ↗</span></a>`:""}
@@ -1239,11 +1275,7 @@ function renderResource(r){
     ${companionHTML(sr)}
     ${sr?quoteCardHTML(FEEDBACK[sr.s].quotes[(sr.part-1)%FEEDBACK[sr.s].quotes.length],FEEDBACK[sr.s]):""}
     ${seeIt.length?`<div class="next">${rowHTML("seeit","See it in practice", rs?"Classroom stories that bring this research to life":"Stories that bring this work to life", seeIt.map(cardHTML).join(""))}</div>`:""}
-    ${rs?`<nav class="rs-nav" aria-label="Research Series">
-      ${prev?`<a href="#${prev.slug}" data-res="${prev.slug}"><span class="k">← Part ${prev.part}</span><b>${esc(prev.title)}</b></a>`:""}
-      <a href="#c-research-series" data-coll="research-series"><span class="k">Research Series</span><b>See all ${RESEARCH.length} parts</b></a>
-      ${nxt?`<a class="next-p" href="#${nxt.slug}" data-res="${nxt.slug}"><span class="k">Part ${nxt.part} →</span><b>${esc(nxt.title)}</b></a>`:""}
-    </nav>`:""}
+    ${!(embed||slides)?nextUpHTML(q):""}
   </article>`;
   wireRows(app);
   if(embed) wireChapters(embed);
