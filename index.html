@@ -449,7 +449,7 @@ nav.main .nav-sub{font-weight:400;opacity:.85}
 const GRADES = {"elementary school":"Elementary","elementary":"Elementary","middle school":"Middle School","high school":"High School"};
 const SUBJECTS = ["math","science","biology","chemistry","ela","writing","history","social studies","spanish","economics","special education","art","music","agricultural science"];
 const SPECIFIC = ["chemistry","biology","agricultural science"];
-const SPECIAL = {"ela":"ELA"};
+const SPECIAL = {"ela":"ELA","amt":"AMT","classvoice":"ClassVoice"};
 const nice = t => SPECIAL[t] || t.replace(/\b\w/g,c=>c.toUpperCase());
 const slug = t => t.toLowerCase().replace(/[’']/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 const TEMPLATES = ["sunrise","sky","navy","garden","orange","split"];
@@ -671,13 +671,13 @@ const COLLECTIONS = [
   stories:["is-our-system-really-working","opening-the-classroom-door","getting-back-to-the-classroom-i-wanted","stepping-back-so-students-can-step-up","when-collaboration-becomes-the-culture"]},
  {id:"coaching-conversation", title:"Coaching Conversation", blurb:"Questions that help the work become more visible", tone:"sage", icon:"chat", leaders:true,
   stories:["seeing-the-big-picture","opening-the-classroom-door","stepping-back-so-students-can-step-up","building-community-through-student-centered-learning","from-delivering-content-to-facilitating-thinking"]},
- {id:"learn-the-amt-framework", title:"Learn the AMT Framework", blurb:"Build shared understanding of meaningful learning", tone:"navy", icon:"bookicon", leaders:true,
+ {id:"learn-the-amt-framework", byResTag:["AMT"], title:"Learn the AMT Framework", blurb:"Build shared understanding of meaningful learning", tone:"navy", icon:"bookicon", leaders:true,
   resources:["r-acquisition-meaning-making-transfer"], stories:["concept-before-content","from-sound-to-sense-making","from-delivering-content-to-facilitating-thinking","they-already-knew-more-than-i-thought","looking-beyond-the-surface"]},
- {id:"engagement-blueprint", title:"Explore the Engagement Blueprint", blurb:"A guide for designing the conditions for engagement", tone:"peach", icon:"compass", leaders:true,
+ {id:"engagement-blueprint", byResTag:["Engagement Blueprint"], title:"Explore the Engagement Blueprint", blurb:"A guide for designing the conditions for engagement", tone:"peach", icon:"compass", leaders:true,
   resources:["r-engagement-blueprint","r-engagement-blueprint-lesson-flow","r-engagement-blueprint-reference-guide"], stories:["stepping-back-so-students-can-step-up","learning-spanish-beyond-the-textbook","students-take-a-seat-at-the-table","finding-learning-all-around-us","whats-beneath-the-surface"]},
- {id:"build-a-better-unit", title:"Build a Better Unit", blurb:"Align learning, assessment & instruction", tone:"sky", icon:"check",
+ {id:"build-a-better-unit", byResTag:["Unit Design"], title:"Build a Better Unit", blurb:"Align learning, assessment & instruction", tone:"sky", icon:"check",
   stories:["seeing-the-big-picture","students-take-a-seat-at-the-table","whats-beneath-the-surface","brewing-up-real-world-math","when-words-have-a-purpose","learning-spanish-beyond-the-textbook"]},
- {id:"5-minutes-or-less", title:"5 Minutes or Less", blurb:"Quick ideas, examples & videos", tone:"blue", icon:"clock",
+ {id:"5-minutes-or-less", byResTag:["5 Minutes Or Less"], title:"5 Minutes or Less", blurb:"Quick ideas, examples & videos", tone:"blue", icon:"clock",
   stories:["a-small-shift-that-gets-students-thinking","less-telling-more-thinking","finding-learning-all-around-us","rethinking-needs-and-wants","concept-before-content"]}
 ];
 const L = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
@@ -700,6 +700,7 @@ const bySlug = Object.fromEntries(stories.map(s=>[s.slug,s]));
 
 const RES_TYPE_ICON = {"Slideshow":"bookicon","Slides":"bookicon","Tutorial":"play","Tutorial Video":"play","Video":"play","Template":"doc","Protocol":"list","Guide":"bookicon"};
 const resBySlug = Object.fromEntries(resources.map(r=>[r.slug,r]));
+COLLECTIONS.forEach(c=>{ if(c.byResTag){ const tags = c.byResTag.map(t=>t.toLowerCase()); c.resources = [...new Set([...(c.resources||[]), ...resources.filter(r=>r.focus.some(f=>tags.includes(f.toLowerCase()))).map(r=>r.slug)])]; } });
 COLLECTIONS.forEach(c=>{ if(c.byGrades) c.stories = [...new Set([...c.stories, ...stories.filter(s=>s.grades.includes("Elementary") || s.gradeLevels.some(g=>c.byGrades.includes(g))).map(s=>s.slug)])]; });
 COLLECTIONS.forEach(c=>{ if(c.byTag){ const tags = [].concat(c.byTag); c.stories = [...new Set([...c.stories, ...stories.filter(s=>s.focus.some(f=>tags.includes(f))).map(s=>s.slug)])]; } });
 function resourceHTML(r){
@@ -1280,6 +1281,13 @@ function nextUpHTML(q){
     ? `<a class="next-up" href="#${q.next.slug}" data-res="${q.next.slug}"><span><span class="k">Next: Part ${q.i+2} of ${q.list.length}</span><b>${esc(q.next.title)}</b></span><span class="ar" aria-hidden="true">→</span></a>`
     : `<a class="next-up done" href="#c-${q.c.id}" data-coll="${q.c.id}"><span><span class="k">You finished the series</span><b>Back to ${esc(q.c.title)}</b></span><span class="ar" aria-hidden="true">→</span></a>`;
 }
+function relatedFor(item){
+  const norm = v => { const id = ytId(v); if(id) return "yt:"+id; const lm = (v||"").match(/loom\.com\/(?:share|embed)\/([a-f0-9]+)/i); if(lm) return "lm:"+lm[1]; if(/^https?:/i.test(v)) return "u:"+v.replace(/[?#].*$/,"").replace(/\/$/,""); return "t:"+slug(v); };
+  const keysOf = o => [ "t:"+slug(o.title), o.link?norm(o.link):"" ].filter(Boolean);
+  const refs = o => (o.related||"").split(/[\n;|]+/).map(x=>x.trim()).filter(Boolean).filter(v=>!isPdf(v)).map(norm);
+  const mine = refs(item), myKeys = keysOf(item);
+  return [...stories, ...resources].filter(o => o!==item && (keysOf(o).some(k=>mine.includes(k)) || refs(o).some(k=>myKeys.includes(k))));
+}
 function renderResource(r){
   const sr = seriesFor(r);
   const q = seqFor(r);
@@ -1311,6 +1319,7 @@ function renderResource(r){
     ${r.link&&!embed&&!pdf&&!slides?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
     <div class="chips">${r.focus.map(t=>`<span class="chip static">${esc(t)}</span>`).join("")}</div>
     ${companionHTML(sr)}
+    ${(()=>{ const rel = relatedFor(r).filter(o=>!(sr&&sr.videos&&o.video&&sr.videos.some(v=>v[0]===o.video))); return rel.length?`<section class="paired"><div class="eyebrow orange">Goes well with</div><h2>${rel.length>1?"Watch these too":"Watch this too"}</h2><div class="tryit-grid">${rel.map(o=>o.pathway===undefined?resourceHTML(o):cardHTML(o)).join("")}</div></section>`:""; })()}
     ${sr?quoteCardHTML(FEEDBACK[sr.s].quotes[(sr.part-1)%FEEDBACK[sr.s].quotes.length],FEEDBACK[sr.s]):""}
     ${seeIt.length?`<div class="next">${rowHTML("seeit","See it in practice", rs?"Classroom stories that bring this research to life":"Stories that bring this work to life", seeIt.map(cardHTML).join(""))}</div>`:""}
     ${!(embed||slides)?nextUpHTML(q):""}
