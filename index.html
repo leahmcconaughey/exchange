@@ -305,6 +305,20 @@ nav.main a.on{color:var(--navy)}
 .player.video iframe{width:100%;height:100%;border:0;display:block}
 .player.slides{aspect-ratio:1920/1109;background:#05415B;cursor:default}
 .player.slides iframe{width:100%;height:100%;border:0;display:block}
+.rs-credit{background:#fff;border:1px solid var(--line);border-left:6px solid var(--orange);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55}
+.rs-nav{display:flex;gap:12px;flex-wrap:wrap;align-items:stretch}
+.rs-nav a{flex:1 1 220px;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;display:grid;gap:2px;color:var(--navy)}
+.rs-nav a:hover{border-color:var(--blue)}
+.rs-nav .k{font-size:12.5px;font-weight:800;color:var(--blue)}
+.rs-nav b{font-size:15.5px;line-height:1.25}
+.rs-nav .next-p{text-align:right}
+.rs-part{font-size:12.5px;font-weight:800;color:var(--orange-ink,#8A4B1C);margin-left:auto}
+.research{background:#05415B;color:#fff;border-radius:18px;padding:24px;display:grid;gap:12px}
+.research .eyebrow{color:#F2A766}
+.research h2{margin:0;font-size:24px;font-weight:800}
+.research p.rnote{margin:0;opacity:.85;font-size:15px}
+.research .res{color:var(--navy)}
+.coll-sec h2{margin:8px 0 0;font-size:24px;font-weight:800}
 .slide-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
 .loading{padding-block:80px;text-align:center;color:var(--muted);font-size:17px}
 .loading b{color:var(--navy)}
@@ -585,6 +599,20 @@ async function boot(){
 
 function startApp(){
 /* ---------- curated collections (placeholder picks until Leah sends hers) ---------- */
+/* LearningWorks Research Series: six decks from Leah and Paul's 2017 research, in order.
+   "stories" are the classroom stories each deck links to; every one of those stories links back. */
+const RESEARCH = [
+ {title:"Why School Must Change", stories:["Is our system really working?","Rewriting Perry's Story","Getting Back to the Classroom I Wanted","Zoe and The Bee Project"]},
+ {title:"The Three Types of Engagement", stories:["Building Community Through Student-Centered Learning","When Collaboration Becomes the Culture","Getting Messy with Light and Shadow","Less Telling, More Thinking","Taking Off the Training Wheels"]},
+ {title:"Acquisition, Meaning Making, Transfer", wiggins:true, stories:["The 20-Minute Pivot","Beyond the Essay","What Is Your Carbon Footprint?","Stepping Back So Students Can Step Up","Concept Before Content"]},
+ {title:"The Case for Authenticity", stories:["Students Take A Seat at the Table","When Words Have a Purpose","Brewing Up Real-World Math","Learning Spanish Beyond the Textbook","Letters from the Wild","Singing for Change"]},
+ {title:"The ALTmodel", wiggins:true, stories:["Shifting Desks and Minds","The Bee Crisis, Fifth-Grade Style","Real Data, Real Excitement","Students Take A Seat at the Table"]},
+ {title:"Professional Learning That Changes Practice", stories:["Opening the Classroom Door","Teachers Learning Together","Seeing the Big Picture","Seeing Classrooms Differently","Is our system really working?"]}
+].map((x,i)=>({...x, part:i+1, slug:"r-"+slug(x.title), storySlugs:x.stories.map(slug)}));
+const researchFor = r => RESEARCH.find(x=>x.slug===r.slug);
+const researchOf = st => RESEARCH.filter(x=>x.storySlugs.includes(st.slug));
+const WIGGINS_CREDIT = `<b>About the framework:</b> Acquisition, Meaning Making, Transfer was developed by Grant Wiggins. We are grateful for his work and credit it to him throughout this series.`;
+const RS_CREDIT = `Based on the original 2017 research of Leah McConaughey, Ed.D. and Paul Facteau, Ed.D.`;
 const COLLECTIONS = [
  {id:"new-to-this-work", title:"New to This Work", tag:"Start Here", blurb:"Small, doable first steps from teachers who started where you are", tone:"sage", icon:"sprout",
   stories:["getting-back-to-the-classroom-i-wanted","stepping-back-so-students-can-step-up","a-small-shift-that-gets-students-thinking","less-telling-more-thinking","concept-before-content","they-already-knew-more-than-i-thought"]},
@@ -592,6 +620,8 @@ const COLLECTIONS = [
   stories:[], resources:["r-meaning-making-101-the-why","r-meaning-making-101-the-how-part-1","r-meaning-making-101-the-how-part-iia","r-meaning-making-101-the-how-part-iib","r-meaning-making-101-leahs-thinking"]},
  {id:"meaning-making-201", title:"Meaning Making 201", tag:"Video Series", blurb:"Go deeper: analyze real lessons and discover what every lesson needs for students to make meaning", tone:"peach", icon:"play", series:true, fb:"201",
   stories:[], resources:["r-meaning-making-201-the-why","r-meaning-making-201-the-how","r-meaning-making-201-the-what","r-meaning-making-201-leahs-thinking"]},
+ {id:"research-series", title:"Research Series", tag:"Original Research", blurb:"Six short slideshows from Leah and Paul\u2019s original research on designing authentic student tasks", tone:"navy", icon:"bookicon", series:true, unit:"slideshows", research:true, leaders:true,
+  stories:[], resources:RESEARCH.map(x=>x.slug)},
  {id:"student-voice", title:"Student Voice", tag:"Hear It from Students", blurb:"What meaningful learning feels like, in students\u2019 own words", tone:"orange", icon:"chat", byTag:"Student Voice",
   stories:[]},
  {id:"professional-learning", title:"Professional Learning", tag:"Teachers Learning Together", blurb:"Learning walks, coaching, peer visits, and other ways educators grow together", tone:"sage", icon:"people", leaders:true,
@@ -606,7 +636,7 @@ const COLLECTIONS = [
  {id:"coaching-conversation", title:"Coaching Conversation", blurb:"Questions that help the work become more visible", tone:"sage", icon:"chat", leaders:true,
   stories:["seeing-the-big-picture","opening-the-classroom-door","stepping-back-so-students-can-step-up","building-community-through-student-centered-learning","from-delivering-content-to-facilitating-thinking"]},
  {id:"learn-the-amt-framework", title:"Learn the AMT Framework", blurb:"Build shared understanding of meaningful learning", tone:"navy", icon:"bookicon", leaders:true,
-  stories:["concept-before-content","from-sound-to-sense-making","from-delivering-content-to-facilitating-thinking","they-already-knew-more-than-i-thought","looking-beyond-the-surface"]},
+  resources:["r-acquisition-meaning-making-transfer"], stories:["concept-before-content","from-sound-to-sense-making","from-delivering-content-to-facilitating-thinking","they-already-knew-more-than-i-thought","looking-beyond-the-surface"]},
  {id:"engagement-blueprint", title:"Explore the Engagement Blueprint", blurb:"A guide for designing the conditions for engagement", tone:"peach", icon:"compass", leaders:true,
   resources:["r-engagement-blueprint","r-engagement-blueprint-lesson-flow","r-engagement-blueprint-reference-guide"], stories:["stepping-back-so-students-can-step-up","learning-spanish-beyond-the-textbook","students-take-a-seat-at-the-table","finding-learning-all-around-us","whats-beneath-the-surface"]},
  {id:"build-a-better-unit", title:"Build a Better Unit", blurb:"Align learning, assessment & instruction", tone:"sky", icon:"check",
@@ -639,7 +669,7 @@ COLLECTIONS.forEach(c=>{ if(c.byTag){ const tags = [].concat(c.byTag); c.stories
 function resourceHTML(r){
   return `<a class="res" href="#${r.slug}" data-res="${r.slug}">
     ${r.img?`<div class="cover real res-cover"><img src="${r.img}" alt="" loading="lazy"></div>`:""}
-    <div class="res-top"><span class="res-icon">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><span class="res-type">${esc(r.type)}</span></div>
+    <div class="res-top"><span class="res-icon">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><span class="res-type">${esc(r.type)}</span>${researchFor(r)?`<span class="rs-part">Part ${researchFor(r).part} of ${RESEARCH.length}</span>`:""}</div>
     <h3>${esc(r.title)}</h3>
     <p${r.img?' class="clamp"':""}>${esc(r.summary)}</p>
     ${r.audience.length?`<div class="res-for">For ${esc(r.audience.join(", ").toLowerCase())}</div>`:""}
@@ -730,7 +760,7 @@ function wireRows(root){
 }
 function collectionHTML(c){
   const n = c.stories.filter(x=>bySlug[x]).length, nr = (c.resources||[]).filter(x=>resBySlug[x]).length;
-  const count = c.series ? `${nr} tutorials` : [n?`${n} stories`:"", nr?`${nr} resources`:""].filter(Boolean).join(" · ");
+  const count = c.series ? `${nr} ${c.unit||"tutorials"}` : [n?`${n} stories`:"", nr?`${nr} resources`:""].filter(Boolean).join(" · ");
   return `<a class="coll tone-${c.tone}" href="#c-${c.id}" data-coll="${c.id}">
     <span class="coll-icon">${CICONS[c.icon]}</span>
     ${c.tag?`<span class="coll-tag">${esc(c.tag)}</span>`:""}
@@ -982,8 +1012,14 @@ function renderCollection(c){
     ${TESTIMONIALS.some(t=>(t.colls||[]).includes(c.id))?`<div class="testi-grid">${TESTIMONIALS.filter(t=>(t.colls||[]).includes(c.id)).map(t=>testimonialHTML(t,true)).join("")}</div>`:""}
     ${rlist.length?`<div class="tryit-grid">${rlist.map(resourceHTML).join("")}</div>`:""}
     ${list.length?`<div class="grid">${list.map(cardHTML).join("")}</div>`:""}
+    ${c.research?researchCollExtra():""}
   </article>`;
   wireProof();
+}
+function researchCollExtra(){
+  const st = [...new Set(RESEARCH.flatMap(x=>x.storySlugs))].map(x=>bySlug[x]).filter(Boolean);
+  return `<div class="rs-credit">${RS_CREDIT} Each part ends with questions to use with your team.<br><br>${WIGGINS_CREDIT}</div>
+    ${st.length?`<section class="coll-sec"><div class="eyebrow">See it in practice</div><h2>Stories that bring the research to life</h2><div class="grid" style="margin-top:14px">${st.map(cardHTML).join("")}</div></section>`:""}`;
 }
 function tagToFilter(t){
   const F = STORY_FILTERS;
@@ -1003,7 +1039,8 @@ function renderStory(s){
   const paired = pairedFor(s);
   const related = stories.filter(o=>o!==s && !paired.includes(o)).map(o=>({o,n:o.allTags.filter(t=>s.allTags.includes(t)&&t!=="Meaning Making"&&t!=="Engagement Blueprint").length + (o.pathway===s.pathway?0.5:0)}))
     .sort((a,b)=>b.n-a.n).slice(0,8).map(x=>x.o);
-  const tryIt = resources.filter(r=>r.focus.some(f=>s.focus.includes(f)));
+  const decks = researchOf(s).map(x=>resBySlug[x.slug]).filter(Boolean);
+  const tryIt = resources.filter(r=>!researchFor(r) && r.focus.some(f=>s.focus.includes(f)));
   const inColls = COLLECTIONS.filter(c=>c.stories.includes(s.slug));
   app.innerHTML = `<article class="wrap story">
     <a class="back" href="#stories" data-go="stories">← Back to Stories</a>
@@ -1015,6 +1052,7 @@ function renderStory(s){
     ${inColls.length?`<div class="chips">${inColls.map(c=>`<a class="chip coll-chip" href="#c-${c.id}" data-coll="${c.id}">In collection: ${esc(c.title)}</a>`).join("")}</div>`:""}
     ${testimonialsFor(s).map(t=>testimonialHTML(t,false)).join("")}
     ${paired.length?`<section class="paired"><div class="eyebrow orange">Part of the same story</div><h2>${paired.length>1?"Watch these too":"Watch this one too"}</h2><div class="mini-grid">${paired.map(o=>`<a class="mini" href="#${o.slug}" data-story="${o.slug}">${coverHTML(o)}<div class="mb"><div class="mt">${esc(o.title)}</div><div class="who">${esc(o.places.slice().reverse().join(" · "))}</div></div></a>`).join("")}</div></section>`:""}
+    ${decks.length?`<section class="research"><div class="eyebrow">Go deeper</div><h2>The research behind this story</h2><p class="rnote">From the LearningWorks Research Series, based on Leah and Paul\u2019s original research</p><div class="tryit-grid">${decks.map(resourceHTML).join("")}</div><a class="link" style="color:#fff;font-weight:800" href="#c-research-series" data-coll="research-series">See the full Research Series →</a></section>`:""}
     ${tryIt.length?`<section class="tryit"><div class="eyebrow">Your next step</div><h2>Try it yourself</h2><div class="tryit-grid">${tryIt.map(resourceHTML).join("")}</div></section>`:""}
     <div class="next">${rowHTML("related","More stories like this","", related.map(cardHTML).join(""))}</div>
   </article>`;
@@ -1171,15 +1209,18 @@ function renderResource(r){
   const pdfLink = isPdf(r.link) ? r.link : (isPdf(r.related) ? r.related : "");
   const pdf = !!pdfLink;
   const slides = slidesEmbed(r);
-  const seeIt = stories.filter(s=>s.focus.some(f=>r.focus.includes(f))).slice(0,8);
+  const rs = researchFor(r);
+  const seeIt = rs ? rs.storySlugs.map(x=>bySlug[x]).filter(Boolean) : stories.filter(s=>s.focus.some(f=>r.focus.includes(f))).slice(0,8);
+  const prev = rs && RESEARCH[rs.part-2], nxt = rs && RESEARCH[rs.part];
   app.innerHTML = `<article class="wrap story">
     <a class="back" href="#resources" data-go="resources">← Back to Resources</a>
-    <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_META[sr.s].name} · Part ${sr.part} of ${SERIES_META[sr.s].total}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
+    <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_META[sr.s].name} · Part ${sr.part} of ${SERIES_META[sr.s].total}`:rs?`Research Series · Part ${rs.part} of ${RESEARCH.length}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
     ${sr?statLineHTML(FEEDBACK[sr.s]):""}
     ${embed?`<div class="player video"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`:""}
     ${slides?`<div class="player slides"><iframe src="${esc(slides)}" title="${esc(r.title)} slideshow" allowfullscreen loading="lazy"></iframe></div>
       <div class="slide-actions"><a class="open-res ghost" href="${esc(slidesFull(slides))}" target="_blank" rel="noopener">Open full screen ↗</a></div>`:""}
     <p class="desc">${esc(r.summary)}</p>
+    ${rs?`<div class="rs-credit">${RS_CREDIT}${rs.wiggins?`<br><br>${WIGGINS_CREDIT}`:""}</div>`:""}
     ${sr&&sr.blueprint?`<a class="bp-link" href="${BLUEPRINT_PDF}" target="_blank" rel="noopener"><b>Keep the Engagement Blueprint open while you watch</b><span>Opens the PDF in a new tab ↗</span></a>`:""}
     ${chaptersHTML(sr, embed)}
     ${sr&&sr.blueprint?precheckHTML():""}
@@ -1192,7 +1233,12 @@ function renderResource(r){
     <div class="chips">${r.focus.map(t=>`<span class="chip static">${esc(t)}</span>`).join("")}</div>
     ${companionHTML(sr)}
     ${sr?quoteCardHTML(FEEDBACK[sr.s].quotes[(sr.part-1)%FEEDBACK[sr.s].quotes.length],FEEDBACK[sr.s]):""}
-    ${seeIt.length?`<div class="next">${rowHTML("seeit","See it in practice","Stories that bring this work to life", seeIt.map(cardHTML).join(""))}</div>`:""}
+    ${seeIt.length?`<div class="next">${rowHTML("seeit","See it in practice", rs?"Classroom stories that bring this research to life":"Stories that bring this work to life", seeIt.map(cardHTML).join(""))}</div>`:""}
+    ${rs?`<nav class="rs-nav" aria-label="Research Series">
+      ${prev?`<a href="#${prev.slug}" data-res="${prev.slug}"><span class="k">← Part ${prev.part}</span><b>${esc(prev.title)}</b></a>`:""}
+      <a href="#c-research-series" data-coll="research-series"><span class="k">Research Series</span><b>See all ${RESEARCH.length} parts</b></a>
+      ${nxt?`<a class="next-p" href="#${nxt.slug}" data-res="${nxt.slug}"><span class="k">Part ${nxt.part} →</span><b>${esc(nxt.title)}</b></a>`:""}
+    </nav>`:""}
   </article>`;
   wireRows(app);
   if(embed) wireChapters(embed);
