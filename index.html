@@ -150,6 +150,16 @@ nav.main a.on{color:var(--navy)}
 .coll-hero .eyebrow{color:inherit;opacity:.8}
 .coll-hero h1{margin:2px 0}
 .coll-hero p{margin:0;opacity:.85}
+.door-h{margin:6px 0 -4px;font-size:24px}
+.doors-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.doors-2 .coll{min-height:230px;padding:28px}
+.doors-2 .coll-title{font-size:21px}
+.door-q{font-size:12.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.75}
+.coll.soon{opacity:.6;cursor:default}
+.coll.soon:hover{transform:none}
+.other-path{justify-self:start;text-decoration:none;color:var(--navy);background:#fff;border:1px solid var(--line);border-radius:99px;padding:9px 18px;font-size:15px}
+.other-path:hover{border-color:var(--blue)}
+@media (max-width:620px){.doors-2{grid-template-columns:minmax(0,1fr)}}
 .coll-chip{text-decoration:none;background:var(--beige)}
 .next{border-top:1px solid var(--line);padding-top:26px}
 /* real covers */
@@ -637,8 +647,13 @@ const RS_CREDIT = `Based on the original 2017 research of Leah McConaughey, Ed.D
 const COLLECTIONS = [
  {id:"new-to-this-work", title:"New to This Work", tag:"Start Here", blurb:"Small, doable first steps from teachers who started where you are", tone:"sage", icon:"sprout",
   stories:["getting-back-to-the-classroom-i-wanted","stepping-back-so-students-can-step-up","a-small-shift-that-gets-students-thinking","less-telling-more-thinking","concept-before-content","they-already-knew-more-than-i-thought"]},
- {id:"meaning-making-101", title:"Meaning Making 101", tag:"Video Series", blurb:"A self-paced tutorial series that walks you through meaning making, step by step", tone:"sky", icon:"play", series:true, fb:"101",
+ /* Meaning Making 101 is a starting page with two doors: learn on your own, or learn with a group */
+ {id:"meaning-making-101", title:"Meaning Making 101", tag:"Start Here", blurb:"How will you learn this? Choose your path: on your own, or with a group", tone:"sky", icon:"compass", stories:[],
+  hub:["meaning-making-101-on-your-own","meaning-making-101-with-a-group"]},
+ {id:"meaning-making-101-on-your-own", title:"Meaning Making 101: On Your Own", door:"On my own", tag:"Self-Paced Video Series", blurb:"A self-paced tutorial series that walks you through meaning making, step by step", tone:"sky", icon:"play", series:true, fb:"101", inHub:"meaning-making-101",
   stories:[], resources:["r-meaning-making-101-the-why","r-meaning-making-101-the-how-part-1","r-meaning-making-101-the-how-part-iia","r-meaning-making-101-the-how-part-iib","r-meaning-making-101-leahs-thinking"]},
+ {id:"meaning-making-101-with-a-group", title:"Meaning Making 101: With a Group", door:"With a group", tag:"For Teams and Facilitators", blurb:"Shared experiences for exploring meaning making with colleagues, or for leading your team through it", tone:"peach", icon:"people", inHub:"meaning-making-101",
+  stories:[], resources:[]},
  {id:"meaning-making-201", title:"Meaning Making 201", tag:"Video Series", blurb:"Go deeper: analyze real lessons and discover what every lesson needs for students to make meaning", tone:"peach", icon:"play", series:true, fb:"201",
   stories:[], resources:["r-meaning-making-201-the-why","r-meaning-making-201-the-how","r-meaning-making-201-the-what","r-meaning-making-201-leahs-thinking"]},
  {id:"research-series", title:"Research Series", tag:"Original Research", blurb:"Six short slideshows from Leah and Paul\u2019s original research on designing authentic student tasks", tone:"navy", icon:"bookicon", series:true, unit:"slideshows", research:true, leaders:true,
@@ -781,7 +796,7 @@ function wireRows(root){
 }
 function collectionHTML(c){
   const n = c.stories.filter(x=>bySlug[x]).length, nr = (c.resources||[]).filter(x=>resBySlug[x]).length;
-  const count = c.series ? `${nr} ${c.unit||"tutorials"}` : [n?`${n} stories`:"", nr?`${nr} resources`:""].filter(Boolean).join(" · ");
+  const count = c.hub ? `${c.hub.length} paths` : c.series ? `${nr} ${c.unit||"tutorials"}` : [n?`${n} stories`:"", nr?`${nr} resources`:""].filter(Boolean).join(" · ");
   return `<a class="coll tone-${c.tone}" href="#c-${c.id}" data-coll="${c.id}">
     <span class="coll-icon">${CICONS[c.icon]}</span>
     ${c.tag?`<span class="coll-tag">${esc(c.tag)}</span>`:""}
@@ -790,8 +805,10 @@ function collectionHTML(c){
     <span class="coll-count">${count} →</span>
   </a>`;
 }
-const hasItems = c => c.stories.some(x=>bySlug[x]) || (c.resources||[]).some(x=>resBySlug[x]);
-const collRow = (list=COLLECTIONS, title="Curated Collections", sub="Start with what you need") => rowHTML("coll-"+title.length, title, sub, list.filter(hasItems).map(collectionHTML).join(""));
+const collById = id => COLLECTIONS.find(x=>x.id===id);
+const hasItems = c => c.hub ? c.hub.some(id=>hasItems(collById(id))) : (c.stories.some(x=>bySlug[x]) || (c.resources||[]).some(x=>resBySlug[x]));
+/* Collections inside a starting page (inHub) show only through their starting page */
+const collRow = (list=COLLECTIONS, title="Curated Collections", sub="Start with what you need") => rowHTML("coll-"+title.length, title, sub, list.filter(c=>!c.inHub && hasItems(c)).map(collectionHTML).join(""));
 const SEARCH_ICON = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#038FDD" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>`;
 
 const app = document.getElementById("app");
@@ -1023,12 +1040,33 @@ function renderAbout(){
 }
 
 /* ---------- COLLECTION, STORY, RESOURCE pages ---------- */
+function doorHTML(d){
+  const ready = hasItems(d);
+  const n = (d.resources||[]).filter(x=>resBySlug[x]).length + d.stories.filter(x=>bySlug[x]).length;
+  const inner = `<span class="coll-icon">${CICONS[d.icon]}</span><span class="door-q">${esc(d.door)}</span>
+    <span class="coll-title">${esc(d.title)}</span><span class="coll-blurb">${esc(d.blurb)}</span>
+    <span class="coll-count">${ready?`${n} ${d.series?(d.unit||"tutorials"):"items"} →`:"Coming soon"}</span>`;
+  return ready ? `<a class="coll door tone-${d.tone}" href="#c-${d.id}" data-coll="${d.id}">${inner}</a>`
+               : `<div class="coll door soon tone-${d.tone}">${inner}</div>`;
+}
 function renderCollection(c){
+  const hub = c.inHub && collById(c.inHub);
+  if(c.hub){
+    app.innerHTML = `<article class="wrap story">
+      <a class="back" href="#stories" data-go="stories">← Back to the library</a>
+      <div class="coll-hero tone-${c.tone}"><span class="coll-icon">${CICONS[c.icon]}</span><div><div class="eyebrow">${c.tag?esc(c.tag)+" · ":""}Curated Collection</div><h1>${esc(c.title)}</h1><p>Same ideas, two ways in. Choose the path that fits how you will learn.</p></div></div>
+      <h2 class="door-h">How will you learn this?</h2>
+      <div class="doors-2">${c.hub.map(id=>doorHTML(collById(id))).join("")}</div>
+    </article>`;
+    return;
+  }
+  const sib = hub && hub.hub.map(collById).find(x=>x.id!==c.id && hasItems(x));
   const list = c.stories.map(x=>bySlug[x]).filter(Boolean);
   const rlist = (c.resources||[]).map(x=>resBySlug[x]).filter(Boolean);
   app.innerHTML = `<article class="wrap story">
-    <a class="back" href="#stories" data-go="stories">← Back to the library</a>
+    ${hub?`<a class="back" href="#c-${hub.id}" data-coll="${hub.id}">← Back to ${esc(hub.title)}</a>`:`<a class="back" href="#stories" data-go="stories">← Back to the library</a>`}
     <div class="coll-hero tone-${c.tone}"><span class="coll-icon">${CICONS[c.icon]}</span><div><div class="eyebrow">${c.tag?esc(c.tag)+" · ":""}Curated Collection</div><h1>${esc(c.title)}</h1><p>${esc(c.blurb)}</p></div></div>
+    ${sib?`<a class="other-path" href="#c-${sib.id}" data-coll="${sib.id}">${c.series?"Learning with colleagues?":"Learning on your own?"} Try <b>${esc(sib.title)}</b> →</a>`:""}
     ${c.fb?proofHTML(FEEDBACK[c.fb]):""}
     ${TESTIMONIALS.some(t=>(t.colls||[]).includes(c.id))?`<div class="testi-grid">${TESTIMONIALS.filter(t=>(t.colls||[]).includes(c.id)).map(t=>testimonialHTML(t,true)).join("")}</div>`:""}
     ${rlist.length?`<div class="tryit-grid">${rlist.map(resourceHTML).join("")}</div>`:""}
@@ -1139,7 +1177,7 @@ const FEEDBACK = {
   "I used to think that one missing component was not that big of a deal. Now I see that it is."
  ]}
 };
-const SERIES_META = {"101":{name:"Meaning Making 101", total:5}, "201":{name:"Meaning Making 201", total:4}};
+const SERIES_META = {"101":{name:"Meaning Making 101: On Your Own", total:5}, "201":{name:"Meaning Making 201", total:4}};
 const whoFor = F => `Educator, ${F.course} participant`;
 let proofTimer;
 function proofHTML(F){
