@@ -1146,9 +1146,7 @@ function videoEmbed(link){
 }
 /* Google Slides decks play right on the page. Primary Link can be the "Publish to web" link
    (…/d/e/2PACX…/pub or /pubembed) or a regular share link (…/d/<id>/edit). */
-const SLIDE_EMBEDS = {
-  "The Case for Authenticity": "https://docs.google.com/presentation/d/e/2PACX-1vRCQSYIRRkGy2047D83YQ7fKkAMlm6PfjS_hldkLtqj-n1vquSEwxPhD5aTwtMb7Q/pubembed?start=false&loop=false&delayms=60000"
-};
+const SLIDE_EMBEDS = {};
 const slidesFull = u => u.includes("/preview") ? u.replace("/preview","/view") : u.includes("/pubembed") ? u.replace("/pubembed","/pub") : u.replace("/embed","/present");
 function slidesEmbed(r){
   const pub = (r.link||"").match(/docs\.google\.com\/presentation\/d\/e\/([\w-]+)\/pub/i);
