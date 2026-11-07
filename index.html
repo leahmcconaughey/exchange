@@ -427,6 +427,10 @@ nav.main .nav-sub{font-weight:400;opacity:.85}
 .ask-btn:hover{background:var(--navy);color:#fff}
 .coll-time{margin-top:8px!important;font-weight:700;font-size:15px}
 </style>
+<!-- GoatCounter analytics: no cookies, no sign-in. Pages are counted by the router below. -->
+<script>window.goatcounter={no_onload:true};window.__gcq=[];
+function gcCount(o){try{if(window.__gcq)window.__gcq.push(o);else window.goatcounter.count(o);}catch(e){}}</script>
+<script data-goatcounter="https://learningworks.goatcounter.com/count" async src="//gc.zgo.at/count.js" onload="var q=window.__gcq||[];window.__gcq=null;q.forEach(function(o){gcCount(o)})"></script>
 </head>
 <body>
 <header class="site">
@@ -1177,7 +1181,7 @@ function mountVideo(s){
       playerVars: {rel:0, playsinline:1, modestbranding:1},
       events: {
         onReady: ()=>wrap.classList.add("ready"),
-        onStateChange: e=>{ if(e.data===1 || e.data===3) wrap.classList.add("playing"); }
+        onStateChange: e=>{ if(e.data===1 || e.data===3){ if(!wrap.classList.contains("playing")) gcCount({path:"Video play: "+s.title, title:s.slug||"", event:true}); wrap.classList.add("playing"); } }
       }
     });
   }).catch(fallback);
@@ -1436,6 +1440,9 @@ function route(){
   else if(bySlug[h]){ renderStory(bySlug[h]); navKey="home"; }
   else if(resBySlug[h]){ renderResource(resBySlug[h]); navKey="home"; }
   else { renderHome(); navKey="home"; }
+  const PAGE_NAMES = {"":"Home", stories:"Stories", resources:"Resources", leaders:"For Leaders & Coaches", voices:"Voices", about:"About"};
+  const gcTitle = PAGE_NAMES[h] !== undefined ? PAGE_NAMES[h] : c ? "Collection: "+c.title : bySlug[h] ? "Story: "+bySlug[h].title : resBySlug[h] ? "Resource: "+resBySlug[h].title : "Home";
+  gcCount({path: "/" + (PAGES[h]||c||bySlug[h]||resBySlug[h] ? h : ""), title: gcTitle});
   document.querySelectorAll("nav.main a").forEach(a=>a.classList.toggle("on", a.dataset.nav===navKey));
   window.scrollTo(0,0);
 }
@@ -1450,6 +1457,17 @@ document.addEventListener("click",e=>{
 document.addEventListener("click",e=>{ document.querySelectorAll("details.multi[open]").forEach(d=>{ if(!d.contains(e.target)) d.open=false; }); });
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") document.querySelectorAll("details.multi[open]").forEach(d=>{ d.open=false; d.querySelector("summary").focus(); }); });
 window.addEventListener("hashchange",route);
+/* Count clicks on downloads, PDFs, outside links, and email buttons as GoatCounter events */
+document.addEventListener("click",e=>{
+  const a = e.target.closest("a[href]"); if(!a) return;
+  const raw = a.getAttribute("href")||"";
+  let name = "";
+  if(a.dataset.mail) name = "Email: " + ({question:"Ask a question", resource:"Request a resource", work:"Work with us"}[a.dataset.mail] || a.dataset.mail);
+  else if(raw.startsWith("mailto:")) name = "Email: info";
+  else if(isPdf(raw)) name = (a.hasAttribute("download") ? "Download PDF: " : "Open PDF: ") + decodeURIComponent(raw.split("/").pop().split(/[?#]/)[0]);
+  else if(/^https?:/i.test(raw) && new URL(raw).host !== location.host) name = "Open link: " + new URL(raw).host.replace(/^www\./,"") + new URL(raw).pathname.replace(/\/$/,"");
+  if(name) gcCount({path: name.slice(0,200), title: (location.hash.slice(1) || "home"), event: true});
+}, true);
 route();
 
 }
