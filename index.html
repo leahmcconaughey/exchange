@@ -1080,6 +1080,7 @@ function renderCollection(c){
     <div class="coll-hero tone-${c.tone}"><span class="coll-icon">${CICONS[c.icon]}</span><div><div class="eyebrow">${c.tag?esc(c.tag)+" · ":""}Curated Collection</div><h1>${esc(c.title)}</h1><p>${esc(c.blurb)}</p></div></div>
     ${sib?`<a class="other-path" href="#c-${sib.id}" data-coll="${sib.id}">${c.series?"Learning with colleagues?":"Learning on your own?"} Try <b>${esc(sib.title)}</b> →</a>`:""}
     ${c.fb?proofHTML(FEEDBACK[c.fb]):""}
+    ${c.id==="watching-yourself-teach"?recordHTML():""}
     ${TESTIMONIALS.some(t=>(t.colls||[]).includes(c.id))?`<div class="testi-grid">${TESTIMONIALS.filter(t=>(t.colls||[]).includes(c.id)).map(t=>testimonialHTML(t,true)).join("")}</div>`:""}
     ${rlist.length?`<div class="tryit-grid">${rlist.map(resourceHTML).join("")}</div>`:""}
     ${list.length?`<div class="grid">${list.map(cardHTML).join("")}</div>`:""}
@@ -1129,6 +1130,7 @@ function renderStory(s){
     ${s.video?`<div class="player yt-wrap" id="ytwrap"><div class="yt-frame"><div id="yt"></div></div><div class="yt-cover" aria-hidden="true">${coverHTML(s)}</div></div>`:`<a class="player" href="${esc(s.link)}" target="_blank" rel="noopener">${coverHTML(s)}</a>`}
     <p class="desc">${esc(s.summary)}</p>
     ${notesHTML(s)}
+    ${isWYT(s)?recordHTML():""}
     <div class="where">${esc(s.places.slice().reverse().join(" · "))}</div>
     ${s.allTags.length?`<div class="chips">${s.allTags.map(t=>`<button class="chip" data-tag="${esc(t)}">${esc(t)}</button>`).join("")}</div>`:""}
     ${inColls.length?`<div class="chips">${inColls.map(c=>`<a class="chip coll-chip" href="#c-${c.id}" data-coll="${c.id}">In collection: ${esc(c.title)}</a>`).join("")}</div>`:""}
@@ -1288,6 +1290,10 @@ function slidesEmbed(r){
 const isPdf = l => /\.pdf(\?|#|$)/i.test(l||"");
 const BLUEPRINT_PDF = "docs/Engagement-Blueprint.pdf";
 const CLASSVOICE_URL = "https://classvoice.net", PRECHECK_PDF = "docs/Pre-Check-Guide.pdf";
+const recordHTML = () => `<section class="precheck"><div><div class="eyebrow">Try it in your classroom</div>
+  <p>Not ready to film yourself? Start by listening. The <b>Record feature in ClassVoice</b> captures your lesson so you can hear what students heard: a mirror for what happens in your classroom.</p></div>
+  <div class="pdf-actions"><a class="open-res" href="${CLASSVOICE_URL}" target="_blank" rel="noopener">Open ClassVoice ↗</a></div></section>`;
+const isWYT = o => (o.focus||[]).some(f=>f.toLowerCase()==="watching yourself teach");
 const precheckHTML = () => `<section class="precheck"><div><div class="eyebrow">Get feedback on your lesson</div>
   <p>Run your lesson through <b>Pre-Check in ClassVoice</b> to see which Engagement Blueprint components are present and what to strengthen.</p></div>
   <div class="pdf-actions"><a class="open-res" href="${CLASSVOICE_URL}" target="_blank" rel="noopener">Open ClassVoice ↗</a>${PRECHECK_PDF&&!/pre-check/i.test(location.hash)?`<a class="open-res ghost" href="${PRECHECK_PDF}" target="_blank" rel="noopener">Pre-Check Guide ↗</a>`:""}</div></section>`;
@@ -1336,6 +1342,7 @@ function renderResource(r){
     ${(embed||slides)?nextUpHTML(q):""}
     <p class="desc">${esc(r.summary)}</p>
     ${notesHTML(r, "As you watch")}
+    ${isWYT(r)?recordHTML():""}
     ${rs?`<div class="rs-credit">${RS_CREDIT}${rs.wiggins?`<br><br>${WIGGINS_CREDIT}`:""}</div>`:""}
     ${sr&&sr.blueprint?`<a class="bp-link" href="${BLUEPRINT_PDF}" target="_blank" rel="noopener"><b>Keep the Engagement Blueprint open while you watch</b><span>Opens the PDF in a new tab ↗</span></a>`:""}
     ${chaptersHTML(sr || (CHAPTERS[chapKey(r.title)] ? {chapters:CHAPTERS[chapKey(r.title)]} : null), embed)}
