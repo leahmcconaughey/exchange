@@ -245,6 +245,9 @@ nav.main a.on{color:var(--navy)}
 .testi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:18px}
 .voices{display:grid;gap:12px;padding-bottom:20px;margin-top:20px}
 .more-voices{font-weight:800;color:var(--blue);text-decoration:none;justify-self:start}
+.notes-list{background:#fff;border:1px solid var(--line);border-left:6px solid var(--blue);border-radius:14px;padding:18px 22px}
+.notes-list h2{margin:0 0 8px;font-size:20px;font-weight:800}
+.notes-list ul{margin:0;padding-left:20px;display:grid;gap:8px;line-height:1.55}
 .series-note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55;color:var(--muted)}
 .series-note b{color:var(--navy)}
 .res-icon{width:44px;height:44px;border-radius:12px;background:var(--beige);color:var(--blue);display:grid;place-items:center;flex:none}
@@ -589,7 +592,7 @@ function buildData(rows){
     let subDistrict = "";
     parts = parts.map((x,i)=>{ const m = i>0 && x.match(/^(?:community school\s*)?(?:district|d)\s*#?\s*(\d+)$/i); if(m){ subDistrict = "District "+(+m[1]); return subDistrict; } return x; });
     const schoolName = parts.slice(1).find(x=>x!==subDistrict) || "";
-    const base = {title:get(r,"Title"), link:get(r,"Primary Link"), related:get(r,"Related Content"), summary:get(r,"Short Summary"),
+    const base = {title:get(r,"Title"), link:get(r,"Primary Link"), related:get(r,"Related Content"), notes:get(r,"Additional Context"), summary:get(r,"Short Summary"),
       grades, subjects:subjectsRaw.map(nice), focus:focusRaw.map(nice), places:parts, org:parts[0]||"", school:schoolName, subDistrict: subDistrict ? `${parts[0]==="New York City Public Schools"?"NYC ":""}${subDistrict}` : "",
       img: imgPath(get(r,"Featured Image URL")) || COVER_BY_TITLE[coverKey(get(r,"Title"))] || "",
       gradeLevels: parseGrades(get(r,"Grade Level"))};
@@ -1102,6 +1105,15 @@ function pairedFor(s){
   const mine = (s.related||"").split(/[\n;|]+/).map(x=>x.trim()).filter(Boolean);
   return stories.filter(o => o!==s && (mine.some(v=>matches(o,v)) || (o.related||"").split(/[\n;|]+/).map(x=>x.trim()).some(v=>matches(s,v))));
 }
+/* "Additional Context" column: one point per line (a leading -, *, or bullet is optional).
+   An optional first line ending in ":" becomes the heading. Shown under the description. */
+function notesHTML(o){
+  let lines = (o.notes||"").split(/\r?\n/).map(x=>x.replace(/^\s*[-*\u2022]\s*/,"").trim()).filter(Boolean);
+  if(!lines.length) return "";
+  let head = "What teachers said";
+  if(lines[0].endsWith(":") && lines.length>1){ head = lines.shift().slice(0,-1); }
+  return `<section class="notes-list"><h2>${esc(head)}</h2><ul>${lines.map(l=>`<li>${esc(l)}</li>`).join("")}</ul></section>`;
+}
 function renderStory(s){
   const paired = pairedFor(s);
   const related = stories.filter(o=>o!==s && !paired.includes(o)).map(o=>({o,n:o.allTags.filter(t=>s.allTags.includes(t)&&t!=="Meaning Making"&&t!=="Engagement Blueprint").length + (o.pathway===s.pathway?0.5:0)}))
@@ -1114,6 +1126,7 @@ function renderStory(s){
     <h1>${esc(s.title)}</h1>
     ${s.video?`<div class="player yt-wrap" id="ytwrap"><div class="yt-frame"><div id="yt"></div></div><div class="yt-cover" aria-hidden="true">${coverHTML(s)}</div></div>`:`<a class="player" href="${esc(s.link)}" target="_blank" rel="noopener">${coverHTML(s)}</a>`}
     <p class="desc">${esc(s.summary)}</p>
+    ${notesHTML(s)}
     <div class="where">${esc(s.places.slice().reverse().join(" · "))}</div>
     ${s.allTags.length?`<div class="chips">${s.allTags.map(t=>`<button class="chip" data-tag="${esc(t)}">${esc(t)}</button>`).join("")}</div>`:""}
     ${inColls.length?`<div class="chips">${inColls.map(c=>`<a class="chip coll-chip" href="#c-${c.id}" data-coll="${c.id}">In collection: ${esc(c.title)}</a>`).join("")}</div>`:""}
