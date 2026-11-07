@@ -425,6 +425,7 @@ nav.main .nav-sub{font-weight:400;opacity:.85}
 .coll-title.tagged{margin-top:0}
 .testi-grid.three{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
 .ask-btn:hover{background:var(--navy);color:#fff}
+.coll-time{margin-top:8px!important;font-weight:700;font-size:15px}
 </style>
 </head>
 <body>
@@ -653,7 +654,7 @@ const COLLECTIONS = [
  /* Meaning Making 101 is a starting page with two doors: learn on your own, or learn with a group */
  {id:"meaning-making-101", title:"Meaning Making 101", tag:"Start Here", blurb:"How will you learn this? Choose your path: on your own, or with a group", tone:"sky", icon:"compass", stories:[],
   hub:["meaning-making-101-on-your-own","meaning-making-101-with-a-group"]},
- {id:"meaning-making-101-on-your-own", title:"Meaning Making 101: On Your Own", door:"On my own", tag:"Self-Paced Video Series", blurb:"A self-paced tutorial series that walks you through meaning making, step by step", tone:"sky", icon:"play", series:true, fb:"101", inHub:"meaning-making-101",
+ {id:"meaning-making-101-on-your-own", title:"Meaning Making 101: On Your Own", door:"On my own", tag:"Self-Paced Video Series", time:"about 2 hours", timeNote:"About 2 hours in all, at your own pace. Take one tutorial at a time and come back whenever you are ready for the next.", blurb:"A self-paced tutorial series that walks you through meaning making, step by step", tone:"sky", icon:"play", series:true, fb:"101", inHub:"meaning-making-101",
   stories:[], resources:["r-meaning-making-101-the-why","r-meaning-making-101-the-how-part-1","r-meaning-making-101-the-how-part-iia","r-meaning-making-101-the-how-part-iib","r-meaning-making-101-leahs-thinking"]},
  {id:"meaning-making-101-with-a-group", title:"Meaning Making 101: With a Group", door:"With a group", tag:"For Teams and Facilitators", blurb:"Shared experiences for exploring meaning making with colleagues, or for leading your team through it", tone:"peach", icon:"people", inHub:"meaning-making-101",
   stories:[], resources:[]},
@@ -808,7 +809,7 @@ function wireRows(root){
 }
 function collectionHTML(c){
   const n = c.stories.filter(x=>bySlug[x]).length, nr = (c.resources||[]).filter(x=>resBySlug[x]).length;
-  const count = c.hub ? `${c.hub.length} paths` : c.series ? `${nr} ${c.unit||"tutorials"}` : [n?`${n} stories`:"", nr?`${nr} resources`:""].filter(Boolean).join(" · ");
+  const count = c.hub ? `${c.hub.length} paths` : c.series ? `${nr} ${c.unit||"tutorials"}${c.time?` · ${c.time}`:""}` : [n?`${n} stories`:"", nr?`${nr} resources`:""].filter(Boolean).join(" · ");
   return `<a class="coll tone-${c.tone}" href="#c-${c.id}" data-coll="${c.id}">
     <span class="coll-icon">${CICONS[c.icon]}</span>
     ${c.tag?`<span class="coll-tag">${esc(c.tag)}</span>`:""}
@@ -1057,7 +1058,7 @@ function doorHTML(d){
   const n = (d.resources||[]).filter(x=>resBySlug[x]).length + d.stories.filter(x=>bySlug[x]).length;
   const inner = `<span class="coll-icon">${CICONS[d.icon]}</span><span class="door-q">${esc(d.door)}</span>
     <span class="coll-title">${esc(d.title)}</span><span class="coll-blurb">${esc(d.blurb)}</span>
-    <span class="coll-count">${ready?`${n} ${d.series?(d.unit||"tutorials"):"items"} →`:"Coming soon"}</span>`;
+    <span class="coll-count">${ready?`${n} ${d.series?(d.unit||"tutorials"):"items"}${d.time?` · ${d.time}`:""} →`:"Coming soon"}</span>`;
   return ready ? `<a class="coll door tone-${d.tone}" href="#c-${d.id}" data-coll="${d.id}">${inner}</a>`
                : `<div class="coll door soon tone-${d.tone}">${inner}</div>`;
 }
@@ -1077,7 +1078,7 @@ function renderCollection(c){
   const rlist = (c.resources||[]).map(x=>resBySlug[x]).filter(Boolean);
   app.innerHTML = `<article class="wrap story">
     ${hub?`<a class="back" href="#c-${hub.id}" data-coll="${hub.id}">← Back to ${esc(hub.title)}</a>`:`<a class="back" href="#stories" data-go="stories">← Back to the library</a>`}
-    <div class="coll-hero tone-${c.tone}"><span class="coll-icon">${CICONS[c.icon]}</span><div><div class="eyebrow">${c.tag?esc(c.tag)+" · ":""}Curated Collection</div><h1>${esc(c.title)}</h1><p>${esc(c.blurb)}</p></div></div>
+    <div class="coll-hero tone-${c.tone}"><span class="coll-icon">${CICONS[c.icon]}</span><div><div class="eyebrow">${c.tag?esc(c.tag)+" · ":""}Curated Collection</div><h1>${esc(c.title)}</h1><p>${esc(c.blurb)}</p>${c.timeNote?`<p class="coll-time">${esc(c.timeNote)}</p>`:""}</div></div>
     ${sib?`<a class="other-path" href="#c-${sib.id}" data-coll="${sib.id}">${c.series?"Learning with colleagues?":"Learning on your own?"} Try <b>${esc(sib.title)}</b> →</a>`:""}
     ${c.fb?proofHTML(FEEDBACK[c.fb]):""}
     ${c.id==="watching-yourself-teach"?recordHTML():""}
