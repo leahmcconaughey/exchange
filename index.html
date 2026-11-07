@@ -663,6 +663,10 @@ const COLLECTIONS = [
  {id:"professional-learning", title:"Professional Learning", tag:"Teachers Learning Together", blurb:"Learning walks, coaching, peer visits, and other ways educators grow together", tone:"sage", icon:"people", leaders:true,
   byTag:["Professional Learning","Learning Walks","Collective Practice","Teacher As Professional","Coaching"],
   stories:["opening-the-classroom-door","seeing-the-big-picture","seeing-classrooms-differently"]},
+ /* FPS Level Up: any Farmington story tagged "Level Up" in the sheet joins automatically. Link: exchange.learning-works.org/#c-fps-level-up */
+ {id:"fps-level-up", title:"FPS Level Up", tag:"Farmington Public Schools", blurb:"Farmington teachers open their classroom doors to learn from one another, not to evaluate", tone:"sky", icon:"people",
+  byTag:["Level Up"], byOrg:"Farmington Public Schools",
+  stories:["opening-the-classroom-door"]},
  {id:"elementary-in-action", title:"Elementary in Action", tag:"Pre-K to 5", blurb:"Meaningful learning with our youngest students, from counting breakfast supplies to saving the bees", tone:"peach", icon:"sprout", byGrades:BANDS["Elementary"],
   stories:[]},
  {id:"use-tomorrow", title:"Use Tomorrow", blurb:"Ready-to-use ideas", tone:"blue", icon:"spark",
@@ -702,7 +706,7 @@ const RES_TYPE_ICON = {"Slideshow":"bookicon","Slides":"bookicon","Tutorial":"pl
 const resBySlug = Object.fromEntries(resources.map(r=>[r.slug,r]));
 COLLECTIONS.forEach(c=>{ if(c.byResTag){ const tags = c.byResTag.map(t=>t.toLowerCase()); c.resources = [...new Set([...(c.resources||[]), ...resources.filter(r=>r.focus.some(f=>tags.includes(f.toLowerCase()))).map(r=>r.slug)])]; } });
 COLLECTIONS.forEach(c=>{ if(c.byGrades) c.stories = [...new Set([...c.stories, ...stories.filter(s=>s.grades.includes("Elementary") || s.gradeLevels.some(g=>c.byGrades.includes(g))).map(s=>s.slug)])]; });
-COLLECTIONS.forEach(c=>{ if(c.byTag){ const tags = [].concat(c.byTag); c.stories = [...new Set([...c.stories, ...stories.filter(s=>s.focus.some(f=>tags.includes(f))).map(s=>s.slug)])]; } });
+COLLECTIONS.forEach(c=>{ if(c.byTag){ const tags = [].concat(c.byTag); c.stories = [...new Set([...c.stories, ...stories.filter(s=>(!c.byOrg || s.org===c.byOrg) && s.focus.some(f=>tags.includes(f))).map(s=>s.slug)])]; } });
 function resourceHTML(r){
   return `<a class="res" href="#${r.slug}" data-res="${r.slug}">
     ${r.img?`<div class="cover real res-cover"><img src="${r.img}" alt="" loading="lazy"></div>`:""}
