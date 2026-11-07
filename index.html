@@ -671,7 +671,7 @@ const COLLECTIONS = [
   byTag:["Level-Up","Level Up"], byOrg:"Farmington Public Schools",
   /* Leah's FPS Level-Up Feedback PDF in Google Drive; replace it with Manage versions so this link never changes */
   drivePdf:"1av4i7mqidXLbJdhfGNRHuJVQF6lD6tMD", drivePdfTitle:"What Teachers Say About Level-Up",
-  stories:["opening-the-classroom-door"]},
+  stories:["opening-the-classroom-door","teaching-is-a-team-sport"]},
  {id:"elementary-in-action", title:"Elementary in Action", tag:"Pre-K to 5", blurb:"Meaningful learning with our youngest students, from counting breakfast supplies to saving the bees", tone:"peach", icon:"sprout", byGrades:BANDS["Elementary"],
   stories:[]},
  {id:"use-tomorrow", title:"Use Tomorrow", blurb:"Ready-to-use ideas", tone:"blue", icon:"spark",
@@ -1078,10 +1078,10 @@ function renderCollection(c){
     <div class="coll-hero tone-${c.tone}"><span class="coll-icon">${CICONS[c.icon]}</span><div><div class="eyebrow">${c.tag?esc(c.tag)+" · ":""}Curated Collection</div><h1>${esc(c.title)}</h1><p>${esc(c.blurb)}</p></div></div>
     ${sib?`<a class="other-path" href="#c-${sib.id}" data-coll="${sib.id}">${c.series?"Learning with colleagues?":"Learning on your own?"} Try <b>${esc(sib.title)}</b> →</a>`:""}
     ${c.fb?proofHTML(FEEDBACK[c.fb]):""}
-    ${c.drivePdf?`<div class="pdf-view" style="margin:22px 0"><iframe src="https://drive.google.com/file/d/${c.drivePdf}/preview" title="${esc(c.drivePdfTitle||c.title)}" loading="lazy"></iframe></div>`:""}
     ${TESTIMONIALS.some(t=>(t.colls||[]).includes(c.id))?`<div class="testi-grid">${TESTIMONIALS.filter(t=>(t.colls||[]).includes(c.id)).map(t=>testimonialHTML(t,true)).join("")}</div>`:""}
     ${rlist.length?`<div class="tryit-grid">${rlist.map(resourceHTML).join("")}</div>`:""}
     ${list.length?`<div class="grid">${list.map(cardHTML).join("")}</div>`:""}
+    ${c.drivePdf?`<div class="pdf-view" style="margin:22px 0"><iframe src="https://drive.google.com/file/d/${c.drivePdf}/preview" title="${esc(c.drivePdfTitle||c.title)}" loading="lazy"></iframe></div>`:""}
     ${c.research?researchCollExtra():""}
   </article>`;
   wireProof();
