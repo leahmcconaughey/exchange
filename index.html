@@ -1143,7 +1143,6 @@ function renderStory(s){
     ${notesHTML(s)}
     ${isWYT(s)?recordHTML():""}
     <div class="where">${esc(s.places.slice().reverse().join(" · "))}</div>
-    ${s.allTags.length?`<div class="chips">${s.allTags.map(t=>`<button class="chip" data-tag="${esc(t)}">${esc(t)}</button>`).join("")}</div>`:""}
     ${inColls.length?`<div class="chips">${inColls.map(c=>`<a class="chip coll-chip" href="#c-${c.id}" data-coll="${c.id}">In collection: ${esc(c.title)}</a>`).join("")}</div>`:""}
     ${testimonialsFor(s).map(t=>testimonialHTML(t,false)).join("")}
     ${paired.length?`<section class="paired"><div class="eyebrow orange">Part of the same story</div><h2>${paired.length>1?"Watch these too":"Watch this one too"}</h2><div class="mini-grid">${paired.map(o=>`<a class="mini" href="#${o.slug}" data-story="${o.slug}">${coverHTML(o)}<div class="mb"><div class="mt">${esc(o.title)}</div><div class="who">${esc(o.places.slice().reverse().join(" · "))}</div></div></a>`).join("")}</div></section>`:""}
@@ -1367,7 +1366,6 @@ function renderResource(r){
       <div class="pdf-actions"><a class="open-res" href="${esc(pdfLink)}" download>Download PDF ↓</a><a class="open-res ghost" href="${esc(pdfLink)}" target="_blank" rel="noopener">Open in a new tab ↗</a></div>`:""}
     ${/engagement blueprint|pre-check/i.test(r.title)?precheckHTML():""}
     ${r.link&&!embed&&!pdf&&!slides?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
-    ${sr?"":`<div class="chips">${r.focus.map(t=>`<span class="chip static">${esc(t)}</span>`).join("")}</div>`}
     ${companionHTML(sr)}
     ${(()=>{ const rel = relatedFor(r).filter(o=>!(sr&&sr.videos&&o.video&&sr.videos.some(v=>v[0]===o.video))); return rel.length?`<section class="paired"><div class="eyebrow orange">Goes well with</div><h2>${rel.length>1?"Watch these too":"Watch this too"}</h2><div class="tryit-grid">${rel.map(o=>o.pathway===undefined?resourceHTML(o):cardHTML(o)).join("")}</div></section>`:""; })()}
     ${sr?quoteCardHTML(FEEDBACK[sr.s].quotes[(sr.part-1)%FEEDBACK[sr.s].quotes.length],FEEDBACK[sr.s]):""}
