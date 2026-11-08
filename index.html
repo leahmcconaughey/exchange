@@ -607,6 +607,21 @@ const ordinal = n => n+(["th","st","nd","rd"][(n%100>10&&n%100<14)?0:(n%10)]||"t
 const gradeWords = gl => gl.map(g=>g==="K"?"kindergarten k":g==="Young 5s"?"young 5s young fives":g==="Pre-K"?"pre-k prek":`grade ${g} ${ordinal(+g)} grade`).join(" ");
 const gradeLabel = g => /^\d+$/.test(g) ? ordinal(+g) : g;
 
+/* Focus filter groups: many sheet tags roll up into a few filter choices.
+   Tags in the sheet stay as they are (collections still use them); only the Focus dropdown is simplified.
+   A tag not listed here still works in search, it just does not appear in the dropdown. */
+const FOCUS_GROUPS = [
+ ["Engagement Blueprint", ["engagement blueprint","cognitive engagement","student engagement","instruction","participation structures","small groups","cooperative learning","jigsaw","productive struggle","classroom dialogue","quality dialogue index","questioning"]],
+ ["Meaning Making & Transfer", ["meaning making","amt","transfer"]],
+ ["Authentic Learning", ["authentic learning","altmodel","technology"]],
+ ["Unit & Task Design", ["unit design","task design"]],
+ ["Professional Learning", ["professional learning","coaching","learning walks","collective practice","teacher as professional","leadership","system change","reflection","watching yourself teach","research","level-up","level up"]],
+ ["ClassVoice", ["classvoice","pre-check","record"]],
+ ["Student Voice", ["student voice"]],
+ ["Quick Recaps", ["quick recap","5 minutes or less"]]
+];
+const areasOf = focus => FOCUS_GROUPS.filter(([,tags])=>focus.some(f=>tags.includes(f.toLowerCase()))).map(([n])=>n);
+const areaFor = tag => (FOCUS_GROUPS.find(([,tags])=>tags.includes(String(tag).toLowerCase()))||[])[0];
 function buildData(rows){
   const head = rows[0].map(h=>h.trim());
   const col = name => head.indexOf(name);
@@ -630,7 +645,7 @@ function buildData(rows){
     if(type==="resource"){
       const audience = get(r,"Audience").split(",").map(s=>s.trim()).filter(Boolean).map(nice);
       const rtype = nice(get(r,"Resource Type").toLowerCase()) || "Resource";
-      R.push({...base, type:rtype, audience, slug:"r-"+slug(base.title), allTags:[...grades,...base.subjects,...base.focus,rtype,...audience]});
+      R.push({...base, areas:areasOf(base.focus), type:rtype, audience, slug:"r-"+slug(base.title), allTags:[...grades,...base.subjects,...base.focus,rtype,...audience]});
     } else {
       const i = S.length, pathway = get(r,"Pathway") || "Classroom";
       const coaching = focusRaw.includes("coaching");
@@ -639,7 +654,7 @@ function buildData(rows){
       const spec = subjectsRaw.find(s=>SPECIFIC.includes(s));
       let sLine = spec ? nice(spec) : subjectsRaw.slice(0,2).map(nice).join(" & ");
       if(!sLine){ const f = focusRaw.find(x=>!["meaning making","engagement blueprint","student voice"].includes(x)); sLine = f ? nice(f) : "Leadership"; }
-      S.push({...base, pathway, slug:slug(base.title), label: student?"STUDENT VOICE":coaching?"COACHING STORY":pathway.toUpperCase()+" STORY",
+      S.push({...base, areas:areasOf(base.focus), pathway, slug:slug(base.title), label: student?"STUDENT VOICE":coaching?"COACHING STORY":pathway.toUpperCase()+" STORY",
         gLine, sLine, template:TEMPLATES[i%TEMPLATES.length], icon:pickIcon(subjectsRaw, focusRaw, pathway), video:ytId(base.link),
         allTags:[...grades,...base.subjects,...base.focus]});
     }
@@ -760,12 +775,12 @@ const uniq = arr => [...new Set(arr)].sort((a,b)=>a.localeCompare(b));
 const STORY_FILTERS = {
   grade: {label:"Grade level", all:"All grades", multi:true, opts:GRADE_ORDER.filter(g=>BANDS["K–12"].includes(g) || stories.some(s=>s.gradeLevels.includes(g)))},
   subject: {label:"Subject", all:"All subjects", opts:uniq(stories.flatMap(s=>s.subjects))},
-  focus: {label:"Focus", all:"All focus areas", opts:uniq(stories.flatMap(s=>s.focus))},
+  focus: {label:"Focus", all:"All focus areas", opts:FOCUS_GROUPS.map(g=>g[0]).filter(n=>stories.some(s=>s.areas.includes(n)))},
   place: {label:"District", all:"All districts", opts:uniq(stories.map(s=>s.org).filter(Boolean)), subs:uniq(stories.map(s=>s.subDistrict).filter(Boolean)).sort((a,b)=>(+a.replace(/\D/g,""))-(+b.replace(/\D/g,"")))},
   level: {label:"Where it happens", all:"Anywhere", opts:["Classroom","School","District"]}
 };
 const RES_FILTERS = {
-  focus: {label:"Focus", all:"All focus areas", opts:uniq(resources.flatMap(r=>r.focus))},
+  focus: {label:"Focus", all:"All focus areas", opts:FOCUS_GROUPS.map(g=>g[0]).filter(n=>resources.some(r=>r.areas.includes(n)))},
   type: {label:"Type", all:"All types", opts:uniq(resources.map(r=>r.type))},
   audience: {label:"Who it's for", all:"Everyone", opts:uniq(resources.flatMap(r=>r.audience))},
   grade: {label:"Grade level", all:"All grades", multi:true, opts:GRADE_ORDER.filter(g=>resources.some(r=>r.gradeLevels.includes(g)))},
@@ -775,12 +790,12 @@ const blank = F => Object.fromEntries([["q",""],...Object.keys(F).map(k=>[k, F[k
 const isActive = st => Object.values(st).some(v=>Array.isArray(v) ? v.length : v);
 let fState = {stories: blank(STORY_FILTERS), resources: blank(RES_FILTERS)};
 try{
-  const saved = JSON.parse(localStorage.getItem("lw-filters4")||"null");
+  const saved = JSON.parse(localStorage.getItem("lw-filters5")||"null");
   if(saved) fState = {stories:{...fState.stories,...saved.stories}, resources:{...fState.resources,...saved.resources}};
   ["stories","resources"].forEach(t=>{ if(!Array.isArray(fState[t].grade)) fState[t].grade = []; });
 }catch(e){}
 if(fState.stories.place && ![...STORY_FILTERS.place.opts, ...STORY_FILTERS.place.subs].includes(fState.stories.place)) fState.stories.place = "";
-const save = ()=>{ try{ localStorage.setItem("lw-filters4", JSON.stringify(fState)); }catch(e){} };
+const save = ()=>{ try{ localStorage.setItem("lw-filters5", JSON.stringify(fState)); }catch(e){} };
 
 /* Search ignores small question words, so "What is meaning making?" finds meaning making */
 const STOP = new Set("a an the is are was were be what whats how do does did i can could should would to of for in on at about and or with my me we our you your it its this that these those between difference learn find show me tell use using".split(" "));
@@ -805,13 +820,13 @@ const textHit = (q, hay) => {
 function storyMatch(s, st){
   if(st.grade.length && !s.gradeLevels.some(g=>st.grade.includes(g))) return false;
   if(st.subject && !s.subjects.includes(st.subject)) return false;
-  if(st.focus && !s.focus.includes(st.focus)) return false;
+  if(st.focus && !s.areas.includes(st.focus)) return false;
   if(st.place && s.org!==st.place && s.subDistrict!==st.place) return false;
   if(st.level && s.pathway!==st.level) return false;
   return textHit(st.q, s.title+" "+s.summary+" "+s.allTags.join(" ")+" "+s.places.join(" ")+" "+gradeWords(s.gradeLevels));
 }
 function resMatch(r, st){
-  if(st.focus && !r.focus.includes(st.focus)) return false;
+  if(st.focus && !r.areas.includes(st.focus)) return false;
   if(st.type && r.type!==st.type) return false;
   if(st.audience && !r.audience.includes(st.audience)) return false;
   if(st.grade.length && !r.gradeLevels.some(g=>st.grade.includes(g))) return false;
@@ -1139,6 +1154,7 @@ function tagToFilter(t){
   const F = STORY_FILTERS;
   if(BANDS[t]){ fState.stories = {...blank(F), grade: BANDS[t].filter(g=>F.grade.opts.includes(g))}; save(); go("stories"); return; }
   const k = F.subject.opts.includes(t)?"subject":"focus";
+  if(k==="focus"){ const a = areaFor(t); if(!a) return; t = a; }
   fState.stories = {...blank(F),[k]:t}; save(); go("stories");
 }
 /* Paired stories: a story's "Related Content" cell can name another story by its title
