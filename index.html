@@ -1146,7 +1146,7 @@ function renderStory(s){
     ${testimonialsFor(s).map(t=>testimonialHTML(t,false)).join("")}
     ${paired.length?`<section class="paired"><div class="eyebrow orange">Part of the same story</div><h2>${paired.length>1?"Watch these too":"Watch this one too"}</h2><div class="mini-grid">${paired.map(o=>`<a class="mini" href="#${o.slug}" data-story="${o.slug}">${coverHTML(o)}<div class="mb"><div class="mt">${esc(o.title)}</div><div class="who">${esc(o.places.slice().reverse().join(" · "))}</div></div></a>`).join("")}</div></section>`:""}
     ${decks.length?`<section class="research"><div class="eyebrow">Go deeper</div><h2>The research behind this story</h2><p class="rnote">From the LearningWorks Research Series, based on Leah and Paul\u2019s original research</p><div class="tryit-grid">${decks.map(resourceHTML).join("")}</div><a class="link" style="color:#fff;font-weight:800" href="#c-research-series" data-coll="research-series">See the full Research Series →</a></section>`:""}
-    ${(()=>{ const rr = relatedFor(s).filter(o=>o.pathway===undefined); return rr.length?`<section class="tryit"><div class="eyebrow">Goes well with</div><h2>${rr.length>1?"Related resources":"Related resource"}</h2><div class="tryit-grid">${rr.map(resourceHTML).join("")}</div></section>`:""; })()}
+    ${(()=>{ const rr = relatedFor(s).filter(o=>o.pathway===undefined); return rr.length?`<section class="tryit"><h2>Goes well with</h2><div class="tryit-grid">${rr.map(resourceHTML).join("")}</div></section>`:""; })()}
     ${tryIt.length?`<section class="tryit"><div class="eyebrow">Your next step</div><h2>Try it yourself</h2><div class="tryit-grid">${tryIt.map(resourceHTML).join("")}</div></section>`:""}
     <div class="next">${rowHTML("related","More stories like this","", related.map(cardHTML).join(""))}</div>
   </article>`;
@@ -1364,7 +1364,7 @@ function renderResource(r){
     ${/engagement blueprint|pre-check/i.test(r.title)?precheckHTML():""}
     ${r.link&&!embed&&!pdf&&!slides?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
     ${companionHTML(sr)}
-    ${(()=>{ const rel = relatedFor(r).filter(o=>!(sr&&sr.videos&&o.video&&sr.videos.some(v=>v[0]===o.video))); return rel.length?`<section class="paired"><div class="eyebrow orange">Goes well with</div><h2>${rel.length>1?"Watch these too":"Watch this too"}</h2><div class="tryit-grid">${rel.map(o=>o.pathway===undefined?resourceHTML(o):cardHTML(o)).join("")}</div></section>`:""; })()}
+    ${(()=>{ const rel = relatedFor(r).filter(o=>!(sr&&sr.videos&&o.video&&sr.videos.some(v=>v[0]===o.video))); return rel.length?`<section class="paired"><h2>Goes well with</h2><div class="tryit-grid">${rel.map(o=>o.pathway===undefined?resourceHTML(o):cardHTML(o)).join("")}</div></section>`:""; })()}
     ${sr?quoteCardHTML(FEEDBACK[sr.s].quotes[(sr.part-1)%FEEDBACK[sr.s].quotes.length],FEEDBACK[sr.s]):""}
     ${seeIt.length?`<div class="next">${rowHTML("seeit","See it in practice", rs?"Classroom stories that bring this research to life":"Stories that bring this work to life", seeIt.map(cardHTML).join(""))}</div>`:""}
     ${!(embed||slides)?nextUpHTML(q):""}
