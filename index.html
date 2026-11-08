@@ -318,6 +318,10 @@ nav.main a.on{color:var(--navy)}
 .player.video iframe{width:100%;height:100%;border:0;display:block}
 /* Videos and video covers on story and resource pages: about two-thirds width, centered. Slide decks stay full width. */
 .story > .player:not(.slides){max-width:760px;width:100%;justify-self:center}
+.vid-side{display:grid;grid-template-columns:minmax(0,760px) minmax(0,1fr);gap:36px;align-items:center}
+.vid-side .side-text{display:grid;gap:18px;align-content:center}
+.vid-side .side-text .desc{margin:0}
+@media (max-width:900px){.vid-side{grid-template-columns:1fr;gap:18px}}
 .player.slides{aspect-ratio:1920/1109;background:#05415B;cursor:default}
 .player.slides iframe{width:100%;height:100%;border:0;display:block}
 .rs-credit{background:#fff;border:1px solid var(--line);border-left:6px solid var(--orange);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55}
@@ -1295,6 +1299,8 @@ function slidesEmbed(r){
   return id ? `https://docs.google.com/presentation/d/${id[1]}/embed?start=false&loop=false&delayms=60000` : "";
 }
 const isPdf = l => /\.pdf(\?|#|$)/i.test(l||"");
+/* Video on the left, summary on the right (trial: ClassVoice Record Guide). Stacks on small screens. */
+const SIDE_LAYOUT = r => /classvoice record/i.test(r.title||"");
 const BLUEPRINT_PDF = "docs/Engagement-Blueprint.pdf";
 const CLASSVOICE_URL = "https://classvoice.net", PRECHECK_PDF = "docs/Pre-Check-Guide.pdf", RECORD_PDF = "docs/Record-Guide.pdf";
 const recordHTML = () => `<section class="precheck"><div><div class="eyebrow">Try it in your classroom</div>
@@ -1337,17 +1343,19 @@ function renderResource(r){
   const pdf = !!pdfLink;
   const slides = slidesEmbed(r);
   const rs = researchFor(r);
+  const side = SIDE_LAYOUT(r);
   const seeIt = rs ? rs.storySlugs.map(x=>bySlug[x]).filter(Boolean) : stories.filter(s=>s.focus.some(f=>r.focus.includes(f))).slice(0,8);
   app.innerHTML = `<article class="wrap story">
     ${q?`<a class="back" href="#c-${q.c.id}" data-coll="${q.c.id}">← Back to ${esc(q.c.title)}</a>`:`<a class="back" href="#resources" data-go="resources">← Back to Resources</a>`}
     <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_META[sr.s].name} · Part ${sr.part} of ${SERIES_META[sr.s].total}`:rs?`Research Series · Part ${rs.part} of ${RESEARCH.length}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
     ${seriesStripHTML(q)}
     ${sr?statLineHTML(FEEDBACK[sr.s]):""}
-    ${embed?`<div class="player video"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`:""}
+    ${embed&&side?`<div class="vid-side">${`<div class="player video"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`}<div class="side-text"><p class="desc">${esc(r.summary)}</p>${pdf?`<div class="pdf-actions"><a class="open-res" href="${esc(pdfLink)}" download>Download the guide ↓</a></div>`:""}</div></div>`:""}
+    ${embed&&!side?`<div class="player video"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`:""}
     ${slides?`<div class="player slides"><iframe src="${esc(slides)}" title="${esc(r.title)} slideshow" allowfullscreen loading="lazy"></iframe></div>
       <div class="slide-actions"><a class="open-res ghost" href="${esc(slidesFull(slides))}" target="_blank" rel="noopener">Open full screen ↗</a></div>`:""}
     ${(embed||slides)?nextUpHTML(q):""}
-    <p class="desc">${esc(r.summary)}</p>
+    ${side?"":`<p class="desc">${esc(r.summary)}</p>`}
     ${notesHTML(r, "As you watch")}
     ${isWYT(r)?recordHTML():""}
     ${rs?`<div class="rs-credit">${RS_CREDIT}${rs.wiggins?`<br><br>${WIGGINS_CREDIT}`:""}</div>`:""}
