@@ -1405,7 +1405,8 @@ function renderResource(r){
     ${/engagement blueprint|pre-check/i.test(r.title)?precheckHTML():""}
     ${r.link&&!embed&&!pdf&&!slides?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
     ${companionHTML(sr)}
-    ${(()=>{ const rel = relatedFor(r).filter(o=>!(sr&&sr.videos&&o.video&&sr.videos.some(v=>v[0]===o.video))); return rel.length?`<section class="paired"><h2>Goes well with</h2><div class="tryit-grid">${rel.map(o=>o.pathway===undefined?resourceHTML(o):cardHTML(o)).join("")}</div></section>`:""; })()}
+    ${(()=>{ const cvPage = !!classVoiceHTML(r);
+      const rel = relatedFor(r).filter(o=>!(sr&&sr.videos&&o.video&&sr.videos.some(v=>v[0]===o.video))).filter(o=>!(cvPage && resBySlug[o.slug]===o && classVoiceHTML(o))); return rel.length?`<section class="paired"><h2>Goes well with</h2><div class="tryit-grid">${rel.map(o=>o.pathway===undefined?resourceHTML(o):cardHTML(o)).join("")}</div></section>`:""; })()}
     ${sr?quoteCardHTML(FEEDBACK[sr.s].quotes[(sr.part-1)%FEEDBACK[sr.s].quotes.length],FEEDBACK[sr.s]):""}
     ${seeIt.length?`<div class="next">${rowHTML("seeit","See it in practice", rs?"Classroom stories that bring this research to life":"Stories that bring this work to life", seeIt.map(cardHTML).join(""))}</div>`:""}
     ${!(embed||slides)?nextUpHTML(q):""}
