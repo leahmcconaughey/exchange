@@ -436,7 +436,7 @@ nav.main .nav-sub{font-weight:400;opacity:.85}
 .cv-box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 20px;display:grid;gap:12px}
 .cv-box p{margin:0;font-size:16px}
 .cv-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.cv-tool{display:grid;gap:3px;padding:14px 16px;border:1.5px solid var(--line);border-radius:12px;text-decoration:none;color:var(--navy);background:var(--beige)}
+.cv-tool{display:grid;align-content:start;gap:3px;padding:14px 16px;border:1.5px solid var(--line);border-radius:12px;text-decoration:none;color:var(--navy);background:var(--beige)}
 a.cv-tool:hover{border-color:var(--blue)}
 .cv-tool.here{border-color:var(--navy);background:#fff}
 .cv-tool .cv-when{font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
@@ -1279,8 +1279,10 @@ function chaptersHTML(sr, embed){
     `<li><button type="button" class="chap" data-t="${toSec(t)}"><span class="ct">${esc(t)}</span><span>${esc(label)}</span></button></li>`).join("")}</ol></section>`;
 }
 function wireChapters(embed){
-  const frame = app.querySelector(".player.video iframe"); if(!frame) return;
+  if(!app.querySelector(".player.video iframe, #ytwrap")) return;
   app.querySelectorAll(".chap").forEach(b=>b.onclick=()=>{
+    const frame = app.querySelector(".player.video iframe") || app.querySelector("#ytwrap iframe"); if(!frame) return;
+    const wrap = app.querySelector("#ytwrap"); if(wrap) wrap.classList.add("playing");
     frame.src = embed.replace(/([?&])t=\d+s?&?/,"$1") + (embed.includes("?")?"&":"?") + "t=" + b.dataset.t + "&autoplay=1";
     app.querySelectorAll(".chap").forEach(x=>x.classList.toggle("on", x===b));
     frame.scrollIntoView({behavior:"smooth", block:"center"});
@@ -1371,6 +1373,13 @@ function classVoiceHTML(r){
       ${tool("rec","Record","After you teach","Record a lesson and get feedback on how the classroom talk actually went.",rec)}
     </div></section>`;
 }
+/* YouTube draws its own title bar over the player before play. When a resource has a cover,
+   show the cover over the player (clicks pass through to YouTube), the same way story pages do. */
+const resYtId = (r, embed) => /youtube/.test(embed||"") && r.img ? ytId(embed) : "";
+function resPlayerHTML(r, embed){
+  if(resYtId(r, embed)) return `<div class="player yt-wrap" id="ytwrap"><div class="yt-frame"><div id="yt"></div></div><div class="yt-cover" aria-hidden="true"><div class="cover real"><img src="${r.img}" alt=""></div></div></div>`;
+  return `<div class="player video"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+}
 function renderResource(r){
   const sr = seriesFor(r);
   const q = seqFor(r);
@@ -1387,8 +1396,8 @@ function renderResource(r){
     <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_META[sr.s].name} · Part ${sr.part} of ${SERIES_META[sr.s].total}`:rs?`Research Series · Part ${rs.part} of ${RESEARCH.length}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
     ${seriesStripHTML(q)}
     ${sr?statLineHTML(FEEDBACK[sr.s]):""}
-    ${embed&&side?`<div class="vid-side">${`<div class="player video"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`}<div class="side-text"><p class="desc">${esc(r.summary)}</p>${pdf?`<div class="pdf-actions"><a class="open-res" href="${esc(pdfLink)}" download>Download the guide ↓</a></div>`:""}</div></div>`:""}
-    ${embed&&!side?`<div class="player video"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`:""}
+    ${embed&&side?`<div class="vid-side">${resPlayerHTML(r, embed)}<div class="side-text"><p class="desc">${esc(r.summary)}</p>${pdf?`<div class="pdf-actions"><a class="open-res" href="${esc(pdfLink)}" download>Download the guide ↓</a></div>`:""}</div></div>`:""}
+    ${embed&&!side?resPlayerHTML(r, embed):""}
     ${slides?`<div class="player slides"><iframe src="${esc(slides)}" title="${esc(r.title)} slideshow" allowfullscreen loading="lazy"></iframe></div>
       <div class="slide-actions"><a class="open-res ghost" href="${esc(slidesFull(slides))}" target="_blank" rel="noopener">Open full screen ↗</a></div>`:""}
     ${(embed||slides)?nextUpHTML(q):""}
@@ -1413,6 +1422,7 @@ function renderResource(r){
   </article>`;
   wireRows(app);
   if(embed) wireChapters(embed);
+  { const yid = resYtId(r, embed); if(yid) mountVideo({video:yid, link:"https://youtu.be/"+yid, title:r.title, img:r.img}); }
 }
 
 /* ---------- testimonials (shared with permission) ----------
