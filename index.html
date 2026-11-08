@@ -1358,9 +1358,9 @@ function relatedFor(item){
 /* ClassVoice is one app with two tools; say so at the top of each tool's page */
 function classVoiceHTML(r){
   const t = r.title.toLowerCase();
-  const which = /pre-?check/.test(t) ? "pre" : /record/.test(t) && /classvoice/.test(t) ? "rec" : "";
+  const which = /pre-?check guide/.test(t) ? "pre" : /^(classvoice )?record guide$/.test(t.trim()) ? "rec" : "";
   if(!which) return "";
-  const pre = resources.find(x=>/pre-?check guide/i.test(x.title)), rec = resources.find(x=>/classvoice record guide/i.test(x.title));
+  const pre = resources.find(x=>/pre-?check guide/i.test(x.title)), rec = resources.find(x=>/^(classvoice )?record guide$/i.test(x.title.trim()));
   const tool = (key, name, when, desc, res) => {
     const here = key===which;
     const inner = `<span class="cv-when">${when}</span><b>${name}</b><span>${desc}</span>${here?`<em>You are here</em>`:res?`<em>See the guide →</em>`:""}`;
