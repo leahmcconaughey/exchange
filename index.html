@@ -318,6 +318,7 @@ nav.main a.on{color:var(--navy)}
 .player.video iframe{width:100%;height:100%;border:0;display:block}
 /* Videos and video covers on story and resource pages: about two-thirds width, centered. Slide decks stay full width. */
 .story > .player:not(.slides){max-width:760px;width:100%;justify-self:center}
+/* Video on the left, text on the right, tops aligned. Stacks on small screens. */
 .vid-side{display:grid;grid-template-columns:minmax(0,760px) minmax(0,1fr);gap:36px;align-items:start}
 .vid-side .side-text{display:grid;gap:18px;align-content:start}
 .vid-side .side-text .desc{margin:0}
@@ -1138,11 +1139,9 @@ function renderStory(s){
   app.innerHTML = `<article class="wrap story">
     <a class="back" href="#stories" data-go="stories">← Back to Stories</a>
     <h1>${esc(s.title)}</h1>
-    ${s.video?`<div class="player yt-wrap" id="ytwrap"><div class="yt-frame"><div id="yt"></div></div><div class="yt-cover" aria-hidden="true">${coverHTML(s)}</div></div>`:`<a class="player" href="${esc(s.link)}" target="_blank" rel="noopener">${coverHTML(s)}</a>`}
-    <p class="desc">${esc(s.summary)}</p>
+    <div class="vid-side">${s.video?`<div class="player yt-wrap" id="ytwrap"><div class="yt-frame"><div id="yt"></div></div><div class="yt-cover" aria-hidden="true">${coverHTML(s)}</div></div>`:`<a class="player" href="${esc(s.link)}" target="_blank" rel="noopener">${coverHTML(s)}</a>`}<div class="side-text"><p class="desc">${esc(s.summary)}</p><div class="where">${esc(s.places.slice().reverse().join(" · "))}</div></div></div>
     ${notesHTML(s)}
     ${isWYT(s)?recordHTML():""}
-    <div class="where">${esc(s.places.slice().reverse().join(" · "))}</div>
     ${inColls.length?`<div class="chips">${inColls.map(c=>`<a class="chip coll-chip" href="#c-${c.id}" data-coll="${c.id}">In collection: ${esc(c.title)}</a>`).join("")}</div>`:""}
     ${testimonialsFor(s).map(t=>testimonialHTML(t,false)).join("")}
     ${paired.length?`<section class="paired"><div class="eyebrow orange">Part of the same story</div><h2>${paired.length>1?"Watch these too":"Watch this one too"}</h2><div class="mini-grid">${paired.map(o=>`<a class="mini" href="#${o.slug}" data-story="${o.slug}">${coverHTML(o)}<div class="mb"><div class="mt">${esc(o.title)}</div><div class="who">${esc(o.places.slice().reverse().join(" · "))}</div></div></a>`).join("")}</div></section>`:""}
@@ -1298,8 +1297,6 @@ function slidesEmbed(r){
   return id ? `https://docs.google.com/presentation/d/${id[1]}/embed?start=false&loop=false&delayms=60000` : "";
 }
 const isPdf = l => /\.pdf(\?|#|$)/i.test(l||"");
-/* Video on the left, summary on the right (trial: ClassVoice Record Guide). Stacks on small screens. */
-const SIDE_LAYOUT = r => /classvoice record/i.test(r.title||"");
 const BLUEPRINT_PDF = "docs/Engagement-Blueprint.pdf";
 const CLASSVOICE_URL = "https://classvoice.net", PRECHECK_PDF = "docs/Pre-Check-Guide.pdf", RECORD_PDF = "docs/Record-Guide.pdf";
 const recordHTML = () => `<section class="precheck"><div><div class="eyebrow">Try it in your classroom</div>
@@ -1342,7 +1339,7 @@ function renderResource(r){
   const pdf = !!pdfLink;
   const slides = slidesEmbed(r);
   const rs = researchFor(r);
-  const side = SIDE_LAYOUT(r);
+  const side = !!embed;
   const seeIt = rs ? rs.storySlugs.map(x=>bySlug[x]).filter(Boolean) : stories.filter(s=>s.focus.some(f=>r.focus.includes(f))).slice(0,8);
   app.innerHTML = `<article class="wrap story">
     ${q?`<a class="back" href="#c-${q.c.id}" data-coll="${q.c.id}">← Back to ${esc(q.c.title)}</a>`:`<a class="back" href="#resources" data-go="resources">← Back to Resources</a>`}
