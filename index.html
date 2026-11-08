@@ -446,6 +446,10 @@ a.cv-tool:hover{border-color:var(--blue)}
 .cv-tool.here em{color:var(--navy)}
 @media (max-width:620px){.cv-tools{grid-template-columns:minmax(0,1fr)}}
 .side-actions{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+.yt-wrap.thumb{aspect-ratio:16/9}
+.yt-cover .yt-thumb{display:block;width:100%;height:100%;object-fit:cover}
+.yt-cover .yt-play{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;background:var(--navy);box-shadow:0 0 0 6px rgba(255,255,255,.85)}
+.yt-cover .yt-play::after{content:"";position:absolute;left:31px;top:24px;border-left:22px solid #fff;border-top:14px solid transparent;border-bottom:14px solid transparent}
 </style>
 <!-- GoatCounter analytics: no cookies, no sign-in. Pages are counted by the router below. -->
 <script>window.goatcounter={no_onload:true};window.__gcq=[];
@@ -1376,9 +1380,12 @@ function classVoiceHTML(r){
 }
 /* YouTube draws its own title bar over the player before play. When a resource has a cover,
    show the cover over the player (clicks pass through to YouTube), the same way story pages do. */
-const resYtId = (r, embed) => /youtube/.test(embed||"") && r.img ? ytId(embed) : "";
+const resYtId = (r, embed) => /youtube/.test(embed||"") ? ytId(embed) : "";
+/* No cover image? Use the video's own thumbnail (no YouTube title bar) with a play button */
 function resPlayerHTML(r, embed){
-  if(resYtId(r, embed)) return `<div class="player yt-wrap" id="ytwrap"><div class="yt-frame"><div id="yt"></div></div><div class="yt-cover" aria-hidden="true"><div class="cover real"><img src="${r.img}" alt=""></div></div></div>`;
+  const id = resYtId(r, embed);
+  if(id && r.img) return `<div class="player yt-wrap" id="ytwrap"><div class="yt-frame"><div id="yt"></div></div><div class="yt-cover" aria-hidden="true"><div class="cover real"><img src="${r.img}" alt=""></div></div></div>`;
+  if(id) return `<div class="player yt-wrap thumb" id="ytwrap"><div class="yt-frame"><div id="yt"></div></div><div class="yt-cover" aria-hidden="true"><img class="yt-thumb" src="https://i.ytimg.com/vi/${id}/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${id}/hqdefault.jpg'" alt=""><span class="yt-play"></span></div></div>`;
   return `<div class="player video"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
 }
 /* "Slides Link" column: a Google Slides or Drive share link becomes a direct PDF download */
@@ -1431,7 +1438,7 @@ function renderResource(r){
   </article>`;
   wireRows(app);
   if(embed) wireChapters(embed);
-  { const yid = resYtId(r, embed); if(yid) mountVideo({video:yid, link:"https://youtu.be/"+yid, title:r.title, img:r.img}); }
+  { const yid = resYtId(r, embed); if(yid) mountVideo({video:yid, link:"https://youtu.be/"+yid, title:r.title, img:r.img || `https://i.ytimg.com/vi/${yid}/hqdefault.jpg`}); }
 }
 
 /* ---------- testimonials (shared with permission) ----------
