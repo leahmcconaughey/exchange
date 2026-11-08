@@ -316,7 +316,8 @@ nav.main a.on{color:var(--navy)}
 .player{border:0;padding:0;width:100%;cursor:pointer;background:none;font:inherit}
 .player.video{aspect-ratio:16/9;background:#000;max-width:100%}
 .player.video iframe{width:100%;height:100%;border:0;display:block}
-.player.video.compact{max-width:760px;justify-self:center}
+/* Videos and video covers on story and resource pages: about two-thirds width, centered. Slide decks stay full width. */
+.story > .player:not(.slides){max-width:760px;width:100%;justify-self:center}
 .player.slides{aspect-ratio:1920/1109;background:#05415B;cursor:default}
 .player.slides iframe{width:100%;height:100%;border:0;display:block}
 .rs-credit{background:#fff;border:1px solid var(--line);border-left:6px solid var(--orange);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55}
@@ -1294,8 +1295,6 @@ function slidesEmbed(r){
   return id ? `https://docs.google.com/presentation/d/${id[1]}/embed?start=false&loop=false&delayms=60000` : "";
 }
 const isPdf = l => /\.pdf(\?|#|$)/i.test(l||"");
-/* Smaller video on these pages (trial: ClassVoice Record Guide). Viewers can still go full screen. */
-const COMPACT_VIDEO = r => /classvoice record/i.test(r.title||"");
 const BLUEPRINT_PDF = "docs/Engagement-Blueprint.pdf";
 const CLASSVOICE_URL = "https://classvoice.net", PRECHECK_PDF = "docs/Pre-Check-Guide.pdf", RECORD_PDF = "docs/Record-Guide.pdf";
 const recordHTML = () => `<section class="precheck"><div><div class="eyebrow">Try it in your classroom</div>
@@ -1344,7 +1343,7 @@ function renderResource(r){
     <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_META[sr.s].name} · Part ${sr.part} of ${SERIES_META[sr.s].total}`:rs?`Research Series · Part ${rs.part} of ${RESEARCH.length}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
     ${seriesStripHTML(q)}
     ${sr?statLineHTML(FEEDBACK[sr.s]):""}
-    ${embed?`<div class="player video${COMPACT_VIDEO(r)?" compact":""}"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`:""}
+    ${embed?`<div class="player video"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`:""}
     ${slides?`<div class="player slides"><iframe src="${esc(slides)}" title="${esc(r.title)} slideshow" allowfullscreen loading="lazy"></iframe></div>
       <div class="slide-actions"><a class="open-res ghost" href="${esc(slidesFull(slides))}" target="_blank" rel="noopener">Open full screen ↗</a></div>`:""}
     ${(embed||slides)?nextUpHTML(q):""}
@@ -1356,7 +1355,6 @@ function renderResource(r){
     ${chaptersHTML(sr || (CHAPTERS[chapKey(r.title)] ? {chapters:CHAPTERS[chapKey(r.title)]} : null), embed)}
     ${sr&&sr.blueprint?precheckHTML():""}
     ${sr?`<div class="series-note">${SERIES_NOTE}</div>`:""}
-    ${r.audience.length&&!sr?`<div class="where">For ${esc(r.audience.join(", ").toLowerCase())}</div>`:""}
     ${pdf?`${embed?`<h2 class="pdf-h">The guide</h2>`:""}<div class="pdf-view"><iframe src="${esc(pdfLink)}#view=FitH" title="${esc(r.title)}" loading="lazy"></iframe></div>
       <div class="pdf-actions"><a class="open-res" href="${esc(pdfLink)}" download>Download PDF ↓</a><a class="open-res ghost" href="${esc(pdfLink)}" target="_blank" rel="noopener">Open in a new tab ↗</a></div>`:""}
     ${/engagement blueprint|pre-check/i.test(r.title)?precheckHTML():""}
