@@ -445,6 +445,7 @@ a.cv-tool:hover{border-color:var(--blue)}
 .cv-tool em{font-style:normal;font-weight:800;font-size:13.5px;color:var(--blue);margin-top:4px}
 .cv-tool.here em{color:var(--navy)}
 @media (max-width:620px){.cv-tools{grid-template-columns:minmax(0,1fr)}}
+.side-actions{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
 </style>
 <!-- GoatCounter analytics: no cookies, no sign-in. Pages are counted by the router below. -->
 <script>window.goatcounter={no_onload:true};window.__gcq=[];
@@ -616,7 +617,7 @@ function buildData(rows){
     let subDistrict = "";
     parts = parts.map((x,i)=>{ const m = i>0 && x.match(/^(?:community school\s*)?(?:district|d)\s*#?\s*(\d+)$/i); if(m){ subDistrict = "District "+(+m[1]); return subDistrict; } return x; });
     const schoolName = parts.slice(1).find(x=>x!==subDistrict) || "";
-    const base = {title:get(r,"Title"), link:get(r,"Primary Link"), related:get(r,"Related Content"), notes:get(r,"Additional Context"), summary:get(r,"Short Summary"),
+    const base = {title:get(r,"Title"), link:get(r,"Primary Link"), related:get(r,"Related Content"), notes:get(r,"Additional Context"), slides:get(r,"Slides Link"), summary:get(r,"Short Summary"),
       grades, subjects:subjectsRaw.map(nice), focus:focusRaw.map(nice), places:parts, org:parts[0]||"", school:schoolName, subDistrict: subDistrict ? `${parts[0]==="New York City Public Schools"?"NYC ":""}${subDistrict}` : "",
       img: imgPath(get(r,"Featured Image URL")) || COVER_BY_TITLE[coverKey(get(r,"Title"))] || "",
       gradeLevels: parseGrades(get(r,"Grade Level"))};
@@ -1380,6 +1381,14 @@ function resPlayerHTML(r, embed){
   if(resYtId(r, embed)) return `<div class="player yt-wrap" id="ytwrap"><div class="yt-frame"><div id="yt"></div></div><div class="yt-cover" aria-hidden="true"><div class="cover real"><img src="${r.img}" alt=""></div></div></div>`;
   return `<div class="player video"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
 }
+/* "Slides Link" column: a Google Slides or Drive share link becomes a direct PDF download */
+function slidesDownload(u){
+  const pres = (u||"").match(/docs\.google\.com\/presentation\/d\/([\w-]{20,})/);
+  if(pres) return `https://docs.google.com/presentation/d/${pres[1]}/export/pdf`;
+  const file = (u||"").match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]{20,})/);
+  if(file) return `https://drive.google.com/uc?export=download&id=${file[1]}`;
+  return u;
+}
 function renderResource(r){
   const sr = seriesFor(r);
   const q = seqFor(r);
@@ -1396,7 +1405,7 @@ function renderResource(r){
     <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_META[sr.s].name} · Part ${sr.part} of ${SERIES_META[sr.s].total}`:rs?`Research Series · Part ${rs.part} of ${RESEARCH.length}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
     ${seriesStripHTML(q)}
     ${sr?statLineHTML(FEEDBACK[sr.s]):""}
-    ${embed&&side?`<div class="vid-side">${resPlayerHTML(r, embed)}<div class="side-text"><p class="desc">${esc(r.summary)}</p>${pdf?`<div class="pdf-actions"><a class="open-res" href="${esc(pdfLink)}" download>Download the guide ↓</a></div>`:""}</div></div>`:""}
+    ${embed&&side?`<div class="vid-side">${resPlayerHTML(r, embed)}<div class="side-text"><p class="desc">${esc(r.summary)}</p>${pdf||r.slides?`<div class="pdf-actions side-actions">${pdf?`<a class="open-res" href="${esc(pdfLink)}" download>Download the guide ↓</a>`:""}${r.slides?`<a class="open-res ghost" href="${esc(slidesDownload(r.slides))}" target="_blank" rel="noopener">Download the video slides ↓</a>`:""}</div>`:""}</div></div>`:""}
     ${embed&&!side?resPlayerHTML(r, embed):""}
     ${slides?`<div class="player slides"><iframe src="${esc(slides)}" title="${esc(r.title)} slideshow" allowfullscreen loading="lazy"></iframe></div>
       <div class="slide-actions"><a class="open-res ghost" href="${esc(slidesFull(slides))}" target="_blank" rel="noopener">Open full screen ↗</a></div>`:""}
