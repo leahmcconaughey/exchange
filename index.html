@@ -1412,7 +1412,7 @@ function renderResource(r){
     <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_META[sr.s].name} · Part ${sr.part} of ${SERIES_META[sr.s].total}`:rs?`Research Series · Part ${rs.part} of ${RESEARCH.length}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
     ${seriesStripHTML(q)}
     ${sr?statLineHTML(FEEDBACK[sr.s]):""}
-    ${embed&&side?`<div class="vid-side">${resPlayerHTML(r, embed)}<div class="side-text"><p class="desc">${esc(r.summary)}</p>${pdf||r.slides?`<div class="pdf-actions side-actions">${pdf?`<a class="open-res" href="${esc(pdfLink)}" download>Download the one-pager ↓</a>`:""}${r.slides?`<a class="open-res ghost" href="${esc(slidesDownload(r.slides))}" ${/^https?:/i.test(r.slides)?`target="_blank" rel="noopener"`:"download"}>Download the video slides ↓</a>`:""}</div>`:""}</div></div>`:""}
+    ${embed&&side?`<div class="vid-side">${resPlayerHTML(r, embed)}<div class="side-text"><p class="desc">${esc(r.summary)}</p>${pdf||r.slides?`<div class="pdf-actions side-actions">${pdf?`<a class="open-res" href="${esc(pdfLink)}" download>Download the quick guide ↓</a>`:""}${r.slides?`<a class="open-res ghost" href="${esc(slidesDownload(r.slides))}" ${/^https?:/i.test(r.slides)?`target="_blank" rel="noopener"`:"download"}>Download the video slides ↓</a>`:""}</div>`:""}</div></div>`:""}
     ${embed&&!side?resPlayerHTML(r, embed):""}
     ${slides?`<div class="player slides"><iframe src="${esc(slides)}" title="${esc(r.title)} slideshow" allowfullscreen loading="lazy"></iframe></div>
       <div class="slide-actions"><a class="open-res ghost" href="${esc(slidesFull(slides))}" target="_blank" rel="noopener">Open full screen ↗</a></div>`:""}
