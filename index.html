@@ -778,6 +778,16 @@ const save = ()=>{ try{ localStorage.setItem("lw-filters4", JSON.stringify(fStat
 /* Search ignores small question words, so "What is meaning making?" finds meaning making */
 const STOP = new Set("a an the is are was were be what whats how do does did i can could should would to of for in on at about and or with my me we our you your it its this that these those between difference learn find show me tell use using".split(" "));
 const norm = s => s.toLowerCase().replace(/[’']/g,"").replace(/[-–—_/]+/g," ").replace(/[^a-z0-9 ]+/g," ");
+/* When searching, items whose title contains the search words come first
+   (title starts with them, then title contains all of them, then the rest) */
+function byTitleFirst(list, q){
+  if(!q || !q.trim()) return list;
+  const all = norm(q).split(/\s+/).filter(Boolean);
+  const words = all.filter(w=>!STOP.has(w)).length ? all.filter(w=>!STOP.has(w)) : all;
+  const phrase = words.join(" ");
+  const score = x => { const t = norm(x.title); return t.startsWith(phrase) ? 0 : t.includes(phrase) ? 1 : words.every(w=>t.includes(w)) ? 2 : 3; };
+  return list.map((x,i)=>({x,i,s:score(x)})).sort((a,b)=>a.s-b.s||a.i-b.i).map(o=>o.x);
+}
 const textHit = (q, hay) => {
   if(!q || !q.trim()) return true;
   const all = norm(q).split(/\s+/).filter(Boolean);
@@ -986,8 +996,8 @@ function renderLibrary(tab){
   });
   wireRows(app);
   function update(){
-    const sList = stories.filter(s=>storyMatch(s,fState.stories));
-    const rList = resources.filter(r=>resMatch(r,fState.resources));
+    const sList = byTitleFirst(stories.filter(s=>storyMatch(s,fState.stories)), fState.stories.q);
+    const rList = byTitleFirst(resources.filter(r=>resMatch(r,fState.resources)), fState.resources.q);
     app.querySelectorAll("select").forEach(sel=>sel.classList.toggle("set",!!sel.value));
     app.querySelectorAll("details.multi").forEach(d=>{
       const v = st[d.dataset.key];
