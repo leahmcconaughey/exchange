@@ -1412,7 +1412,7 @@ function renderResource(r){
     <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_META[sr.s].name} · Part ${sr.part} of ${SERIES_META[sr.s].total}`:rs?`Research Series · Part ${rs.part} of ${RESEARCH.length}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
     ${seriesStripHTML(q)}
     ${sr?statLineHTML(FEEDBACK[sr.s]):""}
-    ${embed&&side?`<div class="vid-side">${resPlayerHTML(r, embed)}<div class="side-text"><p class="desc">${esc(r.summary)}</p>${pdf||r.slides?`<div class="pdf-actions side-actions">${pdf?`<a class="open-res" href="${esc(pdfLink)}" download>Download the guide ↓</a>`:""}${r.slides?`<a class="open-res ghost" href="${esc(slidesDownload(r.slides))}" ${/^https?:/i.test(r.slides)?`target="_blank" rel="noopener"`:"download"}>Download the video slides ↓</a>`:""}</div>`:""}</div></div>`:""}
+    ${embed&&side?`<div class="vid-side">${resPlayerHTML(r, embed)}<div class="side-text"><p class="desc">${esc(r.summary)}</p>${pdf||r.slides?`<div class="pdf-actions side-actions">${pdf?`<a class="open-res" href="${esc(pdfLink)}" download>Download the one-pager ↓</a>`:""}${r.slides?`<a class="open-res ghost" href="${esc(slidesDownload(r.slides))}" ${/^https?:/i.test(r.slides)?`target="_blank" rel="noopener"`:"download"}>Download the video slides ↓</a>`:""}</div>`:""}</div></div>`:""}
     ${embed&&!side?resPlayerHTML(r, embed):""}
     ${slides?`<div class="player slides"><iframe src="${esc(slides)}" title="${esc(r.title)} slideshow" allowfullscreen loading="lazy"></iframe></div>
       <div class="slide-actions"><a class="open-res ghost" href="${esc(slidesFull(slides))}" target="_blank" rel="noopener">Open full screen ↗</a></div>`:""}
@@ -1425,7 +1425,7 @@ function renderResource(r){
     ${chaptersHTML(sr || (CHAPTERS[chapKey(r.title)] ? {chapters:CHAPTERS[chapKey(r.title)]} : null), embed)}
     ${sr&&sr.blueprint?precheckHTML():""}
     ${sr?`<div class="series-note">${SERIES_NOTE}</div>`:""}
-    ${pdf?`${embed?`<h2 class="pdf-h">The guide</h2>`:""}<div class="pdf-view"><iframe src="${esc(pdfLink)}#view=FitH" title="${esc(r.title)}" loading="lazy"></iframe></div>
+    ${pdf&&!embed?`<div class="pdf-view"><iframe src="${esc(pdfLink)}#view=FitH" title="${esc(r.title)}" loading="lazy"></iframe></div>
       <div class="pdf-actions"><a class="open-res" href="${esc(pdfLink)}" download>Download PDF ↓</a><a class="open-res ghost" href="${esc(pdfLink)}" target="_blank" rel="noopener">Open in a new tab ↗</a></div>`:""}
     ${/engagement blueprint|pre-check/i.test(r.title)?precheckHTML():""}
     ${r.link&&!embed&&!pdf&&!slides?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
