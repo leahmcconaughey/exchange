@@ -433,6 +433,18 @@ nav.main .nav-sub{font-weight:400;opacity:.85}
 .testi-grid.three{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
 .ask-btn:hover{background:var(--navy);color:#fff}
 .coll-time{margin-top:8px!important;font-weight:700;font-size:15px}
+.cv-box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 20px;display:grid;gap:12px}
+.cv-box p{margin:0;font-size:16px}
+.cv-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.cv-tool{display:grid;gap:3px;padding:14px 16px;border:1.5px solid var(--line);border-radius:12px;text-decoration:none;color:var(--navy);background:var(--beige)}
+a.cv-tool:hover{border-color:var(--blue)}
+.cv-tool.here{border-color:var(--navy);background:#fff}
+.cv-tool .cv-when{font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.cv-tool b{font-size:18px}
+.cv-tool span{font-size:14.5px}
+.cv-tool em{font-style:normal;font-weight:800;font-size:13.5px;color:var(--blue);margin-top:4px}
+.cv-tool.here em{color:var(--navy)}
+@media (max-width:620px){.cv-tools{grid-template-columns:minmax(0,1fr)}}
 </style>
 <!-- GoatCounter analytics: no cookies, no sign-in. Pages are counted by the router below. -->
 <script>window.goatcounter={no_onload:true};window.__gcq=[];
@@ -1331,6 +1343,24 @@ function relatedFor(item){
   const mine = refs(item), myKeys = keysOf(item);
   return [...stories, ...resources].filter(o => o!==item && (keysOf(o).some(k=>mine.includes(k)) || refs(o).some(k=>myKeys.includes(k))));
 }
+/* ClassVoice is one app with two tools; say so at the top of each tool's page */
+function classVoiceHTML(r){
+  const t = r.title.toLowerCase();
+  const which = /pre-?check/.test(t) ? "pre" : /record/.test(t) && /classvoice/.test(t) ? "rec" : "";
+  if(!which) return "";
+  const pre = resources.find(x=>/pre-?check guide/i.test(x.title)), rec = resources.find(x=>/classvoice record guide/i.test(x.title));
+  const tool = (key, name, when, desc, res) => {
+    const here = key===which;
+    const inner = `<span class="cv-when">${when}</span><b>${name}</b><span>${desc}</span>${here?`<em>You are here</em>`:res?`<em>See the guide →</em>`:""}`;
+    return here || !res ? `<div class="cv-tool${here?" here":""}">${inner}</div>` : `<a class="cv-tool" href="#${res.slug}" data-res="${res.slug}">${inner}</a>`;
+  };
+  return `<section class="cv-box" aria-label="About ClassVoice">
+    <p><b>ClassVoice</b> is one app with two tools: Pre-Check your lesson before you teach it, then Record how it goes and get feedback.</p>
+    <div class="cv-tools">
+      ${tool("pre","Pre-Check","Before you teach","Get feedback on your lesson plan against the Engagement Blueprint.",pre)}
+      ${tool("rec","Record","After you teach","Record your lesson and get feedback on how the classroom talk actually went.",rec)}
+    </div></section>`;
+}
 function renderResource(r){
   const sr = seriesFor(r);
   const q = seqFor(r);
@@ -1343,6 +1373,7 @@ function renderResource(r){
   const seeIt = rs ? rs.storySlugs.map(x=>bySlug[x]).filter(Boolean) : stories.filter(s=>s.focus.some(f=>r.focus.includes(f))).slice(0,8);
   app.innerHTML = `<article class="wrap story">
     ${q?`<a class="back" href="#c-${q.c.id}" data-coll="${q.c.id}">← Back to ${esc(q.c.title)}</a>`:`<a class="back" href="#resources" data-go="resources">← Back to Resources</a>`}
+    ${classVoiceHTML(r)}
     <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_META[sr.s].name} · Part ${sr.part} of ${SERIES_META[sr.s].total}`:rs?`Research Series · Part ${rs.part} of ${RESEARCH.length}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
     ${seriesStripHTML(q)}
     ${sr?statLineHTML(FEEDBACK[sr.s]):""}
