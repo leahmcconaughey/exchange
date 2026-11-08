@@ -1352,7 +1352,7 @@ function renderResource(r){
       <div class="slide-actions"><a class="open-res ghost" href="${esc(slidesFull(slides))}" target="_blank" rel="noopener">Open full screen ↗</a></div>`:""}
     ${(embed||slides)?nextUpHTML(q):""}
     ${side?"":`<p class="desc">${esc(r.summary)}</p>`}
-    ${notesHTML(r, "As you watch")}
+    ${notesHTML(r, pdf ? "What you will learn" : "As you watch")}
     ${isWYT(r)?recordHTML():""}
     ${rs?`<div class="rs-credit">${RS_CREDIT}${rs.wiggins?`<br><br>${WIGGINS_CREDIT}`:""}</div>`:""}
     ${sr&&sr.blueprint?`<a class="bp-link" href="${BLUEPRINT_PDF}" target="_blank" rel="noopener"><b>Keep the Engagement Blueprint open while you watch</b><span>Opens the PDF in a new tab ↗</span></a>`:""}
