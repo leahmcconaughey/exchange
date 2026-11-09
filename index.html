@@ -243,6 +243,14 @@ nav.main a.on{color:var(--navy)}
 .testi .th{font-size:22px;font-weight:800;line-height:1.35}
 .testi figcaption{font-size:14.5px;font-weight:700;color:var(--muted)}
 .testi figcaption a{color:var(--blue);text-decoration:none}
+.rot{margin:22px 0;display:grid;gap:12px}
+.rot .testi{min-height:150px;align-content:center}
+.rot .th{transition:opacity .35s}
+.rot.fading .th{opacity:0}
+.rot-dots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.rot-dots button{width:28px;height:28px;border:0;background:none;padding:0;cursor:pointer;display:grid;place-items:center}
+.rot-dots button::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--line)}
+.rot-dots button[aria-current="true"]::before{background:var(--navy)}
 .testi-img{width:100%;border-radius:12px;display:block}
 .testi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:18px}
 .voices{display:grid;gap:12px;padding-bottom:20px;margin-top:20px}
@@ -718,6 +726,14 @@ const COLLECTIONS = [
  {id:"fps-level-up", title:"FPS Level-Up", tag:"Farmington Public Schools", blurb:"Farmington teachers get the opportunity to deepen their understanding of student-centered learning and the Positioning Blueprint", tone:"sky", icon:"people",
   byTag:["Level-Up","Level Up"], byOrg:"Farmington Public Schools",
   /* Leah's FPS Level-Up Feedback PDF in Google Drive; replace it with Manage versions so this link never changes */
+  /* Rotating teacher quotes (Gill Level-Up video, Nov 2026), credited as Leah asked */
+  rotCredit:"FPS Teacher, Level-Up 2026",
+  rotQuotes:["I can\u2019t think of a better way to spend professional development.",
+   "I think it was one of the best PDs that I ever had.",
+   "I feel like this is the kind of intentional learning that we have been asking for.",
+   "The fact that Level-Up is preserving this time for us to go and see each other teach, it\u2019s so valuable and I\u2019m excited to do more.",
+   "I love seeing the ways that the kids responded to the high cognitive prompts that were being asked, how they worked in groups together, the way their conversations went.",
+   "It increases the culture in the building and really facilitates a culture of learning and respect for everyone."],
   drivePdf:"1av4i7mqidXLbJdhfGNRHuJVQF6lD6tMD", drivePdfTitle:"What Teachers Say About Level-Up",
   stories:["opening-the-classroom-door","teaching-is-a-team-sport","the-power-of-peer-observations"]},
  {id:"elementary-in-action", title:"Elementary in Action", tag:"Pre-K to 5", blurb:"Meaningful learning with our youngest students, from counting breakfast supplies to saving the bees", tone:"peach", icon:"sprout", byGrades:BANDS["Elementary"],
@@ -1136,6 +1152,7 @@ function renderCollection(c){
     <div class="coll-hero tone-${c.tone}"><span class="coll-icon">${CICONS[c.icon]}</span><div><div class="eyebrow">${c.tag?esc(c.tag)+" · ":""}Curated Collection</div><h1>${esc(c.title)}</h1><p>${esc(c.blurb)}</p>${c.timeNote?`<p class="coll-time">${esc(c.timeNote)}</p>`:""}</div></div>
     ${sib?`<a class="other-path" href="#c-${sib.id}" data-coll="${sib.id}">${c.series?"Learning with colleagues?":"Learning on your own?"} Try <b>${esc(sib.title)}</b> →</a>`:""}
     ${c.fb?proofHTML(FEEDBACK[c.fb]):""}
+    ${c.rotQuotes?rotHTML(c):""}
     ${c.id==="watching-yourself-teach"?recordHTML():""}
     ${TESTIMONIALS.some(t=>(t.colls||[]).includes(c.id))?`<div class="testi-grid">${TESTIMONIALS.filter(t=>(t.colls||[]).includes(c.id)).map(t=>testimonialHTML(t,true)).join("")}</div>`:""}
     ${rlist.length?`<div class="tryit-grid">${rlist.map(resourceHTML).join("")}</div>`:""}
@@ -1144,6 +1161,32 @@ function renderCollection(c){
     ${c.research?researchCollExtra():""}
   </article>`;
   wireProof();
+  if(c.rotQuotes) wireRot(c);
+}
+/* Rotating quotes: one at a time, a new one every 7 seconds; pauses on hover or focus, dots to pick */
+let rotTimer = null;
+function rotHTML(c){
+  return `<section class="rot" aria-roledescription="carousel" aria-label="What teachers say">
+    <figure class="testi"><blockquote><p class="th" id="rot-q" aria-live="off">\u201C${esc(c.rotQuotes[0])}\u201D</p></blockquote><figcaption>${esc(c.rotCredit||"")}</figcaption></figure>
+    <div class="rot-dots">${c.rotQuotes.map((_,i)=>`<button type="button" data-rot="${i}" aria-label="Quote ${i+1} of ${c.rotQuotes.length}" aria-current="${i===0}"></button>`).join("")}</div>
+  </section>`;
+}
+function wireRot(c){
+  clearInterval(rotTimer);
+  const box = app.querySelector(".rot"); if(!box) return;
+  const q = box.querySelector("#rot-q"), dots = [...box.querySelectorAll("[data-rot]")];
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let i = 0, paused = false;
+  const show = n => {
+    i = (n + c.rotQuotes.length) % c.rotQuotes.length;
+    const swap = () => { q.textContent = "\u201C"+c.rotQuotes[i]+"\u201D"; box.classList.remove("fading"); };
+    dots.forEach((d,k)=>d.setAttribute("aria-current", String(k===i)));
+    if(reduce) swap(); else { box.classList.add("fading"); setTimeout(swap, 350); }
+  };
+  dots.forEach(d=>d.onclick=()=>{ q.setAttribute("aria-live","polite"); show(+d.dataset.rot); });
+  box.addEventListener("mouseenter",()=>paused=true); box.addEventListener("mouseleave",()=>paused=false);
+  box.addEventListener("focusin",()=>paused=true); box.addEventListener("focusout",()=>paused=false);
+  rotTimer = setInterval(()=>{ if(!box.isConnected){ clearInterval(rotTimer); return; } if(!paused && !document.hidden) show(i+1); }, 7000);
 }
 function researchCollExtra(){
   const st = [...new Set(RESEARCH.flatMap(x=>x.storySlugs))].map(x=>bySlug[x]).filter(Boolean);
