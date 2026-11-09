@@ -733,7 +733,12 @@ const COLLECTIONS = [
    "I feel like this is the kind of intentional learning that we have been asking for.",
    "The fact that Level-Up is preserving this time for us to go and see each other teach, it\u2019s so valuable and I\u2019m excited to do more.",
    "I love seeing the ways that the kids responded to the high cognitive prompts that were being asked, how they worked in groups together, the way their conversations went.",
-   "It increases the culture in the building and really facilitates a culture of learning and respect for everyone."],
+   "It increases the culture in the building and really facilitates a culture of learning and respect for everyone.",
+   "She asked me how it was going, and my response was amazing. And I think it caught both of us off guard because that\u2019s not usually the response that teachers have when they\u2019re talking about PD.",
+   "I feel like I learned so much from just the hour that I was able to do it.",
+   "It\u2019s just so cool to step outside of our own classrooms and to see what else is happening here, because there\u2019s just so many good things that we never get to see.",
+   "I think we don\u2019t get to watch each other teach enough.",
+   "I loved being inspired by other educators to be like, ooh, I want to do that. I want to try that."],
   drivePdf:"1av4i7mqidXLbJdhfGNRHuJVQF6lD6tMD", drivePdfTitle:"What Teachers Say About Level-Up",
   stories:["opening-the-classroom-door","teaching-is-a-team-sport","the-power-of-peer-observations"]},
  {id:"elementary-in-action", title:"Elementary in Action", tag:"Pre-K to 5", blurb:"Meaningful learning with our youngest students, from counting breakfast supplies to saving the bees", tone:"peach", icon:"sprout", byGrades:BANDS["Elementary"],
@@ -1532,7 +1537,19 @@ const TESTIMONIALS = [
  {name:"Dawn", org:"Perry Public Schools", lead:true, colls:["engagement-blueprint"],
   headline:"I am working on removing scaffolding and giving students the opportunity to experience math.",
   body:"I am loving working with Class Voice precheck to increase student engagement and help me to develop high-cognitive prompts... Tomorrow, we will be working in small groups and reifying as a large group! I love this work:) I have been enjoying working on opportunities to engage students in their learning - a lot of white board work, sort activities, reifying learning...",
-  story: s => s.slug==="the-20-minute-pivot"}
+  story: s => s.slug==="the-20-minute-pivot"},
+ {name:"FPS Teacher", org:"Level-Up 2026", lead:true,
+  headline:"I can\u2019t think of a better way to spend professional development."},
+ {name:"FPS Teacher", org:"Level-Up 2026", lead:true,
+  headline:"I think it was one of the best PDs that I ever had."},
+ {name:"FPS Teacher", org:"Level-Up 2026", lead:true,
+  headline:"I feel like this is the kind of intentional learning that we have been asking for."},
+ {name:"FPS Teacher", org:"Level-Up 2026", lead:true,
+  headline:"The fact that Level-Up is preserving this time for us to go and see each other teach, it\u2019s so valuable and I\u2019m excited to do more."},
+ {name:"FPS Teacher", org:"Level-Up 2026", lead:true,
+  headline:"I love seeing the ways that the kids responded to the high cognitive prompts that were being asked, how they worked in groups together, the way their conversations went."},
+ {name:"FPS Teacher", org:"Level-Up 2026", lead:true,
+  headline:"It increases the culture in the building and really facilitates a culture of learning and respect for everyone."}
 ];
 /* Leaders page: three random picks from the lead:true pool on each visit */
 const pickThree = arr => { const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a.slice(0,3); };
