@@ -275,6 +275,8 @@ nav.main a.on{color:var(--navy)}
 .tryit{background:var(--sky);border-radius:18px;padding:24px;display:grid;gap:12px}
 .tryit h2{margin:0;font-size:24px;font-weight:800}
 .tryit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.picks-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+@media (max-width:620px){.picks-grid{grid-template-columns:minmax(0,1fr)}}
 /* Meaning Making 101: companion video callout */
 .companion{background:var(--beige);border:2px solid var(--peach);border-left:8px solid var(--orange);border-radius:18px;padding:22px 24px;display:grid;gap:10px}
 .paired{background:var(--beige);border:2px solid var(--peach);border-radius:18px;padding:22px 24px;display:grid;gap:8px}
@@ -1223,11 +1225,6 @@ function notesHTML(o, def){
   return `<section class="notes-list"><h2>${esc(head)}</h2><ul>${lines.map(l=>`<li>${esc(l)}</li>`).join("")}</ul></section>`;
 }
 function renderStory(s){
-  const paired = pairedFor(s);
-  const related = stories.filter(o=>o!==s && !paired.includes(o)).map(o=>({o,n:o.allTags.filter(t=>s.allTags.includes(t)&&t!=="Meaning Making"&&t!=="Engagement Blueprint").length + (o.pathway===s.pathway?0.5:0)}))
-    .sort((a,b)=>b.n-a.n).slice(0,8).map(x=>x.o);
-  const decks = researchOf(s).map(x=>resBySlug[x.slug]).filter(Boolean);
-  const tryIt = resources.filter(r=>!researchFor(r) && r.focus.some(f=>s.focus.includes(f)));
   const inColls = COLLECTIONS.filter(c=>c.stories.includes(s.slug));
   app.innerHTML = `<article class="wrap story">
     <a class="back" href="#stories" data-go="stories">← Back to Stories</a>
@@ -1237,11 +1234,7 @@ function renderStory(s){
     ${isWYT(s)?recordHTML():""}
     ${inColls.length?`<div class="chips">${inColls.map(c=>`<a class="chip coll-chip" href="#c-${c.id}" data-coll="${c.id}">In collection: ${esc(c.title)}</a>`).join("")}</div>`:""}
     ${testimonialsFor(s).map(t=>testimonialHTML(t,false)).join("")}
-    ${paired.length?`<section class="paired"><div class="eyebrow orange">Part of the same story</div><h2>${paired.length>1?"Watch these too":"Watch this one too"}</h2><div class="mini-grid">${paired.map(o=>`<a class="mini" href="#${o.slug}" data-story="${o.slug}">${coverHTML(o)}<div class="mb"><div class="mt">${esc(o.title)}</div><div class="who">${esc(o.places.slice().reverse().join(" · "))}</div></div></a>`).join("")}</div></section>`:""}
-    ${decks.length?`<section class="research"><div class="eyebrow">Go deeper</div><h2>The research behind this story</h2><p class="rnote">From the LearningWorks Research Series, based on Leah and Paul\u2019s original research</p><div class="tryit-grid">${decks.map(resourceHTML).join("")}</div><a class="link" style="color:#fff;font-weight:800" href="#c-research-series" data-coll="research-series">See the full Research Series →</a></section>`:""}
-    ${(()=>{ const rr = relatedFor(s).filter(o=>o.pathway===undefined); return rr.length?`<section class="tryit"><h2>Goes well with</h2><div class="tryit-grid">${rr.map(resourceHTML).join("")}</div></section>`:""; })()}
-    ${tryIt.length?`<section class="tryit"><div class="eyebrow">Your next step</div><h2>Try it yourself</h2><div class="tryit-grid">${tryIt.map(resourceHTML).join("")}</div></section>`:""}
-    <div class="next">${rowHTML("related","More stories like this","", related.map(cardHTML).join(""))}</div>
+    ${picksHTML(s)}
   </article>`;
   wireRows(app);
   app.querySelectorAll("button.chip").forEach(b=>b.onclick=()=>tagToFilter(b.dataset.tag));
@@ -1419,6 +1412,111 @@ function nextUpHTML(q){
     ? `<a class="next-up" href="#${q.next.slug}" data-res="${q.next.slug}"><span><span class="k">Next: Part ${q.i+2} of ${q.list.length}</span><b>${esc(q.next.title)}</b></span><span class="ar" aria-hidden="true">→</span></a>`
     : `<a class="next-up done" href="#c-${q.c.id}" data-coll="${q.c.id}"><span><span class="k">You finished the series</span><b>Back to ${esc(q.c.title)}</b></span><span class="ar" aria-hidden="true">→</span></a>`;
 }
+/* ---------- "Your next step": two hand-picked follow-ups for every page ----------
+   Keyed by page title; each value names two titles (stories or resources).
+   A page not listed here (new rows) gets two automatic picks: anything named in its
+   Related Content first, then the closest match by its specific tags. */
+const PICKS = {
+  "Stepping Back So Students Can Step Up": ["From Worksheet to Thinking Task","Taking Off the Training Wheels"],
+  "A Small Shift That Gets Students Thinking": ["Meaning Making 101 - The How Part 1","From Delivering Content to Facilitating Thinking"],
+  "Concept Before Content": ["Meaning Making 101 - The How Part IIa","From Sound to Sense-Making"],
+  "From Delivering Content to Facilitating Thinking": ["Engagement Blueprint","A Small Shift That Gets Students Thinking"],
+  "Is our system really working?": ["Why School Must Change","Rewriting Perry's Story"],
+  "Building Community Through Student-Centered Learning": ["When Collaboration Becomes the Culture","3 Dimensions of Engagement"],
+  "When Collaboration Becomes the Culture": ["Building Community Through Student-Centered Learning","Meaning Making 101 - The Why"],
+  "Less Telling, More Thinking": ["Engagement Blueprint Lesson Flow","They Already Knew More Than I Thought"],
+  "From Sound to Sense-Making": ["Meaning Making 101 - The How Part 1","Concept Before Content"],
+  "Finding Learning All Around Us": ["Meaning Making 101 - The How Part 1","Counting What Counts"],
+  "Students Take A Seat at the Table": ["The Case for Authenticity","The Bee Crisis, Fifth-Grade Style"],
+  "Rethinking Needs and Wants": ["Meaning Making 101 - Leah's Thinking","Same Story, Different Truths"],
+  "Looking Beyond the Surface": ["Engagement Blueprint","What's Beneath the Surface?"],
+  "They Already Knew More Than I Thought": ["Meaning Making 101 - The How Part 1","Less Telling, More Thinking"],
+  "What's Beneath the Surface?": ["Meaning Making 101 - The How Part IIb","Looking Beyond the Surface"],
+  "Same Story, Different Truths": ["Engagement Blueprint","Rethinking Needs and Wants"],
+  "Learning Spanish Beyond the Textbook": ["The Case for Authenticity","Beyond the Essay"],
+  "Getting Back to the Classroom I Wanted": ["From Worksheet to Thinking Task","Taking Off the Training Wheels"],
+  "When Words Have a Purpose": ["The Case for Authenticity","Letters from the Wild"],
+  "Opening the Classroom Door": ["Professional Learning That Changes Practice","Teachers Learning Together"],
+  "Brewing Up Real-World Math": ["The Case for Authenticity","Shifting Desks and Minds"],
+  "Seeing the Big Picture": ["Acquisition, Meaning Making, Transfer","Refining Your Authentic Transfer Task"],
+  "Teaching Is A Team Sport": ["Professional Learning That Changes Practice","Opening the Classroom Door"],
+  "The Power of Peer Observations at FSA": ["Engagement Blueprint","Teaching Is A Team Sport"],
+  "Inspired by the Room Next Door": ["Teaching Is A Team Sport","Professional Learning That Changes Practice"],
+  "The Jigsaw - Putting the Pieces Together": ["Meaning Making 101 - Leah's Thinking","Engagement Blueprint Lesson Flow"],
+  "Rewriting Perry's Story": ["Why School Must Change","Seeing Classrooms Differently"],
+  "Seeing Classrooms Differently": ["3 Dimensions of Engagement","Rewriting Perry's Story"],
+  "Worms, Wonder, and Real Science": ["Meaning Making 101 - The How Part IIb","What's Beneath the Surface?"],
+  "The 20-Minute Pivot": ["From Worksheet to Thinking Task","little t vs. Big T Transfer"],
+  "Taking Off the Training Wheels": ["Refining Your Authentic Transfer Task","Getting Back to the Classroom I Wanted"],
+  "Beyond the Essay": ["Refining Your Authentic Transfer Task","Taking Off the Training Wheels"],
+  "Singing for Change": ["The Case for Authenticity","Students Take A Seat at the Table"],
+  "Real Data, Real Excitement": ["Teachers Learning Together","Brewing Up Real-World Math"],
+  "Shifting Desks and Minds": ["little t vs. Big T Transfer","Brewing Up Real-World Math"],
+  "Letters from the Wild": ["Refining Your Authentic Transfer Task","When Words Have a Purpose"],
+  "Getting Messy with Light and Shadow": ["3 Dimensions of Engagement","Learning Spanish Beyond the Textbook"],
+  "What Is Your Carbon Footprint?": ["little t vs. Big T Transfer","Students Take A Seat at the Table"],
+  "Let the Thinking Run": ["Engagement Blueprint Lesson Flow","They Already Knew More Than I Thought"],
+  "The Bee Crisis, Fifth-Grade Style": ["Zoe and The Bee Project","The Case for Authenticity"],
+  "Zoe and The Bee Project": ["The Bee Crisis, Fifth-Grade Style","Why School Must Change"],
+  "Teachers Learning Together": ["Real Data, Real Excitement","Opening the Classroom Door"],
+  "Counting What Counts": ["The Case for Authenticity","Finding Learning All Around Us"],
+  "The Replay Effect": ["ClassVoice: Record","Our Own Worst Critics"],
+  "Our Own Worst Critics": ["ClassVoice: Record","The Replay Effect"],
+  "Meaning Making 101 - The Why": ["Acquisition, Meaning Making, Transfer","A Small Shift That Gets Students Thinking"],
+  "Meaning Making 101 - The How Part 1": ["Clarifying the 3 C's","Concept Before Content"],
+  "Meaning Making 101 - The How Part IIa": ["Clarifying the 3 C's","From Sound to Sense-Making"],
+  "Meaning Making 101 - The How Part IIb": ["What's Beneath the Surface?","Real Data, Real Excitement"],
+  "Meaning Making 101 - Leah's Thinking": ["Rethinking Needs and Wants","Less Telling, More Thinking"],
+  "Meaning Making 201 - The Why": ["My Beef with Bloom's Taxonomy","Acquisition, Meaning Making, Transfer"],
+  "Meaning Making 201 - The How": ["Engagement Blueprint","Let the Thinking Run"],
+  "Meaning Making 201 - The What": ["Engagement Blueprint Reference Guide","From Worksheet to Thinking Task"],
+  "Meaning Making 201 - Leah's Thinking": ["ClassVoice: Pre-Check","From Worksheet to Thinking Task"],
+  "Engagement Blueprint": ["ClassVoice: Pre-Check","The 20-Minute Pivot"],
+  "Engagement Blueprint Reference Guide": ["Engagement Blueprint Lesson Flow","Meaning Making 201 - The What"],
+  "Engagement Blueprint Lesson Flow": ["Engagement Blueprint Reference Guide","Less Telling, More Thinking"],
+  "Why School Must Change": ["The Three Types of Engagement","Is our system really working?"],
+  "The Three Types of Engagement": ["Acquisition, Meaning Making, Transfer","Getting Messy with Light and Shadow"],
+  "Acquisition, Meaning Making, Transfer": ["My Beef with Bloom's Taxonomy","The 20-Minute Pivot"],
+  "The Case for Authenticity": ["Refining Your Authentic Transfer Task","Students Take A Seat at the Table"],
+  "The ALTmodel": ["My Beef with Bloom's Taxonomy","What Is Your Carbon Footprint?"],
+  "Professional Learning That Changes Practice": ["Teaching Is A Team Sport","Opening the Classroom Door"],
+  "From Worksheet to Thinking Task": ["ClassVoice: Pre-Check","The 20-Minute Pivot"],
+  "little t vs. Big T Transfer": ["Refining Your Authentic Transfer Task","Students Take A Seat at the Table"],
+  "Refining Your Authentic Transfer Task": ["little t vs. Big T Transfer","Letters from the Wild"],
+  "3 Dimensions of Engagement": ["The Three Types of Engagement","Getting Messy with Light and Shadow"],
+  "My Beef with Bloom's Taxonomy": ["Acquisition, Meaning Making, Transfer","Meaning Making 101 - The Why"],
+  "Clarifying the 3 C's": ["Meaning Making 101 - The How Part 1","Concept Before Content"],
+  "ClassVoice: Pre-Check": ["From Worksheet to Thinking Task","Engagement Blueprint"],
+  "ClassVoice: Record": ["The Replay Effect","Our Own Worst Critics"]
+};
+const pickKey = t => slug((t||"").replace(/[‘’]/g,"'"));
+function picksFor(item){
+  const all = [...stories, ...resources];
+  const byKey = Object.fromEntries(all.map(o=>[pickKey(o.title), o]));
+  const out = [];
+  const add = o => { if(o && o!==item && !out.includes(o) && out.length<2) out.push(o); };
+  const hand = Object.entries(PICKS).find(([k])=>pickKey(k)===pickKey(item.title));
+  if(hand) hand[1].forEach(t=>add(byKey[pickKey(t)]));
+  if(out.length<2){
+    const isStory = o => bySlug[o.slug]===o;
+    (isStory(item)?pairedFor(item):[]).forEach(add);
+    relatedFor(item).forEach(add);
+    const generic = new Set(["Meaning Making","Engagement Blueprint","Teachers","Coaches","Leaders","Video","Guide","Tutorial","Slideshow"]);
+    const mine = new Set((item.allTags||[]).filter(t=>!generic.has(t)));
+    const score = o => (o.allTags||[]).filter(t=>mine.has(t)).length;
+    const ranked = all.filter(o=>o!==item).map(o=>({o,n:score(o)})).filter(x=>x.n>0).sort((a,b)=>b.n-a.n).map(x=>x.o);
+    /* one resource and one story when we can */
+    add(ranked.find(o=>isStory(o)!==isStory(item)) );
+    ranked.forEach(add);
+    all.filter(o=>(o.focus||[]).some(f=>(item.focus||[]).includes(f))).forEach(add);
+  }
+  return out;
+}
+function picksHTML(item){
+  const ps = picksFor(item);
+  if(!ps.length) return "";
+  return `<section class="tryit picks"><div class="eyebrow">Your next step</div><h2>${ps.length>1?"Two to try next":"Try this next"}</h2><div class="picks-grid">${ps.map(o=>bySlug[o.slug]===o?cardHTML(o):resourceHTML(o)).join("")}</div></section>`;
+}
 function relatedFor(item){
   const norm = v => { const id = ytId(v); if(id) return "yt:"+id; const lm = (v||"").match(/loom\.com\/(?:share|embed)\/([a-f0-9]+)/i); if(lm) return "lm:"+lm[1]; if(/^https?:/i.test(v)) return "u:"+v.replace(/[?#].*$/,"").replace(/\/$/,""); return "t:"+slug(v); };
   const keysOf = o => [ "t:"+slug(o.title), o.link?norm(o.link):"" ].filter(Boolean);
@@ -1473,7 +1571,6 @@ function renderResource(r){
   const slides = slidesEmbed(r);
   const rs = researchFor(r);
   const side = !!embed;
-  const seeIt = rs ? rs.storySlugs.map(x=>bySlug[x]).filter(Boolean) : stories.filter(s=>s.focus.some(f=>r.focus.includes(f))).slice(0,8);
   app.innerHTML = `<article class="wrap story">
     ${q?`<a class="back" href="#c-${q.c.id}" data-coll="${q.c.id}">← Back to ${esc(q.c.title)}</a>`:`<a class="back" href="#resources" data-go="resources">← Back to Resources</a>`}
     ${classVoiceHTML(r)}
@@ -1498,10 +1595,8 @@ function renderResource(r){
     ${/engagement blueprint|pre-check/i.test(r.title)?precheckHTML():""}
     ${r.link&&!embed&&!pdf&&!slides?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
     ${companionHTML(sr)}
-    ${(()=>{ const cvPage = !!classVoiceHTML(r);
-      const rel = relatedFor(r).filter(o=>!(sr&&sr.videos&&o.video&&sr.videos.some(v=>v[0]===o.video))).filter(o=>!(cvPage && resBySlug[o.slug]===o && classVoiceHTML(o))); return rel.length?`<section class="paired"><h2>Goes well with</h2><div class="tryit-grid">${rel.map(o=>o.pathway===undefined?resourceHTML(o):cardHTML(o)).join("")}</div></section>`:""; })()}
     ${sr?quoteCardHTML(FEEDBACK[sr.s].quotes[(sr.part-1)%FEEDBACK[sr.s].quotes.length],FEEDBACK[sr.s]):""}
-    ${seeIt.length?`<div class="next">${rowHTML("seeit","See it in practice", rs?"Classroom stories that bring this research to life":"Stories that bring this work to life", seeIt.map(cardHTML).join(""))}</div>`:""}
+    ${picksHTML(r)}
     ${!(embed||slides)?nextUpHTML(q):""}
   </article>`;
   wireRows(app);
