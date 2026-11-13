@@ -626,6 +626,7 @@ const FOCUS_GROUPS = [
  ["Authentic Learning", ["authentic learning","altmodel","technology"]],
  ["Unit & Task Design", ["unit design","task design"]],
  ["Professional Learning", ["professional learning","coaching","learning walks","collective practice","teacher as professional","leadership","system change","reflection","watching yourself teach","research","level-up","level up"]],
+ ["Mastery-Based Grading", ["mastery-based grading","assessment","feedback","grading"]],
  ["ClassVoice", ["classvoice","pre-check","record"]],
  ["Student Voice", ["student voice"]],
  ["Quick Recaps", ["quick recap","5 minutes or less"]]
@@ -719,6 +720,8 @@ const COLLECTIONS = [
   stories:[], resources:RESEARCH.map(x=>x.slug)},
  {id:"watching-yourself-teach", title:"Watching Yourself Teach", tag:"The Replay Effect", blurb:"It is scary, and it is worth it: what educators learn when they watch themselves teach", tone:"sky", icon:"play", leaders:true,
   byTag:["Watching Yourself Teach"], byResTag:["Watching Yourself Teach"], stories:[], resources:[]},
+ {id:"mastery-based-grading", title:"Mastery-Based Grading", tag:"Video Series", blurb:"Six videos on grading the learning: what to track, how to give feedback, and how classrooms, schools, and districts make the shift", tone:"orange", icon:"check", series:true, partLabel:true, leaders:true,
+  byResTag:["Mastery-Based Grading"], stories:[], resources:[]},
  {id:"student-voice", title:"Student Voice", tag:"Hear It from Students", blurb:"What meaningful learning feels like, in students\u2019 own words", tone:"orange", icon:"chat", byTag:"Student Voice",
   stories:[]},
  {id:"professional-learning", title:"Professional Learning", tag:"Teachers Learning Together", blurb:"Learning walks, coaching, peer visits, and other ways educators grow together", tone:"sage", icon:"people", leaders:true,
@@ -1334,6 +1337,10 @@ const seriesFor = r => SERIES[r.title.toLowerCase().replace(/[\u2018\u2019]/g,"'
 const toSec = t => t.split(":").reduce((a,v)=>a*60+(+v),0);
 /* Chapters for videos outside a series, keyed by title (apostrophes and spacing ignored) */
 const chapKey = t => (t||"").toLowerCase().replace(/[\u2018\u2019'"\u201C\u201D]/g,"").replace(/[^a-z0-9]+/g," ").trim();
+/* Chapters by position in a series collection (used when titles are still being decided) */
+const SERIES_CHAPTERS = {
+ "mastery-based-grading": {1: [["00:00","Introduction to mastery-based grading"],["02:32","Where grading fits in school transformation"],["06:37","Why do we give grades?"],["07:34","How traditional grades are calculated"],["10:23","Organizing grades by standard"],["14:17","Not yet meeting, meeting, exceeding"],["18:58","Grading a real piece of evidence"],["21:15","Task-based vs. mastery-based rubrics"],["26:49","Next steps and the series ahead"]]}
+};
 const CHAPTERS = {
  [chapKey("Clarifying the 3 C's")]: [["00:00","Three Cs quick recap"],["03:02","Dots become content and concepts"],["05:13","Context and situation meaning"],["08:03","Competency and real contexts"],["10:32","Brain patterns and why it matters"]]
 };
@@ -1574,7 +1581,7 @@ function renderResource(r){
   app.innerHTML = `<article class="wrap story">
     ${q?`<a class="back" href="#c-${q.c.id}" data-coll="${q.c.id}">← Back to ${esc(q.c.title)}</a>`:`<a class="back" href="#resources" data-go="resources">← Back to Resources</a>`}
     ${classVoiceHTML(r)}
-    <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_META[sr.s].name} · Part ${sr.part} of ${SERIES_META[sr.s].total}`:rs?`Research Series · Part ${rs.part} of ${RESEARCH.length}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
+    <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_META[sr.s].name} · Part ${sr.part} of ${SERIES_META[sr.s].total}`:rs?`Research Series · Part ${rs.part} of ${RESEARCH.length}`:(q&&q.c.partLabel)?`${esc(q.c.title)} · Part ${q.i+1} of ${q.list.length}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
     ${seriesStripHTML(q)}
     ${sr?statLineHTML(FEEDBACK[sr.s]):""}
     ${embed&&side?`<div class="vid-side">${resPlayerHTML(r, embed)}<div class="side-text"><p class="desc">${esc(r.summary)}</p>${pdf||r.slides?`<div class="pdf-actions side-actions">${pdf?`<a class="open-res" href="${esc(pdfLink)}" download>Download the quick guide ↓</a>`:""}${r.slides?`<a class="open-res ghost" href="${esc(slidesDownload(r.slides))}" ${/^https?:/i.test(r.slides)?`target="_blank" rel="noopener"`:"download"}>Download the video slides ↓</a>`:""}</div>`:""}</div></div>`:""}
@@ -1587,7 +1594,7 @@ function renderResource(r){
     ${isWYT(r)?recordHTML():""}
     ${rs?`<div class="rs-credit">${RS_CREDIT}${rs.wiggins?`<br><br>${WIGGINS_CREDIT}`:""}</div>`:""}
     ${sr&&sr.blueprint?`<a class="bp-link" href="${BLUEPRINT_PDF}" target="_blank" rel="noopener"><b>Keep the Engagement Blueprint open while you watch</b><span>Opens the PDF in a new tab ↗</span></a>`:""}
-    ${chaptersHTML(sr || (CHAPTERS[chapKey(r.title)] ? {chapters:CHAPTERS[chapKey(r.title)]} : null), embed)}
+    ${chaptersHTML(sr || (CHAPTERS[chapKey(r.title)] ? {chapters:CHAPTERS[chapKey(r.title)]} : (q && SERIES_CHAPTERS[q.c.id] && SERIES_CHAPTERS[q.c.id][q.i+1]) ? {chapters:SERIES_CHAPTERS[q.c.id][q.i+1]} : null), embed)}
     ${sr&&sr.blueprint?precheckHTML():""}
     ${sr?`<div class="series-note">${SERIES_NOTE}</div>`:""}
     ${pdf&&!embed?`<div class="pdf-view"><iframe src="${esc(pdfLink)}#view=FitH" title="${esc(r.title)}" loading="lazy"></iframe></div>
