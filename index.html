@@ -952,7 +952,7 @@ function wireRows(root){
 }
 function collectionHTML(c){
   const n = c.stories.filter(x=>bySlug[x]).length, nr = (c.resources||[]).filter(x=>resBySlug[x]).length;
-  const count = c.hub ? `${c.hub.length} paths` : c.series ? `${nr} ${c.unit||"tutorials"}${c.time?` · ${c.time}`:""}` : [n?`${n} stories`:"", nr?`${nr} resources`:""].filter(Boolean).join(" · ");
+  const count = c.schools ? `${SCHOOLS.length} schools` : c.hub ? `${c.hub.length} paths` : c.series ? `${nr} ${c.unit||"tutorials"}${c.time?` · ${c.time}`:""}` : [n?`${n} stories`:"", nr?`${nr} resources`:""].filter(Boolean).join(" · ");
   return `<a class="coll tone-${c.tone}" href="#c-${c.id}" data-coll="${c.id}">
     <span class="coll-icon">${CICONS[c.icon]}</span>
     ${c.tag?`<span class="coll-tag">${esc(c.tag)}</span>`:""}
@@ -1130,7 +1130,12 @@ function renderLibrary(tab){
       if(shown.has(c.id)) return "";
       shown.add(c.id); return collectionHTML(c);
     };
-    const items = list.length ? list.map(cardFor).join("") :
+    /* Collections whose title, blurb, or schools match the search show first */
+    const resultHTML = list.map(cardFor).join("");
+    const collHits = (st.q||"").trim() ? COLLECTIONS.filter(c=>!c.inHub && hasItems(c) && !shown.has(c.id) &&
+      textHit(st.q, [c.title, c.blurb, c.tag||"", c.schools ? SCHOOLS.map(x=>x.name+" "+x.place+" "+x.parts.join(" ")).join(" ") : ""].join(" "))) : [];
+    collHits.forEach(c=>shown.add(c.id));
+    const items = (collHits.length || list.length) ? collHits.map(collectionHTML).join("") + resultHTML :
       (tab==="resources" && !resources.length ? `<div class="empty"><b>Practical resources are on the way!</b>In the meantime, explore the stories. <a class="link" href="#stories" data-go="stories">Explore Stories →</a></div>` : `<div class="empty"><b>Nothing matches those filters yet.</b>Try removing a filter or searching a different word.</div>`);
     const holder = app.querySelector("#results");
     holder.innerHTML = rowHTML("res-"+tab, active ? `Matching ${tab}` : (tab==="stories"?"All stories":"All resources"), sub, items);
@@ -1809,7 +1814,8 @@ const SCHOOLS = [
 "Glo Up: a 2023 Congressional App Challenge winner",
 "pdf",
 "docs/schools/TYWLS-Glo-Up-App.pdf"
-]
+],
+["Glo Up wins the 2023 Congressional App Challenge (Congressional App Challenge)","article","https://www.congressionalappchallenge.us/23-ny14/"]
 ]
 },
 {
