@@ -732,7 +732,7 @@ const COLLECTIONS = [
  {id:"watching-yourself-teach", title:"Watching Yourself Teach", tag:"The Replay Effect", blurb:"It is scary, and it is worth it: what educators learn when they watch themselves teach", tone:"sky", icon:"play", leaders:true,
   byTag:["Watching Yourself Teach"], byResTag:["Watching Yourself Teach"], stories:[], resources:[]},
  {id:"mastery-based-grading", title:"Mastery-Based Grading", tag:"Video Series", blurb:"A Start Here video and five station videos on grading the learning: what to track, how to give feedback, and how classrooms, schools, and districts make the shift", tone:"orange", icon:"check", series:true, partLabel:true, startHere:true, leaders:true,
-  note:`<b>About this series:</b> These videos were created for an in-person conference, back when our company was called the Urban Learning Institute. We are now LearningWorks. The Start Here video was the opening session for everyone. Videos 1 through 5 were the five stations: small groups watched the video at each station and then tried a short task together. When you hear "station" or "try this," that is what it refers to. Each station's task and materials are on its page, below the video. The videos were also shared on an earlier online resource hub, so you may hear references to a course, a community, or links "in the post below."`,
+  note:`<b>About this series:</b> These videos were created for an in-person conference, back when our company was called the Urban Learning Institute. We are now LearningWorks. The Start Here video was the opening session for everyone. Parts 1 through 5 were the five stations: small groups watched the video at each station and then tried a short task together. When you hear "station" or "try this," that is what it refers to. Each station's task and materials are on its page, below the video. The videos were also shared on an earlier online resource hub, so you may hear references to a course, a community, or links "in the post below."`,
   byResTag:["Mastery-Based Grading"], stories:[], resources:[]},
  {id:"student-voice", title:"Student Voice", tag:"Hear It from Students", blurb:"What meaningful learning feels like, in students\u2019 own words", tone:"orange", icon:"chat", byTag:"Student Voice",
   stories:[]},
@@ -1373,7 +1373,7 @@ const SERIES_QUESTIONS = {
 };
 /* Part names: collections with startHere call the first video "Start Here" and number the rest Video 1, 2, ... */
 function partName(c, i, total, long){
-  if(c && c.startHere){ if(i===0) return "Start Here"; return long ? `Video ${i} of ${total-1}` : `Video ${i}`; }
+  if(c && c.startHere){ if(i===0) return "Start Here"; return long ? `Part ${i} of ${total-1}` : `Part ${i}`; }
   return long ? `Part ${i+1} of ${total}` : `Part ${i+1}`;
 }
 function partCardHTML(r, i, total, qs, c){
