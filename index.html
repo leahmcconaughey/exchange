@@ -286,18 +286,29 @@ nav.main a.on{color:var(--navy)}
 .sm-filter{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
 .sm-filter button{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:999px;padding:7px 14px;cursor:pointer}
 .sm-filter button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
-.sm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;align-items:start}
-@media(max-width:400px){.sm-grid{grid-template-columns:1fr}}
-.sm-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 22px;display:flex;flex-direction:column;gap:12px}
+.sm-card{position:relative;background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 22px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.track>.sm-card{flex-basis:clamp(270px,calc((100% - 40px)/3),420px)}
+.sm-open{margin-top:auto;align-self:flex-start;font:inherit;font-weight:700;font-size:14.5px;color:var(--blue);background:none;border:0;padding:4px 0;cursor:pointer;position:relative;z-index:2}
+.sm-hover{position:absolute;inset:84px 0 50px 0;padding:6px 22px;background:#fff;display:flex;flex-direction:column;justify-content:flex-start;opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s;z-index:1}
+.sm-card:hover .sm-hover,.sm-card:focus .sm-hover{opacity:1;visibility:visible}
+.sm-hover .sm-tags{gap:8px}.sm-hover .sm-tags span{font-size:13.5px;padding:6px 12px}
+.sm-hover-h{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+@media(hover:none){.sm-hover{display:none}}
 .sm-card[hidden]{display:none}
 .sm-top{display:flex;gap:12px;align-items:flex-start}.sm-ic{flex:none;width:42px;height:42px;border-radius:12px;background:#E3F2FC;color:var(--navy);display:grid;place-items:center}.sm-ic svg{width:22px;height:22px}
 .sm-card h3{margin:0;font-size:19px;line-height:1.25}.sm-where{font-size:13.5px;color:var(--muted);margin-top:3px}
 .sm-card p{margin:0;font-size:15px;line-height:1.5}
 .sm-tags{display:flex;flex-wrap:wrap;gap:6px}.sm-tags span{font-size:12.5px;font-weight:600;background:var(--beige);color:var(--navy);border-radius:999px;padding:4px 10px}
-.sm-files summary{cursor:pointer;font-weight:700;font-size:14.5px;color:var(--blue)}
-.sm-files ul{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}
-.sm-files a{display:flex;gap:10px;align-items:center;font-size:14.5px;color:var(--navy);text-decoration:none;padding:6px 8px;border-radius:10px}
-.sm-files a:hover,.sm-files a:focus-visible{background:var(--beige)}
+.sm-dlg{border:0;border-radius:20px;padding:0;max-width:min(620px,calc(100vw - 32px));width:100%;box-shadow:0 30px 80px rgba(5,65,91,.35);color:var(--navy)}
+.sm-dlg::backdrop{background:rgba(5,65,91,.45)}
+.sm-dlg-in{padding:26px 28px 24px;position:relative;display:grid;gap:12px}
+.sm-dlg h2{margin:0;padding-right:36px;font-size:24px}
+.sm-x{position:absolute;top:14px;right:16px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:22px;line-height:1;cursor:pointer;color:var(--navy)}
+.sm-list{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:4px;max-height:55vh;overflow:auto}
+.sm-list a{display:flex;gap:10px;align-items:center;font-size:15px;color:var(--navy);text-decoration:none;padding:8px 8px;border-radius:10px}
+.sm-list a:hover,.sm-list a:focus-visible{background:var(--beige)}
+.sm-note{margin:0;font-size:13px;color:var(--muted)}
+.sm-kind.k-article,.sm-kind.k-search{background:#EDE7F6;color:#5b3f8c}
 .sm-kind{flex:none;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:3px 7px;background:#E3F2FC;color:var(--blue);min-width:44px;text-align:center}
 .sm-kind.k-video{background:#FDE3CB;color:#9a5a1c}.sm-kind.k-pdf{background:#DFF0E3;color:#2f6b45}
 .series-note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55;color:var(--muted)}
@@ -1515,6 +1526,16 @@ const SCHOOLS = [
 "In customized classrooms, at-risk students thrive (PBS NewsHour)",
 "video",
 "https://youtu.be/8lzs4CdMNtA"
+],
+[
+"One Bronx high school is trying to reach high-needs students by ditching the traditional classroom (Chalkbeat)",
+"article",
+"https://www.chalkbeat.org/newyork/2016/7/19/21100677/one-bronx-high-school-is-trying-to-reach-high-needs-students-by-ditching-the-traditional-classroom"
+],
+[
+"Twenty-one and in high school (The Hechinger Report)",
+"search",
+"https://www.google.com/search?q=%22Twenty-one+and+in+high+school%22+Hechinger+Report"
 ]
 ]
 },
@@ -1778,6 +1799,16 @@ const SCHOOLS = [
 "A Civil War Unit Website",
 "video",
 "https://youtu.be/mycjmltgG7Q"
+],
+[
+"Trash Go! NYC: a student-designed app",
+"pdf",
+"docs/schools/TYWLS-Trash-Go-NYC.pdf"
+],
+[
+"Glo Up: a 2023 Congressional App Challenge winner",
+"pdf",
+"docs/schools/TYWLS-Glo-Up-App.pdf"
 ]
 ]
 },
@@ -1789,8 +1820,14 @@ const SCHOOLS = [
 "Flexible Time, Space, and Grouping",
 "Reimagined Roles"
 ],
-"desc": "Big open classrooms of about 60 students and four teachers, where a master teacher moves between small groups. David Brooks profiled the school in a 2012 New York Times column, “The Relationship School.”",
-"files": []
+"desc": "Big open classrooms of about 60 students and four teachers, where a master teacher moves between small groups so every child is known well.",
+"files": [
+[
+"The Relationship School, by David Brooks (The New York Times, 2012)",
+"search",
+"https://www.google.com/search?q=%22The+Relationship+School%22+David+Brooks+New+York+Times"
+]
+]
 },
 {
 "name": "Olympus Academy",
@@ -1924,27 +1961,42 @@ const SCHOOLS = [
 }
 ];
 const WHEEL_PARTS = ["Competencies","Learning and Instruction","Technology","Mastery-Based Grading","Flexible Time, Space, and Grouping","Reimagined Roles","Community Alliance","Policy Shifts"];
-const FILE_KIND = {slides:"Slides", doc:"Doc", pdf:"PDF", audio:"Audio", video:"Video"};
+const FILE_KIND = {slides:"Slides", doc:"Doc", pdf:"PDF", audio:"Audio", video:"Video", article:"Article", search:"Search"};
 function schoolsHTML(){
-  return `<section class="sm-intro">
-      <p>Each school below is rethinking some part of what school looks like. The tags come from our Competency-Based Learning Framework, so you can find schools working on the same piece you are.</p>
-      <a class="mat" href="docs/Competency-Wheel.pdf" target="_blank" rel="noopener"><span class="mat-ic" aria-hidden="true">\u2197</span><span><b>Competency-Based Learning Framework</b><small>The wheel these tags come from \u00B7 PDF</small></span></a>
-    </section>
-    <div class="sm-filter" role="group" aria-label="Filter schools"><button type="button" class="on" data-part="">All schools</button>${WHEEL_PARTS.map(p=>`<button type="button" data-part="${esc(p)}">${esc(p)}</button>`).join("")}</div>
-    <div class="sm-grid">${SCHOOLS.map((sc,i)=>`<article class="sm-card" data-parts="${esc(sc.parts.join("|"))}">
+  const cards = SCHOOLS.map((sc,i)=>`<article class="sm-card" data-parts="${esc(sc.parts.join("|"))}" tabindex="0">
       <div class="sm-top"><span class="sm-ic" aria-hidden="true">${CICONS.school}</span><div><h3>${esc(sc.name)}</h3><div class="sm-where">${esc(sc.place)} \u00B7 ${esc(sc.grades)}</div></div></div>
       <p>${esc(sc.desc)}</p>
-      <div class="sm-tags">${sc.parts.map(p=>`<span>${esc(p)}</span>`).join("")}</div>
-      ${sc.files.length?`<details class="sm-files"><summary>See their materials (${sc.files.length})</summary><ul>${sc.files.map(([t,k,u])=>`<li><a href="${esc(u)}" target="_blank" rel="noopener"><span class="sm-kind k-${k}">${FILE_KIND[k]}</span>${esc(t)}</a></li>`).join("")}</ul></details>`:""}
-    </article>`).join("")}</div>`;
+      ${sc.files.length?`<button type="button" class="sm-open" data-school="${i}">See their materials (${sc.files.length}) \u2192</button>`:""}
+      <div class="sm-hover" aria-hidden="true"><div class="sm-hover-h">Aligned to</div><div class="sm-tags">${sc.parts.map(p=>`<span>${esc(p)}</span>`).join("")}</div></div>
+    </article>`).join("");
+  return `<section class="sm-intro">
+      <p>Each school below is rethinking some part of what school looks like. Hover over a school to see which parts of our Competency-Based Learning Framework it is working on, or use the buttons to find schools working on the same piece you are.</p>
+      <a class="mat" href="docs/Competency-Wheel.pdf" target="_blank" rel="noopener"><span class="mat-ic" aria-hidden="true">\u2197</span><span><b>Competency-Based Learning Framework</b><small>The wheel these areas come from \u00B7 PDF</small></span></a>
+    </section>
+    <div class="sm-filter" role="group" aria-label="Filter schools"><button type="button" class="on" data-part="">All schools</button>${WHEEL_PARTS.map(p=>`<button type="button" data-part="${esc(p)}">${esc(p)}</button>`).join("")}</div>
+    ${rowHTML("sm-row","Schools","",cards)}
+    <dialog class="sm-dlg" aria-labelledby="sm-dlg-h"><div class="sm-dlg-in"></div></dialog>`;
 }
 function wireSchools(){
-  const btns = app.querySelectorAll(".sm-filter button");
+  const btns = app.querySelectorAll(".sm-filter button"), track = app.querySelector("#sm-row .track");
   btns.forEach(b=>b.onclick=()=>{
     btns.forEach(x=>x.classList.toggle("on", x===b));
     const p = b.dataset.part;
     app.querySelectorAll(".sm-card").forEach(c=>{ c.hidden = !!p && !c.dataset.parts.split("|").includes(p); });
+    if(track){ track.scrollLeft = 0; track.dispatchEvent(new Event("scroll")); }
   });
+  const dlg = app.querySelector(".sm-dlg"), inner = dlg.querySelector(".sm-dlg-in");
+  app.querySelectorAll(".sm-open").forEach(b=>b.onclick=()=>{
+    const sc = SCHOOLS[+b.dataset.school];
+    inner.innerHTML = `<button type="button" class="sm-x" aria-label="Close">\u00D7</button>
+      <h2 id="sm-dlg-h">${esc(sc.name)}</h2><div class="sm-where">${esc(sc.place)} \u00B7 ${esc(sc.grades)}</div>
+      <div class="sm-tags">${sc.parts.map(p=>`<span>${esc(p)}</span>`).join("")}</div>
+      <ul class="sm-list">${sc.files.map(([t,k,u])=>`<li><a href="${esc(u)}" target="_blank" rel="noopener"><span class="sm-kind k-${k}">${FILE_KIND[k]}</span><span>${esc(t)}</span></a></li>`).join("")}</ul>
+      ${sc.files.some(f=>f[1]==="search")?`<p class="sm-note">Search links open a web search for the article, since it lives on the publisher\u2019s site.</p>`:""}`;
+    inner.querySelector(".sm-x").onclick = ()=>dlg.close();
+    dlg.showModal();
+  });
+  dlg.addEventListener("click", e=>{ if(e.target===dlg) dlg.close(); });
 }
 function materialsHTML(c, i){
   const m = c && SERIES_MATERIALS[c.id] && SERIES_MATERIALS[c.id][i+1];
