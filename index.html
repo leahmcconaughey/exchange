@@ -1080,7 +1080,19 @@ function renderLibrary(tab){
     const list = tab==="stories" ? sList : rList, total = tab==="stories" ? stories.length : resources.length;
     const active = isActive(st);
     const sub = `${list.length} of ${total} ${tab}${active?` · <button class="clear" id="clear">Clear filters</button>`:""}`;
-    const items = list.length ? list.map(tab==="stories"?cardHTML:resourceHTML).join("") :
+    /* Forest before trees: when searching or filtering, the videos of a series show as one collection card,
+       placed where the first matching video would have been */
+    const shown = new Set(), seriesOf = new Map();
+    if(active) COLLECTIONS.filter(c=>c.series && !c.hub && !c.inHub && hasItems(c)).forEach(c=>{
+      (tab==="stories" ? c.stories : (c.resources||[])).forEach(sl=>{ if(!seriesOf.has(sl)) seriesOf.set(sl,c); });
+    });
+    const cardFor = x => {
+      const c = seriesOf.get(x.slug);
+      if(!c) return (tab==="stories"?cardHTML:resourceHTML)(x);
+      if(shown.has(c.id)) return "";
+      shown.add(c.id); return collectionHTML(c);
+    };
+    const items = list.length ? list.map(cardFor).join("") :
       (tab==="resources" && !resources.length ? `<div class="empty"><b>Practical resources are on the way!</b>In the meantime, explore the stories. <a class="link" href="#stories" data-go="stories">Explore Stories →</a></div>` : `<div class="empty"><b>Nothing matches those filters yet.</b>Try removing a filter or searching a different word.</div>`);
     const holder = app.querySelector("#results");
     holder.innerHTML = rowHTML("res-"+tab, active ? `Matching ${tab}` : (tab==="stories"?"All stories":"All resources"), sub, items);
