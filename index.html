@@ -252,6 +252,12 @@ nav.main a.on{color:var(--navy)}
 .rot-dots button::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--line)}
 .rot-dots button[aria-current="true"]::before{background:var(--navy)}
 .testi-img{width:100%;border-radius:12px;display:block}
+.track>.testi{flex-basis:clamp(280px,31%,400px);align-self:flex-start}
+.track .testi-img{max-height:190px;object-fit:cover;width:100%}
+.testi .clampable{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+.testi.open .clampable{display:block;-webkit-line-clamp:unset}
+.read-more{justify-self:start;border:0;background:none;padding:6px 0;font:inherit;font-size:14.5px;font-weight:700;color:var(--blue);cursor:pointer}
+.voices .row{margin-bottom:8px}
 .testi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:18px}
 .voices{display:grid;gap:12px;padding-bottom:20px;margin-top:20px}
 .more-voices{font-weight:800;color:var(--blue);text-decoration:none;justify-self:start}
@@ -880,6 +886,15 @@ function rowHTML(id, heading, sub, itemsHTML){
     <div class="track" tabindex="0" aria-label="${heading}">${itemsHTML}</div>
   </section>`;
 }
+/* "Read more" shows only on cards whose text is cut off */
+function wireReadMore(root){
+  root.querySelectorAll(".testi").forEach(card=>{
+    const p = card.querySelector(".clampable"), b = card.querySelector(".read-more"); if(!p||!b) return;
+    const check = ()=>{ if(!card.classList.contains("open")) b.hidden = p.scrollHeight <= p.clientHeight + 2; };
+    b.onclick = ()=>{ const o = card.classList.toggle("open"); b.textContent = o ? "Show less" : "Read more"; b.hidden = false; };
+    requestAnimationFrame(check); new ResizeObserver(check).observe(p);
+  });
+}
 function wireRows(root){
   root.querySelectorAll(".row").forEach(row=>{
     if(row.dataset.wired) return; row.dataset.wired = "1";
@@ -1174,7 +1189,7 @@ function renderCollection(c){
     ${c.fb?proofHTML(FEEDBACK[c.fb]):""}
     ${c.rotQuotes?rotHTML(c):""}
     ${c.id==="watching-yourself-teach"?recordHTML():""}
-    ${TESTIMONIALS.some(t=>(t.colls||[]).includes(c.id))?`<div class="testi-grid">${TESTIMONIALS.filter(t=>(t.colls||[]).includes(c.id)).map(t=>testimonialHTML(t,true)).join("")}</div>`:""}
+    ${TESTIMONIALS.some(t=>(t.colls||[]).includes(c.id))?rowHTML("coll-voices","What educators say","",TESTIMONIALS.filter(t=>(t.colls||[]).includes(c.id)).map(t=>testimonialHTML(t,true)).join("")):""}
     ${rlist.length?(SERIES_QUESTIONS[c.id]
       ? `<div class="part-grid">${rlist.map((r,i)=>partCardHTML(r,i,Math.max(rlist.length,Object.keys(SERIES_QUESTIONS[c.id]).length),SERIES_QUESTIONS[c.id][i+1]||[],c)).join("")}</div>`
       : `<div class="tryit-grid">${rlist.map(resourceHTML).join("")}</div>`):""}
@@ -1183,7 +1198,7 @@ function renderCollection(c){
     ${c.drivePdf?`<div class="pdf-view" style="margin:22px 0"><iframe src="https://drive.google.com/file/d/${c.drivePdf}/preview" title="${esc(c.drivePdfTitle||c.title)}" loading="lazy"></iframe></div>`:""}
     ${c.research?researchCollExtra():""}
   </article>`;
-  wireProof();
+  wireProof(); wireRows(app);
   if(c.rotQuotes) wireRot(c);
 }
 /* Rotating quotes: one at a time, a new one every 7 seconds; pauses on hover or focus, dots to pick */
@@ -1717,7 +1732,7 @@ const storyFor = t => t.story ? stories.find(t.story) : null;
 const credit = t => [t.name, t.role, t.org].filter(Boolean).join(", ");
 function testimonialHTML(t, withLink){
   const st = withLink ? storyFor(t) : null;
-  return `<figure class="testi">${t.img?`<img class="testi-img" src="${t.img}" alt="${esc(t.imgAlt||"")}" loading="lazy">`:""}<blockquote><p class="th">\u201C${esc(t.headline)}\u201D</p>${t.body?`<p>${esc(t.body)}</p>`:""}</blockquote>
+  return `<figure class="testi">${t.img?`<img class="testi-img" src="${t.img}" alt="${esc(t.imgAlt||"")}" loading="lazy">`:""}<blockquote><p class="th">\u201C${esc(t.headline)}\u201D</p>${t.body?`<p class="clampable">${esc(t.body)}</p>`:""}</blockquote>${t.body?`<button type="button" class="read-more" hidden>Read more</button>`:""}
     <figcaption>${esc(credit(t))}${st?` · <a href="#${st.slug}" data-story="${st.slug}">Watch the story →</a>`:""}</figcaption></figure>`;
 }
 function renderVoices(){
@@ -1729,12 +1744,12 @@ function renderVoices(){
     <p>In their own words: teachers and leaders on what changed when students started doing the thinking.</p>
   </section>
   <div class="wrap voices">
-    <div class="testi-grid">${TESTIMONIALS.map(t=>testimonialHTML(t,true)).join("")}</div>
+    ${rowHTML("voices-row","In their own words",`${TESTIMONIALS.length} educators · use the arrows or swipe to see more`, TESTIMONIALS.map(t=>testimonialHTML(t,true)).join(""))}
     <section class="results"><div><div class="eyebrow">Course feedback</div><h2>Meaning Making 101 and 201</h2></div>
       ${proofHTML(F["101"])}
       <div class="quote-grid">${[...F["101"].quotes.slice(0,2).map(q=>quoteCardHTML(q,F["101"])), ...F["201"].quotes.slice(0,2).map(q=>quoteCardHTML(q,F["201"]))].join("")}</div></section>
   </div>`;
-  wireProof();
+  wireProof(); wireRows(app);
 }
 
 /* ---------- routing ---------- */
@@ -1751,6 +1766,7 @@ function route(){
   else if(bySlug[h]){ renderStory(bySlug[h]); navKey="home"; }
   else if(resBySlug[h]){ renderResource(resBySlug[h]); navKey="home"; }
   else { renderHome(); navKey="home"; }
+  wireReadMore(app);
   const PAGE_NAMES = {"":"Home", stories:"Stories", resources:"Resources", leaders:"For Leaders & Coaches", voices:"Voices", about:"About"};
   const gcTitle = PAGE_NAMES[h] !== undefined ? PAGE_NAMES[h] : c ? "Collection: "+c.title : bySlug[h] ? "Story: "+bySlug[h].title : resBySlug[h] ? "Resource: "+resBySlug[h].title : "Home";
   gcCount({path: "/" + (PAGES[h]||c||bySlug[h]||resBySlug[h] ? h : ""), title: gcTitle});
