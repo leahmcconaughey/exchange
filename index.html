@@ -311,6 +311,7 @@ nav.main a.on{color:var(--navy)}
 .sm-kind.k-article,.sm-kind.k-search{background:#EDE7F6;color:#5b3f8c}
 .sm-kind{flex:none;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:3px 7px;background:#E3F2FC;color:var(--blue);min-width:44px;text-align:center}
 .sm-kind.k-video{background:#FDE3CB;color:#9a5a1c}.sm-kind.k-pdf{background:#DFF0E3;color:#2f6b45}
+.end-nav{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:26px 0 8px;padding-top:18px;border-top:1px solid var(--line)}
 .series-note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55;color:var(--muted)}
 .series-note b{color:var(--navy)}
 .res-icon{width:44px;height:44px;border-radius:12px;background:var(--beige);color:var(--blue);display:grid;place-items:center;flex:none}
@@ -776,7 +777,7 @@ const COLLECTIONS = [
  {id:"mastery-based-grading", title:"Mastery-Based Grading", tag:"Video Series", blurb:"A Start Here video and five station videos on grading the learning: what to track, how to give feedback, and how classrooms, schools, and districts make the shift", tone:"orange", icon:"check", series:true, partLabel:true, startHere:true, leaders:true,
   note:`<b>About this series:</b> These videos were created for an in-person conference, back when our company was called the Urban Learning Institute. We are now LearningWorks. The Start Here video was the opening session for everyone. Parts 1 through 5 were the five stations: small groups watched the video at each station and then tried a short task together. When you hear "station" or "try this," that is what it refers to. Each station's task and materials are on its page, below the video. The videos were also shared on an earlier online resource hub, so you may hear references to a course, a community, or links "in the post below."`,
   byResTag:["Mastery-Based Grading"], stories:[], resources:[]},
- {id:"school-models", title:"School Models", tag:"See It in Schools", blurb:"Schools we have visited and worked with that are redesigning learning, grading, time, and roles", tone:"sky", icon:"school", leaders:true, schools:true, stories:[], resources:[]},
+ {id:"school-models", title:"Competency-Based School Models", tag:"See It in Schools", blurb:"Schools we have visited and worked with that are redesigning learning, grading, time, and roles", tone:"sky", icon:"school", leaders:true, schools:true, stories:[], resources:[]},
  {id:"student-voice", title:"Student Voice", tag:"Hear It from Students", blurb:"What meaningful learning feels like, in students\u2019 own words", tone:"orange", icon:"chat", byTag:"Student Voice",
   stories:[]},
  {id:"professional-learning", title:"Professional Learning", tag:"Teachers Learning Together", blurb:"Learning walks, coaching, peer visits, and other ways educators grow together", tone:"sage", icon:"people", leaders:true,
@@ -1838,7 +1839,7 @@ const SCHOOLS = [
 },
 {
 "name": "Olympus Academy",
-"place": "New York City",
+"place": "Brooklyn, New York",
 "grades": "High school",
 "parts": [
 "Mastery-Based Grading",
@@ -1880,8 +1881,8 @@ const SCHOOLS = [
 },
 {
 "name": "Alpha School",
-"place": "Austin, Texas",
-"grades": "Grades K to 12",
+"place": "Austin, Texas, and other campuses",
+"grades": "Several schools, K to 12",
 "parts": [
 "Learning and Instruction",
 "Technology",
@@ -1889,7 +1890,7 @@ const SCHOOLS = [
 "Flexible Time, Space, and Grouping",
 "Reimagined Roles"
 ],
-"desc": "Students spend about two hours a day on personalized, AI-supported academics and use the rest of the day for projects and life skills, with adults working as guides rather than lecturers.",
+"desc": "A network of schools where students spend about two hours a day on personalized, AI-supported academics and use the rest of the day for projects and life skills, with adults working as guides rather than lecturers.",
 "files": [
 [
 "2 Hour Learning",
@@ -2289,7 +2290,7 @@ function renderResource(r){
     ${companionHTML(sr)}
     ${sr?quoteCardHTML(FEEDBACK[sr.s].quotes[(sr.part-1)%FEEDBACK[sr.s].quotes.length],FEEDBACK[sr.s]):""}
     ${q&&q.c.note?`<div class="series-note">${q.c.note}</div>`:""}
-    ${picksHTML(r)}
+    ${early?`<nav class="end-nav"><a class="back" href="#c-${q.c.id}" data-coll="${q.c.id}">\u2190 Back to ${esc(q.c.title)}</a><a class="back" href="#resources" data-go="resources">Browse all stories and resources \u2192</a></nav>`:picksHTML(r)}
     ${!(embed||slides)?nextUpHTML(q):""}
   </article>`;
   wireRows(app);
