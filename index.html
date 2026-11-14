@@ -804,7 +804,6 @@ function resourceHTML(r){
     <div class="res-top"><span class="res-icon">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><span class="res-type">${esc(r.type)}</span>${researchFor(r)?`<span class="rs-part">Part ${researchFor(r).part} of ${RESEARCH.length}</span>`:""}</div>
     <h3>${esc(r.title)}</h3>
     <p${r.img?' class="clamp"':""}>${esc(r.summary)}</p>
-    ${r.audience.length?`<div class="res-for">For ${esc(r.audience.join(", ").toLowerCase())}</div>`:""}
   </a>`;
 }
 
@@ -820,7 +819,6 @@ const STORY_FILTERS = {
 const RES_FILTERS = {
   focus: {label:"Focus", all:"All focus areas", opts:FOCUS_GROUPS.map(g=>g[0]).filter(n=>resources.some(r=>r.areas.includes(n)))},
   type: {label:"Type", all:"All types", opts:uniq(resources.map(r=>r.type))},
-  audience: {label:"Who it's for", all:"Everyone", opts:uniq(resources.flatMap(r=>r.audience))},
   grade: {label:"Grade level", all:"All grades", multi:true, opts:GRADE_ORDER.filter(g=>resources.some(r=>r.gradeLevels.includes(g)))},
   subject: {label:"Subject", all:"All subjects", opts:uniq(resources.flatMap(r=>r.subjects))}
 };
@@ -866,7 +864,6 @@ function storyMatch(s, st){
 function resMatch(r, st){
   if(st.focus && !r.areas.includes(st.focus)) return false;
   if(st.type && r.type!==st.type) return false;
-  if(st.audience && !r.audience.includes(st.audience)) return false;
   if(st.grade.length && !r.gradeLevels.some(g=>st.grade.includes(g))) return false;
   if(st.subject && !r.subjects.includes(st.subject)) return false;
   return textHit(st.q, r.title+" "+r.summary+" "+r.allTags.join(" ")+" "+gradeWords(r.gradeLevels));
@@ -1082,7 +1079,8 @@ function renderLibrary(tab){
 function renderLeaders(){
   const lead = COLLECTIONS.filter(c=>c.leaders);
   const sysStories = stories.filter(s=>s.pathway!=="Classroom" || s.focus.some(f=>["Leadership","Learning Walks","Coaching","Collective Practice"].includes(f)));
-  const lRes = resources.filter(r=>r.audience.some(a=>/^(lead|coach|admin|principal)/i.test(a)));
+  /* Everything is for everyone, so this row shows resources about leading and growing the work */
+  const lRes = resources.filter(r=>r.areas.some(a=>["Professional Learning","Mastery-Based Grading","ClassVoice"].includes(a)));
   app.innerHTML = `
   <section class="wrap intro">
     <div class="eyebrow orange">LearningWorks Exchange</div>
