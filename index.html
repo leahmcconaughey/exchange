@@ -290,7 +290,7 @@ nav.main a.on{color:var(--navy)}
 .wh-seg:hover .wh-fill,.wh-seg:focus-visible .wh-fill,.wh-seg.on .wh-fill{fill:#E3F2FC}
 .wh-band{transition:opacity .15s;opacity:.9}.wh-seg:hover .wh-band,.wh-seg.on .wh-band{opacity:1}
 .wh-core circle{fill:var(--navy);transition:fill .15s}.wh-core:hover circle,.wh-core.on circle,.wh-core:focus-visible circle{fill:#0a5878}
-.wh-core text{fill:#fff}.wh-core .wh-big{font-size:18px;font-weight:800}.wh-core .wh-small{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;fill:#BFE3F7}
+.wh-core text{fill:#fff}.wh-core .wh-big{font-size:18px;font-weight:800}.wh-core .wh-small{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;fill:#BFE3F7}
 .wh-panel h2{margin:4px 0 8px;font-size:26px;line-height:1.2}.wh-panel p{margin:0 0 12px;color:var(--muted);font-size:16px;line-height:1.55}
 .wh-pdf{font-weight:700;font-size:14.5px;color:var(--blue);text-decoration:none}
 .wh-count{font-weight:600}
@@ -1154,8 +1154,21 @@ function renderLibrary(tab){
     const items = (collHits.length || list.length) ? collHits.map(collectionHTML).join("") + resultHTML :
       (tab==="resources" && !resources.length ? `<div class="empty"><b>Practical resources are on the way!</b>In the meantime, explore the stories. <a class="link" href="#stories" data-go="stories">Explore Stories →</a></div>` : `<div class="empty"><b>Nothing matches those filters yet.</b>Try removing a filter or searching a different word.</div>`);
     const holder = app.querySelector("#results");
-    holder.innerHTML = rowHTML("res-"+tab, active ? `Matching ${tab}` : (tab==="stories"?"All stories":"All resources"), sub, items);
+    /* Searching on one tab also shows matches from the other tab, so a search never comes up empty by accident */
+    let other = "";
+    if((st.q||"").trim()){
+      const ot = tab==="stories" ? "resources" : "stories";
+      const oList = ot==="stories" ? byTitleFirst(stories.filter(x=>storyMatch(x,{...blank(STORY_FILTERS),q:st.q})), st.q)
+                                   : byTitleFirst(resources.filter(x=>resMatch(x,{...blank(RES_FILTERS),q:st.q})), st.q);
+      const oShown = new Set(shown), oSeries = new Map();
+      COLLECTIONS.filter(c=>c.series && !c.hub && !c.inHub && hasItems(c)).forEach(c=>(ot==="stories"?c.stories:(c.resources||[])).forEach(sl=>{ if(!oSeries.has(sl)) oSeries.set(sl,c); }));
+      const oCards = oList.map(x=>{ const c=oSeries.get(x.slug); if(!c) return (ot==="stories"?cardHTML:resourceHTML)(x); if(oShown.has(c.id)) return ""; oShown.add(c.id); return collectionHTML(c); }).join("");
+      if(oCards) other = rowHTML("res-other", `Matching ${ot}`, `${oList.length} found \u00B7 <a class="link" href="#${ot}" data-go="${ot}">Search in ${ot[0].toUpperCase()+ot.slice(1)} \u2192</a>`, oCards);
+    }
+    const items2 = (!list.length && !collHits.length && other) ? `<div class="empty"><b>No ${tab} match \u201C${esc(st.q.trim())}\u201D.</b>But there are matching ${tab==="stories"?"resources":"stories"} below.</div>` : items;
+    holder.innerHTML = rowHTML("res-"+tab, active ? `Matching ${tab}` : (tab==="stories"?"All stories":"All resources"), sub, items2) + other;
     wireRows(holder);
+    { const go = holder.querySelector("#res-other a[data-go]"); if(go) go.addEventListener("click", ()=>{ const ot = go.dataset.go; fState[ot] = {...blank(ot==="stories"?STORY_FILTERS:RES_FILTERS), q:st.q}; save(); }, true); }
     const c = holder.querySelector("#clear"); if(c) c.onclick = ()=>{ fState[tab]=blank(F); save(); renderLibrary(tab); };
   }
   update();
@@ -1997,6 +2010,8 @@ const WHEEL = [
  {label:["Community","Alliance"], part:"Community Alliance", group:"Community Alliance", color:"#8B5E9B"},
  {label:["Policy","Shifts"], part:"Policy Shifts", group:"Community Alliance", color:"#8B5E9B"}
 ];
+/* Display names that match the wheel (the data keeps the spreadsheet names) */
+const partLabel = p => p==="Mastery-Based Grading" ? "Feedback and Grading" : p;
 function wheelSVG(){
   const C=210, R1=96, R2=178, R3=194, pt=(r,a)=>[C+r*Math.cos(a), C+r*Math.sin(a)].map(v=>v.toFixed(1));
   const segs = WHEEL.map((w,i)=>{
@@ -2013,7 +2028,7 @@ function wheelSVG(){
   return `<svg class="wheel" viewBox="0 0 420 420" role="group" aria-label="Competency-Based Learning Framework">
     ${segs}
     <g class="wh-seg wh-core" tabindex="0" role="button" data-i="core" aria-label="Competencies"><circle cx="${C}" cy="${C}" r="${R1-6}"/>
-      <text x="${C}" y="${C-28}" text-anchor="middle" class="wh-small">Student</text><text x="${C}" y="${C+6}" text-anchor="middle" class="wh-big">Competencies</text><text x="${C}" y="${C+38}" text-anchor="middle" class="wh-small">Educator</text></g>
+      <text x="${C}" y="${C-8}" text-anchor="middle" class="wh-big">Competencies</text><line x1="${C-50}" y1="${C+8}" x2="${C+50}" y2="${C+8}" stroke="#5E93B0" stroke-width="1.5"/><text x="${C-8}" y="${C+33}" text-anchor="end" class="wh-small">Student</text><text x="${C+8}" y="${C+33}" text-anchor="start" class="wh-small">Educator</text><line x1="${C}" y1="${C+18}" x2="${C}" y2="${C+38}" stroke="#5E93B0" stroke-width="1.5"/></g>
   </svg>`;
 }
 function schoolsHTML(){
@@ -2021,7 +2036,7 @@ function schoolsHTML(){
       <div class="sm-top"><span class="sm-ic" aria-hidden="true">${CICONS.school}</span><div><h3>${esc(sc.name)}</h3><div class="sm-where">${esc(sc.place)} \u00B7 ${esc(sc.grades)}</div></div></div>
       <p>${esc(sc.desc)}</p>
       ${sc.files.length?`<button type="button" class="sm-open" data-school="${i}">See their materials (${sc.files.length}) \u2192</button>`:""}
-      <div class="sm-hover" aria-hidden="true"><div class="sm-hover-h">Aligned to</div><div class="sm-tags">${sc.parts.map(p=>`<span>${esc(p)}</span>`).join("")}</div></div>
+      <div class="sm-hover" aria-hidden="true"><div class="sm-hover-h">Aligned to</div><div class="sm-tags">${sc.parts.map(p=>`<span>${esc(partLabel(p))}</span>`).join("")}</div></div>
     </article>`).join("");
   return `<section class="wh-wrap">
       <div class="wh-left">${wheelSVG()}</div>
@@ -2075,7 +2090,7 @@ function wireSchools(){
     const sc = SCHOOLS[+b.dataset.school];
     inner.innerHTML = `<button type="button" class="sm-x" aria-label="Close">\u00D7</button>
       <h2 id="sm-dlg-h">${esc(sc.name)}</h2><div class="sm-where">${esc(sc.place)} \u00B7 ${esc(sc.grades)}</div>
-      <div class="sm-tags">${sc.parts.map(p=>`<span>${esc(p)}</span>`).join("")}</div>
+      <div class="sm-tags">${sc.parts.map(p=>`<span>${esc(partLabel(p))}</span>`).join("")}</div>
       <ul class="sm-list">${sc.files.map(([t,k,u])=>`<li><a href="${esc(u)}" target="_blank" rel="noopener"><span class="sm-kind k-${k}">${FILE_KIND[k]}</span><span>${esc(t)}</span></a></li>`).join("")}</ul>
       ${sc.files.some(f=>f[1]==="search")?`<p class="sm-note">Search links open a web search for the article, since it lives on the publisher\u2019s site.</p>`:""}`;
     inner.querySelector(".sm-x").onclick = ()=>dlg.close();
