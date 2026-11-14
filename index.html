@@ -325,6 +325,21 @@ nav.main a.on{color:var(--navy)}
 .sm-list a{display:flex;gap:10px;align-items:center;font-size:15px;color:var(--navy);text-decoration:none;padding:8px 8px;border-radius:10px}
 .sm-list a:hover,.sm-list a:focus-visible{background:var(--beige)}
 .sm-note{margin:0;font-size:13px;color:var(--muted)}
+.sm-card[data-school-page]{cursor:pointer;transition:box-shadow .15s,border-color .15s}.sm-card[data-school-page]:hover,.sm-card[data-school-page]:focus-visible{border-color:var(--blue);box-shadow:0 10px 30px rgba(5,65,91,.12)}
+a.sm-open{text-decoration:none}
+.sp-tags{margin-top:12px}.sp-tags span{background:#fff}
+.sp-sec{margin:34px 0 0}.sp-sec h2{font-size:24px;margin:0 0 6px;padding-bottom:10px;border-bottom:2px solid var(--line)}
+.sp-intro{max-width:820px;font-size:16px;line-height:1.6;color:var(--navy);margin:12px 0 0}
+.sp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;margin-top:16px;align-items:start}
+.sp-tile{margin:0;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.sp-frame{position:relative;background:#EEF4F8}.sp-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.sp-frame.f-video,.sp-frame.f-slides{aspect-ratio:16/9}.sp-frame.f-doc,.sp-frame.f-pdf{height:420px}.sp-frame.f-audio{height:160px}
+.sp-tile figcaption{padding:14px 16px 16px;display:grid;gap:8px}
+.sp-cap-top{display:flex;gap:10px;align-items:center}.sp-cap-top b{font-size:16px;line-height:1.3}
+.sp-tile p{margin:0;font-size:14.5px;line-height:1.5;color:var(--muted)}
+.sp-open{font-weight:700;font-size:13.5px;color:var(--blue);text-decoration:none}
+.sp-link{padding:18px;gap:10px;text-decoration:none;color:var(--navy);align-items:flex-start}.sp-link:hover{border-color:var(--blue)}.sp-link b{font-size:16px;line-height:1.35}
+.sp-chaps{display:flex;flex-wrap:wrap;gap:6px}.sp-chaps button{font:inherit;font-size:13px;font-weight:600;color:var(--navy);background:var(--beige);border:1px solid transparent;border-radius:999px;padding:4px 11px;cursor:pointer}.sp-chaps button:hover{border-color:var(--blue)}.sp-chaps span{color:var(--blue);font-weight:800;margin-right:6px}
 .sm-kind.k-article,.sm-kind.k-search{background:#EDE7F6;color:#5b3f8c}
 .sm-kind{flex:none;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:3px 7px;background:#E3F2FC;color:var(--blue);min-width:44px;text-align:center}
 .sm-kind.k-video{background:#FDE3CB;color:#9a5a1c}.sm-kind.k-pdf{background:#DFF0E3;color:#2f6b45}
@@ -1772,10 +1787,106 @@ const SCHOOLS = [
 "video",
 "https://youtu.be/3j5mntMEQv0"
 ]
+],
+"sections": [
+{
+"h": "Overview",
+"p": "Middle School 442 School for Innovation was an original member of the NYC DOE\u2019s Office of Innovation. Over the course of several years, they transformed from a traditional school model to a forward-thinking, innovative culture with authentic learning, inclusive classrooms, purposeful grading, and meaningful uses for technology.",
+"items": [
+[
+"Intro",
+""
+],
+[
+"Context",
+"Footage from a site visit to MS 442. Principal Noreen Mills provides context and background for the school. MS 442 has always focused on an inclusive environment to support all learners: one third of their students have IEPs, all core content classes are taught through an ICT approach, and half of the classes on each grade level are Nest classes."
+],
+[
+"School Visit Slides",
+"Principal Noreen Mills\u2019 complete slide deck."
+],
+[
+"Results",
+"Principal Mills describes MS 442\u2019s overall school performance as measured by the New York City Department of Education."
+]
 ]
 },
 {
-"name": "The Young Women’s Leadership School of Astoria",
+"h": "Learning, Teaching, and Technology",
+"p": "",
+"items": [
+[
+"Classroom Visits",
+"Step inside a typical classroom."
+],
+[
+"Curriculum Resources",
+"Hear Principal Mills talk about integrating authentic learning and mastery-based grading with two curriculum resources: Illustrative Mathematics and Wit & Wisdom."
+]
+]
+},
+{
+"h": "Scheduling and Grouping",
+"p": "Students are organized in grade-level teams. They receive 6 periods of ELA and math per week, along with 2 periods of ELA and math intensives. They also receive numerous elective classes and a mentoring (advisory) period.",
+"items": [
+[
+"Sample Student Schedule",
+"A sample 6th grade weekly schedule."
+],
+[
+"Intensives",
+"Principal Mills discusses intensives."
+],
+[
+"Professional Collaboration Schedule",
+"The schedule allows for multiple peer collaborative opportunities per week, including whole-school professional learning, department time, and team time. Instructional coaches teach part time, which allows other teachers to observe their classrooms for various practices."
+]
+]
+},
+{
+"h": "Experiential Whole-School Professional Learning",
+"p": "MS 442 believes in experiential professional learning where teachers feel what it feels like to be a student. The Phone Booth Challenge session, facilitated at the beginning of MS 442\u2019s transformation journey, integrated authentic learning, effective technology, and mastery-based grading.",
+"items": [
+[
+"Phone Booth Challenge Overview",
+"Learn more about the challenge teachers were given."
+],
+[
+"Phone Booth Challenge",
+"Hear teachers work, see final products, and catch the debrief."
+]
+]
+},
+{
+"h": "Feedback and Grading",
+"p": "",
+"items": [
+[
+"Mastery-Based Grading",
+"Hear Principal Mills discuss standards-based grading, including their four-point scale and making up work through Up Grades."
+]
+]
+}
+],
+"chapters": {
+"Classroom Visits": [
+[
+"00:00",
+"7th Grade Social Studies/ELA"
+],
+[
+"01:32",
+"7th Grade Math"
+],
+[
+"03:39",
+"Fabrication Lab"
+]
+]
+}
+},
+{
+"name": "The Young Women\u2019s Leadership School of Astoria",
 "place": "Queens, New York",
 "grades": "Grades 6 to 12",
 "parts": [
@@ -1998,23 +2109,23 @@ function wheelSVG(){
   </svg>`;
 }
 function schoolsHTML(){
-  const cards = SCHOOLS.map((sc,i)=>`<article class="sm-card" data-parts="${esc(sc.parts.join("|"))}" tabindex="0">
+  const cards = SCHOOLS.map((sc,i)=>`<article class="sm-card" data-parts="${esc(sc.parts.join("|"))}" data-school-page="${schoolSlug(sc)}" tabindex="0" role="link" aria-label="${esc(sc.name)}: open the school page">
       <div class="sm-top"><span class="sm-ic" aria-hidden="true">${CICONS.school}</span><div><h3>${esc(sc.name)}</h3><div class="sm-where">${esc(sc.place)} \u00B7 ${esc(sc.grades)}</div></div></div>
       <p>${esc(sc.desc)}</p>
-      ${sc.files.length?`<button type="button" class="sm-open" data-school="${i}">See their materials (${sc.files.length}) \u2192</button>`:""}
+      <a class="sm-open" href="#school-${schoolSlug(sc)}">${sc.files.length?`See the school page (${sc.files.length} materials)`:"See the school page"} \u2192</a>
       <div class="sm-hover" aria-hidden="true"><div class="sm-hover-h">Aligned to</div><div class="sm-tags">${sc.parts.map(p=>`<span>${esc(partLabel(p))}</span>`).join("")}</div></div>
     </article>`).join("");
   return `<section class="wh-wrap">
-      <div class="wh-left">${wheelSVG()}<p class="wh-hint"><b>Hover</b> over an area to preview its schools. <b>Click</b> an area to keep the list open, then choose a school.</p></div>
+      <div class="wh-left">${wheelSVG()}<p class="wh-hint"><b>Hover</b> over an area to preview its schools. <b>Click</b> an area to keep the list open, then click a school to open its page.</p></div>
       <div class="wh-panel" aria-live="polite"><div class="wh-default">
         <div class="eyebrow">Competency-Based Learning Framework</div>
         <h2>Which schools are doing what?</h2>
-        <p>Each part of the wheel is an area of our framework. See which schools are working on each one, then explore their materials in the cards below.</p>
+        <p>Each part of the wheel is an area of our framework. See which schools are working on each one, then click a school to see all of its videos and materials on one page.</p>
         <a class="wh-pdf" href="docs/Competency-Wheel.pdf" target="_blank" rel="noopener">Download the framework (PDF) \u2197</a>
       </div><div class="wh-detail" hidden></div></div>
     </section>
     ${rowHTML("sm-row","Schools","",cards)}
-    <dialog class="sm-dlg" aria-labelledby="sm-dlg-h"><div class="sm-dlg-in"></div></dialog>`;
+`;
 }
 function wireSchools(){
   const track = app.querySelector("#sm-row .track"), def = app.querySelector(".wh-default"), det = app.querySelector(".wh-detail");
@@ -2037,12 +2148,7 @@ function wireSchools(){
     app.querySelectorAll(".sm-card").forEach(c=>{ c.hidden = !!part && !c.dataset.parts.split("|").includes(part); });
     if(track){ track.scrollLeft = 0; track.dispatchEvent(new Event("scroll")); }
   };
-  const goSchool = k => {
-    const card = app.querySelectorAll(".sm-card")[k]; if(!card) return;
-    card.hidden = false;
-    card.scrollIntoView({behavior:"smooth", block:"center", inline:"start"});
-    card.classList.remove("flash"); void card.offsetWidth; card.classList.add("flash");
-  };
+  const goSchool = k => go("school-"+schoolSlug(SCHOOLS[k]));
   segs.forEach(g=>{
     const i = g.dataset.i==="core" ? "core" : +g.dataset.i;
     g.addEventListener("mouseenter", ()=>show(i));
@@ -2050,19 +2156,61 @@ function wireSchools(){
     g.addEventListener("click", ()=>{ locked = locked===i ? null : i; filter(locked===null?null:info(i).part); show(locked===null? i : i); });
     g.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); g.click(); } });
   });
-  app.querySelector(".wheel").addEventListener("mouseleave", ()=>show(locked));
-  const dlg = app.querySelector(".sm-dlg"), inner = dlg.querySelector(".sm-dlg-in");
-  app.querySelectorAll(".sm-open").forEach(b=>b.onclick=()=>{
-    const sc = SCHOOLS[+b.dataset.school];
-    inner.innerHTML = `<button type="button" class="sm-x" aria-label="Close">\u00D7</button>
-      <h2 id="sm-dlg-h">${esc(sc.name)}</h2><div class="sm-where">${esc(sc.place)} \u00B7 ${esc(sc.grades)}</div>
-      <div class="sm-tags">${sc.parts.map(p=>`<span>${esc(partLabel(p))}</span>`).join("")}</div>
-      <ul class="sm-list">${sc.files.map(([t,k,u])=>`<li><a href="${esc(u)}" target="_blank" rel="noopener"><span class="sm-kind k-${k}">${FILE_KIND[k]}</span><span>${esc(t)}</span></a></li>`).join("")}</ul>
-      ${sc.files.some(f=>f[1]==="search")?`<p class="sm-note">Search links open a web search for the article, since it lives on the publisher\u2019s site.</p>`:""}`;
-    inner.querySelector(".sm-x").onclick = ()=>dlg.close();
-    dlg.showModal();
+  /* Leaving the wheel keeps the last area's schools showing, so the mouse can travel to the list and click a school */
+  app.querySelector(".wheel").addEventListener("mouseleave", ()=>{ if(locked!==null) show(locked); });
+  app.querySelectorAll(".sm-card[data-school-page]").forEach(c=>{
+    c.addEventListener("click", e=>{ if(e.target.closest("a")) return; go("school-"+c.dataset.schoolPage); });
+    c.addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); go("school-"+c.dataset.schoolPage); } });
   });
-  dlg.addEventListener("click", e=>{ if(e.target===dlg) dlg.close(); });
+}
+/* ---------- School pages: every video, deck, doc, and PDF for one school, embedded on one page ---------- */
+const schoolSlug = sc => slug(sc.name);
+const schoolBySlug = h => SCHOOLS.find(sc=>schoolSlug(sc)===h);
+function fileEmbed(k,u){
+  const id = (u.match(/\/d\/([\w-]{20,})/)||[])[1];
+  if(k==="video") return videoEmbed(u);
+  if(k==="slides" && id) return `https://docs.google.com/presentation/d/${id}/embed?start=false&loop=false`;
+  if(k==="doc" && id) return `https://docs.google.com/document/d/${id}/preview`;
+  if((k==="pdf"||k==="audio") && /drive\.google\.com/.test(u) && id) return `https://drive.google.com/file/d/${id}/preview`;
+  if(k==="pdf" && !/^https?:/.test(u)) return u;
+  return "";
+}
+function schoolTileHTML(sc,[t,k,u],cap){
+  const src = fileEmbed(k,u), local = !/^https?:/.test(u);
+  const chap = (sc.chapters||{})[t];
+  const open = `<a class="sp-open" href="${esc(u)}" target="_blank" rel="noopener">${k==="video"?"Watch on YouTube":local?"Open the PDF":"Open full size"} \u2197</a>`;
+  if(!src) return `<a class="sp-tile sp-link" href="${esc(u)}" target="_blank" rel="noopener"><span class="sm-kind k-${k}">${FILE_KIND[k]}</span><b>${esc(t)}</b>${cap?`<p>${esc(cap)}</p>`:""}<span class="sp-open">${k==="search"?"Search for the article":"Read it"} \u2197</span></a>`;
+  return `<figure class="sp-tile k-${k}">
+      <div class="sp-frame f-${k}"><iframe src="${esc(src)}" title="${esc(t)}" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
+      <figcaption><div class="sp-cap-top"><span class="sm-kind k-${k}">${FILE_KIND[k]}</span><b>${esc(t)}</b></div>
+      ${cap?`<p>${esc(cap)}</p>`:""}
+      ${chap?`<div class="sp-chaps">${chap.map(([ts,l])=>`<button type="button" data-t="${ts.split(":").reduce((m,x)=>m*60+ +x,0)}"><span>${esc(ts)}</span>${esc(l)}</button>`).join("")}</div>`:""}
+      ${open}</figcaption></figure>`;
+}
+function renderSchool(sc){
+  const byTitle = Object.fromEntries(sc.files.map(f=>[f[0],f]));
+  const used = new Set();
+  const grid = items => `<div class="sp-grid">${items.map(([f,cap])=>{ used.add(f[0]); return schoolTileHTML(sc,f,cap); }).join("")}</div>`;
+  let body = "";
+  if(sc.sections){
+    body = sc.sections.map(sec=>`<section class="sp-sec"><h2>${esc(sec.h)}</h2>${sec.p?`<p class="sp-intro">${esc(sec.p)}</p>`:""}${grid(sec.items.filter(([t])=>byTitle[t]).map(([t,cap])=>[byTitle[t],cap]))}</section>`).join("");
+  }
+  const rest = sc.files.filter(f=>!used.has(f[0]));
+  const groups = [["Videos",["video"]],["Slides, documents, and PDFs",["slides","doc","pdf","audio"]],["In the news",["article","search"]]];
+  body += groups.map(([h,ks])=>{ const fs = rest.filter(f=>ks.includes(f[1])); return fs.length?`<section class="sp-sec"><h2>${sc.sections?"More: ":""}${h}</h2>${grid(fs.map(f=>[f,""]))}</section>`:""; }).join("");
+  if(!sc.files.length) body = `<p class="sp-intro">Materials from this school are on the way.</p>`;
+  app.innerHTML = `<article class="wrap story school-page">
+    <a class="back" href="#c-school-models" data-coll="school-models">\u2190 Back to Competency-Based School Models</a>
+    <div class="coll-hero tone-sky"><span class="coll-icon">${CICONS.school}</span><div><div class="eyebrow">School Model \u00B7 ${esc(sc.place)} \u00B7 ${esc(sc.grades)}</div><h1>${esc(sc.name)}</h1><p>${esc(sc.desc)}</p>
+      <div class="sm-tags sp-tags">${sc.parts.map(p=>`<span>${esc(partLabel(p))}</span>`).join("")}</div></div></div>
+    ${body}
+    ${sc.files.some(f=>f[1]==="search")?`<p class="sm-note">Search links open a web search for the article, since it lives on the publisher\u2019s site.</p>`:""}
+    <nav class="end-nav"><a class="back" href="#c-school-models" data-coll="school-models">\u2190 All school models</a></nav>
+  </article>`;
+  app.querySelectorAll(".sp-chaps button").forEach(b=>b.onclick=()=>{
+    const f = b.closest(".sp-tile").querySelector("iframe");
+    f.src = f.src.replace(/[?&](start|autoplay)=\d+/g,"") + `&start=${b.dataset.t}&autoplay=1`;
+  });
 }
 function materialsHTML(c, i){
   const m = c && SERIES_MATERIALS[c.id] && SERIES_MATERIALS[c.id][i+1];
@@ -2444,11 +2592,12 @@ function route(){
   else if(c) renderCollection(c);
   else if(bySlug[h]){ renderStory(bySlug[h]); navKey="home"; }
   else if(resBySlug[h]){ renderResource(resBySlug[h]); navKey="home"; }
+  else if(h.startsWith("school-") && schoolBySlug(h.slice(7))){ renderSchool(schoolBySlug(h.slice(7))); navKey="leaders"; }
   else { renderHome(); navKey="home"; }
   wireReadMore(app);
   const PAGE_NAMES = {"":"Home", stories:"Stories", resources:"Resources", leaders:"For Leaders & Coaches", voices:"Voices", about:"About"};
-  const gcTitle = PAGE_NAMES[h] !== undefined ? PAGE_NAMES[h] : c ? "Collection: "+c.title : bySlug[h] ? "Story: "+bySlug[h].title : resBySlug[h] ? "Resource: "+resBySlug[h].title : "Home";
-  gcCount({path: "/" + (PAGES[h]||c||bySlug[h]||resBySlug[h] ? h : ""), title: gcTitle});
+  const gcTitle = PAGE_NAMES[h] !== undefined ? PAGE_NAMES[h] : c ? "Collection: "+c.title : bySlug[h] ? "Story: "+bySlug[h].title : resBySlug[h] ? "Resource: "+resBySlug[h].title : (h.startsWith("school-") && schoolBySlug(h.slice(7))) ? "School: "+schoolBySlug(h.slice(7)).name : "Home";
+  gcCount({path: "/" + (PAGES[h]||c||bySlug[h]||resBySlug[h]||(h.startsWith("school-")&&schoolBySlug(h.slice(7))) ? h : ""), title: gcTitle});
   document.querySelectorAll("nav.main a").forEach(a=>a.classList.toggle("on", a.dataset.nav===navKey));
   window.scrollTo(0,0);
 }
