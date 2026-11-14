@@ -258,6 +258,17 @@ nav.main a.on{color:var(--navy)}
 .notes-list{background:#fff;border:1px solid var(--line);border-left:6px solid var(--blue);border-radius:14px;padding:18px 22px}
 .notes-list h2{margin:0 0 8px;font-size:20px;font-weight:800}
 .notes-list ul{margin:0;padding-left:20px;display:grid;gap:8px;line-height:1.55}
+.series-note.small{font-size:13.5px;padding:12px 16px;margin-top:26px;line-height:1.5}
+.part-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.part-card{display:flex;flex-direction:column;gap:10px;background:#fff;border:1px solid var(--line);border-top:5px solid var(--orange);border-radius:18px;padding:22px 22px 18px;color:inherit;text-decoration:none;transition:transform .15s,box-shadow .15s}
+.part-card:hover,.part-card:focus-visible{transform:translateY(-2px);box-shadow:0 8px 22px rgba(20,50,80,.10)}
+.part-pill{align-self:flex-start;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9a5a1c;background:#FBE9D8;border-radius:999px;padding:4px 10px}
+.part-card h3{margin:2px 0 0;font-size:21px;line-height:1.25;color:var(--navy)}
+.part-q-h{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.part-q{list-style:none;margin:0;padding:0;display:grid;gap:9px;counter-reset:pq}
+.part-q li{counter-increment:pq;position:relative;padding-left:32px;font-size:15px;line-height:1.45}
+.part-q li::before{content:counter(pq);position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:#E3F2FC;color:var(--blue);font-size:12.5px;font-weight:700;display:grid;place-items:center}
+.part-go{margin-top:auto;padding-top:6px;font-weight:700;font-size:14.5px;color:var(--blue)}
 .series-note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55;color:var(--muted)}
 .series-note b{color:var(--navy)}
 .res-icon{width:44px;height:44px;border-radius:12px;background:var(--beige);color:var(--blue);display:grid;place-items:center;flex:none}
@@ -1165,10 +1176,12 @@ function renderCollection(c){
     ${c.fb?proofHTML(FEEDBACK[c.fb]):""}
     ${c.rotQuotes?rotHTML(c):""}
     ${c.id==="watching-yourself-teach"?recordHTML():""}
-    ${c.note?`<div class="series-note">${c.note}</div>`:""}
     ${TESTIMONIALS.some(t=>(t.colls||[]).includes(c.id))?`<div class="testi-grid">${TESTIMONIALS.filter(t=>(t.colls||[]).includes(c.id)).map(t=>testimonialHTML(t,true)).join("")}</div>`:""}
-    ${rlist.length?`<div class="tryit-grid">${rlist.map(resourceHTML).join("")}</div>`:""}
+    ${rlist.length?(SERIES_QUESTIONS[c.id]
+      ? `<div class="part-grid">${rlist.map((r,i)=>partCardHTML(r,i,Math.max(rlist.length,Object.keys(SERIES_QUESTIONS[c.id]).length),SERIES_QUESTIONS[c.id][i+1]||[])).join("")}</div>`
+      : `<div class="tryit-grid">${rlist.map(resourceHTML).join("")}</div>`):""}
     ${list.length?`<div class="grid">${list.map(cardHTML).join("")}</div>`:""}
+    ${c.note?`<div class="series-note small">${c.note}</div>`:""}
     ${c.drivePdf?`<div class="pdf-view" style="margin:22px 0"><iframe src="https://drive.google.com/file/d/${c.drivePdf}/preview" title="${esc(c.drivePdfTitle||c.title)}" loading="lazy"></iframe></div>`:""}
     ${c.research?researchCollExtra():""}
   </article>`;
@@ -1344,6 +1357,26 @@ const SERIES_CHAPTERS = {
  "mastery-based-grading": {1: [["00:00","Introduction to mastery-based grading"],["02:32","Where grading fits in school transformation"],["06:37","Why do we give grades?"],["07:34","How traditional grades are calculated"],["10:23","Organizing grades by standard"],["14:17","Not yet meeting, meeting, exceeding"],["18:58","Grading a real piece of evidence"],["21:15","Task-based vs. mastery-based rubrics"],["26:49","Next steps and the series ahead"]]}
 };
 /* Extra links by position in a series collection: [url, bold label, small line] */
+/* Questions each video answers, by position in a series collection (shown on the collection page) */
+const SERIES_QUESTIONS = {
+ "mastery-based-grading": {
+  1:["What is mastery-based grading, and how does it differ from traditional grading?"],
+  2:["How do I grade an individual piece of work?","How do I determine mastery based on evidence?","How do I efficiently organize grades and work over time?"],
+  3:["What do I track mastery of?","How might assessments change when I track standards and competencies?","What types of assessments \u201Ccount\u201D as evidence toward mastery?"],
+  4:["I have all of this data. What do I do with it?","How can I reflect on my data as an individual teacher?","How can we create inter-rater reliability as a content area or grade-level team?"],
+  5:["How do conversations with and about students change?","What is the best way to explain this to parents?","How does the role of parent-teacher conferences change?"],
+  6:["How can I align this with state tests?","How can I convert mastery-based grades to letter grades for a transcript?"]
+ }
+};
+function partCardHTML(r, i, total, qs){
+  return `<a class="part-card" href="#${r.slug}" data-res="${r.slug}">
+    <span class="part-pill">Part ${i+1} of ${total}</span>
+    <h3>${esc(r.title.replace(/^(video|part)\s*\d+\s*[:.\-\u2013\u2014]\s*/i,""))}</h3>
+    <div class="part-q-h">This video answers</div>
+    <ol class="part-q">${qs.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
+    <span class="part-go">Watch \u2192</span>
+  </a>`;
+}
 const SERIES_LINKS = {
  "mastery-based-grading": {1: [["https://vimeo.com/158058171","Watch the Young Women\u2019s Leadership School of Astoria video referenced in this session","Opens on Vimeo in a new tab \u2197"]]}
 };
