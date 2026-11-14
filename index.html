@@ -2241,6 +2241,7 @@ function slidesDownload(u){
   return u;
 }
 function renderResource(r){
+  /* In part-labeled series (Mastery-Based Grading), chapters and extra links sit right under the video */
   const sr = seriesFor(r);
   const q = seqFor(r);
   const embed = videoEmbed(r.link) || videoEmbed(r.related);
@@ -2249,6 +2250,9 @@ function renderResource(r){
   const slides = slidesEmbed(r);
   const rs = researchFor(r);
   const side = !!embed;
+  const early = !!(q && q.c.partLabel);
+  const chapBlock = chaptersHTML(sr || (CHAPTERS[chapKey(r.title)] ? {chapters:CHAPTERS[chapKey(r.title)]} : (q && SERIES_CHAPTERS[q.c.id] && SERIES_CHAPTERS[q.c.id][q.i+1]) ? {chapters:SERIES_CHAPTERS[q.c.id][q.i+1]} : null), embed);
+  const linkBlock = (q && SERIES_LINKS[q.c.id] && SERIES_LINKS[q.c.id][q.i+1] || []).map(([u,t,n])=>`<a class="bp-link" href="${esc(u)}" target="_blank" rel="noopener"><b>${esc(t)}</b><span>${esc(n)}</span></a>`).join("");
   app.innerHTML = `<article class="wrap story">
     ${q?`<a class="back" href="#c-${q.c.id}" data-coll="${q.c.id}">← Back to ${esc(q.c.title)}</a>`:`<a class="back" href="#resources" data-go="resources">← Back to Resources</a>`}
     ${classVoiceHTML(r)}
@@ -2260,15 +2264,15 @@ function renderResource(r){
     ${slides?`<div class="player slides"><iframe src="${esc(slides)}" title="${esc(r.title)} slideshow" allowfullscreen loading="lazy"></iframe></div>
       <div class="slide-actions"><a class="open-res ghost" href="${esc(slidesFull(slides))}" target="_blank" rel="noopener">Open full screen ↗</a></div>`:""}
     ${(embed||slides)?nextUpHTML(q):""}
+    ${early?chapBlock+linkBlock:""}
     ${side?"":`<p class="desc">${esc(r.summary)}</p>`}
-    ${q&&q.c.note?`<div class="series-note">${q.c.note}</div>`:""}
     ${notesHTML(r, pdf ? "What you will learn" : "As you watch")}
     ${q?materialsHTML(q.c, q.i):""}
     ${isWYT(r)?recordHTML():""}
     ${rs?`<div class="rs-credit">${RS_CREDIT}${rs.wiggins?`<br><br>${WIGGINS_CREDIT}`:""}</div>`:""}
     ${sr&&sr.blueprint?`<a class="bp-link" href="${BLUEPRINT_PDF}" target="_blank" rel="noopener"><b>Keep the Engagement Blueprint open while you watch</b><span>Opens the PDF in a new tab ↗</span></a>`:""}
-    ${chaptersHTML(sr || (CHAPTERS[chapKey(r.title)] ? {chapters:CHAPTERS[chapKey(r.title)]} : (q && SERIES_CHAPTERS[q.c.id] && SERIES_CHAPTERS[q.c.id][q.i+1]) ? {chapters:SERIES_CHAPTERS[q.c.id][q.i+1]} : null), embed)}
-    ${(q && SERIES_LINKS[q.c.id] && SERIES_LINKS[q.c.id][q.i+1] || []).map(([u,t,n])=>`<a class="bp-link" href="${esc(u)}" target="_blank" rel="noopener"><b>${esc(t)}</b><span>${esc(n)}</span></a>`).join("")}
+    ${early?"":chapBlock}
+    ${early?"":linkBlock}
     ${sr&&sr.blueprint?precheckHTML():""}
     ${sr?`<div class="series-note">${SERIES_NOTE}</div>`:""}
     ${pdf&&!embed?`<div class="pdf-view"><iframe src="${esc(pdfLink)}#view=FitH" title="${esc(r.title)}" loading="lazy"></iframe></div>
@@ -2277,6 +2281,7 @@ function renderResource(r){
     ${r.link&&!embed&&!pdf&&!slides?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
     ${companionHTML(sr)}
     ${sr?quoteCardHTML(FEEDBACK[sr.s].quotes[(sr.part-1)%FEEDBACK[sr.s].quotes.length],FEEDBACK[sr.s]):""}
+    ${q&&q.c.note?`<div class="series-note">${q.c.note}</div>`:""}
     ${picksHTML(r)}
     ${!(embed||slides)?nextUpHTML(q):""}
   </article>`;
