@@ -281,6 +281,25 @@ nav.main a.on{color:var(--navy)}
 .mat:hover,.mat:focus-visible{border-color:var(--blue);box-shadow:0 6px 16px rgba(5,65,91,.08)}
 .mat-ic{flex:none;width:30px;height:30px;border-radius:50%;background:#E3F2FC;color:var(--blue);display:grid;place-items:center;font-weight:800}
 .mat b{display:block;font-size:15px;line-height:1.3}.mat small{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.sm-intro{display:grid;grid-template-columns:1fr minmax(240px,320px);gap:18px;align-items:center;margin:4px 0 18px}.sm-intro p{margin:0;font-size:16px;line-height:1.55;color:var(--muted)}
+@media(max-width:720px){.sm-intro{grid-template-columns:1fr}}
+.sm-filter{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.sm-filter button{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:999px;padding:7px 14px;cursor:pointer}
+.sm-filter button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.sm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;align-items:start}
+@media(max-width:400px){.sm-grid{grid-template-columns:1fr}}
+.sm-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 22px;display:flex;flex-direction:column;gap:12px}
+.sm-card[hidden]{display:none}
+.sm-top{display:flex;gap:12px;align-items:flex-start}.sm-ic{flex:none;width:42px;height:42px;border-radius:12px;background:#E3F2FC;color:var(--navy);display:grid;place-items:center}.sm-ic svg{width:22px;height:22px}
+.sm-card h3{margin:0;font-size:19px;line-height:1.25}.sm-where{font-size:13.5px;color:var(--muted);margin-top:3px}
+.sm-card p{margin:0;font-size:15px;line-height:1.5}
+.sm-tags{display:flex;flex-wrap:wrap;gap:6px}.sm-tags span{font-size:12.5px;font-weight:600;background:var(--beige);color:var(--navy);border-radius:999px;padding:4px 10px}
+.sm-files summary{cursor:pointer;font-weight:700;font-size:14.5px;color:var(--blue)}
+.sm-files ul{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}
+.sm-files a{display:flex;gap:10px;align-items:center;font-size:14.5px;color:var(--navy);text-decoration:none;padding:6px 8px;border-radius:10px}
+.sm-files a:hover,.sm-files a:focus-visible{background:var(--beige)}
+.sm-kind{flex:none;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:3px 7px;background:#E3F2FC;color:var(--blue);min-width:44px;text-align:center}
+.sm-kind.k-video{background:#FDE3CB;color:#9a5a1c}.sm-kind.k-pdf{background:#DFF0E3;color:#2f6b45}
 .series-note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55;color:var(--muted)}
 .series-note b{color:var(--navy)}
 .res-icon{width:44px;height:44px;border-radius:12px;background:var(--beige);color:var(--blue);display:grid;place-items:center;flex:none}
@@ -746,6 +765,7 @@ const COLLECTIONS = [
  {id:"mastery-based-grading", title:"Mastery-Based Grading", tag:"Video Series", blurb:"A Start Here video and five station videos on grading the learning: what to track, how to give feedback, and how classrooms, schools, and districts make the shift", tone:"orange", icon:"check", series:true, partLabel:true, startHere:true, leaders:true,
   note:`<b>About this series:</b> These videos were created for an in-person conference, back when our company was called the Urban Learning Institute. We are now LearningWorks. The Start Here video was the opening session for everyone. Parts 1 through 5 were the five stations: small groups watched the video at each station and then tried a short task together. When you hear "station" or "try this," that is what it refers to. Each station's task and materials are on its page, below the video. The videos were also shared on an earlier online resource hub, so you may hear references to a course, a community, or links "in the post below."`,
   byResTag:["Mastery-Based Grading"], stories:[], resources:[]},
+ {id:"school-models", title:"School Models", tag:"See It in Schools", blurb:"Schools we have visited and worked with that are redesigning learning, grading, time, and roles", tone:"sky", icon:"school", leaders:true, schools:true, stories:[], resources:[]},
  {id:"student-voice", title:"Student Voice", tag:"Hear It from Students", blurb:"What meaningful learning feels like, in students\u2019 own words", tone:"orange", icon:"chat", byTag:"Student Voice",
   stories:[]},
  {id:"professional-learning", title:"Professional Learning", tag:"Teachers Learning Together", blurb:"Learning walks, coaching, peer visits, and other ways educators grow together", tone:"sage", icon:"people", leaders:true,
@@ -794,6 +814,7 @@ const CICONS = {
  people:`<svg viewBox="0 0 24 24" ${L}><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.3 0 4 1.5 4.5 4"/></svg>`,
  chat:`<svg viewBox="0 0 24 24" ${L}><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12.5h5"/></svg>`,
  bookicon:`<svg viewBox="0 0 24 24" ${L}><path d="M12 6c-2-1.6-5-2-8-1v14c3-1 6-.6 8 1 2-1.6 5-2 8-1V5c-3-1-6-.6-8 1z"/><path d="M12 6v14"/></svg>`,
+ school:`<svg viewBox="0 0 24 24" ${L}><path d="M3 10l9-5 9 5"/><path d="M5 10v9h14v-9"/><path d="M10 19v-5h4v5"/></svg>`,
  check:`<svg viewBox="0 0 24 24" ${L}><rect x="4" y="3.5" width="16" height="17" rx="2"/><path d="M8 12l3 3 5-6"/></svg>`,
  clock:`<svg viewBox="0 0 24 24" ${L}><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg>`,
  compass:`<svg viewBox="0 0 24 24" ${L}><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>`,
@@ -930,7 +951,7 @@ function collectionHTML(c){
   </a>`;
 }
 const collById = id => COLLECTIONS.find(x=>x.id===id);
-const hasItems = c => c.hub ? c.hub.some(id=>hasItems(collById(id))) : (c.stories.some(x=>bySlug[x]) || (c.resources||[]).some(x=>resBySlug[x]));
+const hasItems = c => c.schools ? true : c.hub ? c.hub.some(id=>hasItems(collById(id))) : (c.stories.some(x=>bySlug[x]) || (c.resources||[]).some(x=>resBySlug[x]));
 /* Collections inside a starting page (inHub) show only through their starting page */
 const collRow = (list=COLLECTIONS, title="Curated Collections", sub="Start with what you need") => rowHTML("coll-"+title.length, title, sub, list.filter(c=>!c.inHub && hasItems(c)).map(collectionHTML).join(""));
 const SEARCH_ICON = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#038FDD" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>`;
@@ -1213,11 +1234,13 @@ function renderCollection(c){
       : `<div class="tryit-grid">${rlist.map(resourceHTML).join("")}</div>`):""}
     ${list.length?`<div class="grid">${list.map(cardHTML).join("")}</div>`:""}
     ${c.note?`<div class="series-note small">${c.note}</div>`:""}
+    ${c.schools?schoolsHTML():""}
     ${c.drivePdf?`<div class="pdf-view" style="margin:22px 0"><iframe src="https://drive.google.com/file/d/${c.drivePdf}/preview" title="${esc(c.drivePdfTitle||c.title)}" loading="lazy"></iframe></div>`:""}
     ${c.research?researchCollExtra():""}
   </article>`;
   wireProof(); wireRows(app);
   if(c.rotQuotes) wireRot(c);
+  if(c.schools) wireSchools();
 }
 /* Rotating quotes: one at a time, a new one every 7 seconds; pauses on hover or focus, dots to pick */
 let rotTimer = null;
@@ -1421,7 +1444,8 @@ function partCardHTML(r, i, total, qs, c){
 /* Station materials by position in a series collection: [label, link, short note]. Local docs download; Drive links open. */
 const SERIES_MATERIALS = {
  "mastery-based-grading": {
-  1: [["Station Details and Working Guidelines","docs/mbg/Station-Details-and-Working-Guidelines.pdf","All five stations at a glance"]],
+  1: [["Station Details and Working Guidelines","docs/mbg/Station-Details-and-Working-Guidelines.pdf","All five stations at a glance"],
+      ["Competency-Based Learning Framework","docs/Competency-Wheel.pdf","Our current competency wheel"]],
   2: [["Station 1 Overview","docs/mbg/Station-1-Overview.pdf","Guiding questions and tasks"],
       ["Try It Out Prompts","docs/mbg/Station-1-Try-It-Out-Prompts.pdf","The three tasks"],
       ["5th Grade ELA Rubric","https://drive.google.com/file/d/1njQS3sWLhxrNP9G8haXfumpRzbnBAVTz/view","Use with the student writing"],
@@ -1444,6 +1468,484 @@ const SERIES_MATERIALS = {
       ["Letter Grade Conversion Letter","docs/mbg/Station-5-Letter-Grade-Conversion.pdf","How one school explained it to students"]]
  }
 };
+const SCHOOLS = [
+{
+"name": "Bronx Arena High School",
+"place": "Bronx, New York",
+"grades": "High school",
+"parts": [
+"Competencies",
+"Technology",
+"Mastery-Based Grading",
+"Flexible Time, Space, and Grouping"
+],
+"desc": "A high school for students who are older and behind on credits. Students move through competency-based courses at their own pace in a blended learning model, with flexible blocks of time instead of a traditional bell schedule.",
+"files": [
+[
+"Bronx Arena Handbook",
+"slides",
+"https://docs.google.com/presentation/d/1kmjQ5vEq9AakmjA1UZFgAwUY_9J_3cnAQbDEr0aGee4/edit?usp=sharing"
+],
+[
+"Competencies",
+"slides",
+"https://docs.google.com/presentation/d/1TRfnboDpolXcG8OA8_yo-emHIl0xX5GWWdNT6hlFDmo/edit?usp=sharing"
+],
+[
+"Blended Learning",
+"slides",
+"https://docs.google.com/presentation/d/1x7MAeX8uzZvQXGf0wZvG96VrYwExZSoRmxpuA3uT0kY/edit?usp=sharing"
+],
+[
+"Arena Blocks",
+"slides",
+"https://docs.google.com/presentation/d/1bOW4JvSA9aoKeT6amlpjsMuSaAp7Vl8euiTmT1KahFE/edit?usp=sharing"
+],
+[
+"2025 Course Catalog",
+"pdf",
+"https://drive.google.com/file/d/1J4aNUxt_fdx77bHv1WvC55pGKuM0jyzt/view"
+],
+[
+"Electives for Credit",
+"pdf",
+"https://drive.google.com/file/d/1EmFrXg-eTVpPmEh6wvpVHRBaCq5jq1Bi/view"
+],
+[
+"In customized classrooms, at-risk students thrive (PBS NewsHour)",
+"video",
+"https://youtu.be/8lzs4CdMNtA"
+]
+]
+},
+{
+"name": "Bronx Compass High School",
+"place": "Bronx, New York",
+"grades": "High school",
+"parts": [
+"Competencies",
+"Learning and Instruction",
+"Technology",
+"Flexible Time, Space, and Grouping"
+],
+"desc": "Students set goals in Personalized Learning Plans, learn in interdisciplinary academies, and meet in advisory, with shared rubrics that make expectations clear across the school.",
+"files": [
+[
+"Personalized Learning Plans",
+"slides",
+"https://docs.google.com/presentation/d/14wmYPM78GLfdtojbMJAaQmHBN-UrOyCAKF2C6WDchMg/edit?usp=sharing"
+],
+[
+"Academies",
+"slides",
+"https://docs.google.com/presentation/d/1lZWJogCeiS0g1s6RQ4lR5SNx_9tRXZ1gOLWYrCM9caA/edit?usp=sharing"
+],
+[
+"The Academies",
+"doc",
+"https://docs.google.com/document/d/1RHQf99dnGh8kfg0USawKhpLqNSRJO7dPt2hQPQMVnu8/edit?usp=sharing"
+],
+[
+"Curriculum",
+"doc",
+"https://docs.google.com/document/d/1LBLocxFmB2c8nOCKARt3V85VM9DEEs52GsrliHxj33Q/edit?usp=sharing"
+],
+[
+"Advisory",
+"doc",
+"https://docs.google.com/document/d/1K8wM_CDM_JVjsIbuHQ_jlIipzykEzz3hOsvmairvtgw/edit?usp=sharing"
+],
+[
+"Rubrics",
+"pdf",
+"https://drive.google.com/file/d/11ajQFZdFco9ugo-AinasTGwQAYblOGW6/view"
+],
+[
+"Podcast conversation",
+"audio",
+"https://drive.google.com/file/d/1neCzJoH66-S9QJTjeirq9FQcRfnm4IAD/view"
+],
+[
+"Bronx Compass: Cool and Calm",
+"video",
+"https://youtu.be/vL3bS85G_Oo"
+]
+]
+},
+{
+"name": "Lebanon High School",
+"place": "Lebanon, New Hampshire",
+"grades": "High school",
+"parts": [
+"Competencies",
+"Mastery-Based Grading",
+"Flexible Time, Space, and Grouping",
+"Reimagined Roles",
+"Community Alliance",
+"Policy Shifts"
+],
+"desc": "Extended Learning Opportunities let students earn credit outside the classroom through internships, independent study, and community projects. Shared rubrics for research, products, presentations, and reflection keep the bar high, and school board policy makes it official.",
+"files": [
+[
+"ELO Case Study",
+"slides",
+"https://docs.google.com/presentation/d/1tUPh34JcsKsPZ0Dv-AKISm3yRMCZ3lYtpbqTCX9hbNA/edit?usp=sharing"
+],
+[
+"The Three Rs of ELOs",
+"doc",
+"https://docs.google.com/document/d/1hEY1RyWk3Jk-ot0cSvgMukS02iExkYQkq9N5zUoBysU/edit?usp=sharing"
+],
+[
+"Types of ELOs",
+"doc",
+"https://docs.google.com/document/d/1Ln3ooM_osaJZPgu7eMhA_G9gLsk9OTygRDZtosItJXk/edit?usp=sharing"
+],
+[
+"The 3-Step ELO Process",
+"doc",
+"https://docs.google.com/document/d/1sAJ1BA7l27ieUTkuRnXK_bJ8vUApId_zpFPWA6UbCEc/edit?usp=sharing"
+],
+[
+"ELO Planning Grid",
+"doc",
+"https://docs.google.com/document/d/1pshmHgYRwxfKQDuCRtES1DSnV3JbRc8gSasojuK15Sg/edit?usp=sharing"
+],
+[
+"Stakeholder Involvement",
+"doc",
+"https://docs.google.com/document/d/1sOx5MAGvDkRTwR9rNDvIoRlyg1IzrNd8QmNiCsBGENA/edit?usp=sharing"
+],
+[
+"School Board ELO Policy",
+"doc",
+"https://docs.google.com/document/d/1y5Rg2LgsoVqpyWsmSKeCakBcBXVFhPPfA6Lppxvv5-w/edit?usp=sharing"
+],
+[
+"Research Rubric",
+"pdf",
+"https://drive.google.com/file/d/1wecRdmNCs1s6EQWZJJOQnc5gkwEntqNO/view"
+],
+[
+"Product Rubric",
+"pdf",
+"https://drive.google.com/file/d/1ea-IqRQpN94vT_MsACpCryKEqv_wU0-V/view"
+],
+[
+"Presentation Rubric",
+"pdf",
+"https://drive.google.com/file/d/1huJ2R9g8yguH4wNAqE644f5ZXmUpbbxp/view"
+],
+[
+"Reflection Rubric",
+"pdf",
+"https://drive.google.com/file/d/1a2w5qTws7Dgp_xusbBcW5totfZ0n_hgf/view"
+]
+]
+},
+{
+"name": "MS 442 School for Innovation",
+"place": "Brooklyn, New York",
+"grades": "Middle school",
+"parts": [
+"Learning and Instruction",
+"Technology",
+"Mastery-Based Grading"
+],
+"desc": "A grades 6 to 8 middle school where two teachers share every core class and standards-based grading gives students multiple chances to show mastery of each skill.",
+"files": [
+[
+"School Visit Slides",
+"pdf",
+"https://drive.google.com/file/d/1seN-svqdIzOQKf2e6hWU83sgqo5e6ACA/view"
+],
+[
+"Sample Student Schedule",
+"slides",
+"https://docs.google.com/presentation/d/1WBlMiytp3hXn_eQUal9kQ7pynhRtsusInaFY1hyr05U/edit?usp=sharing"
+],
+[
+"Professional Collaboration Schedule",
+"doc",
+"https://docs.google.com/document/d/12rUWtnVEVX7G2ReTcCl9To9k3nnrnjZf0AT4Am51uNc/edit?usp=sharing"
+],
+[
+"Phone Booth Challenge Overview",
+"pdf",
+"https://drive.google.com/file/d/1KlBY1igGSfwztQfn_hpfXobxOId-GLXM/view"
+],
+[
+"Intro",
+"video",
+"https://youtu.be/bQlsm3qjwaw"
+],
+[
+"Context",
+"video",
+"https://youtu.be/awxgt9AZBNk"
+],
+[
+"Results",
+"video",
+"https://youtu.be/WFifWFCOrKg"
+],
+[
+"Classroom Visits",
+"video",
+"https://youtu.be/6YbIV7s8YvY"
+],
+[
+"Curriculum Resources",
+"video",
+"https://youtu.be/LFMJcdzhCXE"
+],
+[
+"Intensives",
+"video",
+"https://youtu.be/gC3QEXmOKfQ"
+],
+[
+"Phone Booth Challenge",
+"video",
+"https://youtu.be/xubfyHTpKyo"
+],
+[
+"Mastery-Based Grading",
+"video",
+"https://youtu.be/3j5mntMEQv0"
+]
+]
+},
+{
+"name": "The Young Women’s Leadership School of Astoria",
+"place": "Queens, New York",
+"grades": "Grades 6 to 12",
+"parts": [
+"Competencies",
+"Learning and Instruction",
+"Technology",
+"Mastery-Based Grading",
+"Flexible Time, Space, and Grouping"
+],
+"desc": "An all-girls school for grades 6 to 12 where students track mastery of shared outcomes, work through self-paced units with task cards and planning logs, and spend two-week Intensives on deep projects that end in a public Expo.",
+"files": [
+[
+"Asynchronous Learning Theory of Action",
+"doc",
+"https://docs.google.com/document/d/1QYIqYrHtGSW4VpItUZiRjHYdABtNqCK2dnkpeM934oc/edit?usp=sharing"
+],
+[
+"Intensives Course Offerings",
+"doc",
+"https://docs.google.com/document/d/1el4w2XetnVzIG4TM4SeKjLOSwvsh51NoLxPw5BddTos/edit?usp=sharing"
+],
+[
+"Unit Planning Calendar",
+"pdf",
+"https://drive.google.com/file/d/107pEOTTVDI-jr2A_oTBjMrXVaTg1YKEq/view"
+],
+[
+"Student Performance Tracker",
+"pdf",
+"https://drive.google.com/file/d/1zeq1S_cQKtAm-Z-FCbXCKbpGaM-Eky43/view"
+],
+[
+"Student Planning Log",
+"pdf",
+"https://drive.google.com/file/d/16F0WzNyy1JKmdPPPkkaw2i8EUQ87PdoE/view"
+],
+[
+"Guidelines for Task Cards",
+"pdf",
+"https://drive.google.com/file/d/1H2tAgseWplQU6IiG79envvpi0AjYOYP8/view"
+],
+[
+"Sample Task Card",
+"pdf",
+"https://drive.google.com/file/d/1nJn9wKz2dY5wQrkKZVi6ApD8jqdqXA-3/view"
+],
+[
+"The Essence of Our Programs",
+"video",
+"https://youtu.be/H9z4PrTX-GY"
+],
+[
+"Mastery-Based Grading: Inter-Rater Reliability",
+"video",
+"https://youtu.be/MPNYVT-Cezs"
+],
+[
+"A Civil War Unit Website",
+"video",
+"https://youtu.be/mycjmltgG7Q"
+]
+]
+},
+{
+"name": "New American Academy",
+"place": "Brooklyn, New York",
+"grades": "Elementary school",
+"parts": [
+"Flexible Time, Space, and Grouping",
+"Reimagined Roles"
+],
+"desc": "Big open classrooms of about 60 students and four teachers, where a master teacher moves between small groups. David Brooks profiled the school in a 2012 New York Times column, “The Relationship School.”",
+"files": []
+},
+{
+"name": "Olympus Academy",
+"place": "New York City",
+"grades": "High school",
+"parts": [
+"Mastery-Based Grading",
+"Flexible Time, Space, and Grouping"
+],
+"desc": "A personalized high school built on a partnership with the New York Center for Interpersonal Development. Students move through courses at their own pace, and the school designed its own way to calculate grades from mastery.",
+"files": [
+[
+"Mission and Vision",
+"doc",
+"https://docs.google.com/document/d/1CmWoItVq7KjI0DVvBrxI_urlG8LEL3YW2JdCcKEMiSc/edit?usp=sharing"
+],
+[
+"Curriculum Design",
+"slides",
+"https://docs.google.com/presentation/d/1Sz7X8-rUxmv1tWe6LPhm46qsryqp8iO-gzMCD2pOyGM/edit?usp=sharing"
+],
+[
+"Curriculum Design Notes",
+"doc",
+"https://docs.google.com/document/d/1i00sFcgX1hgm5tVopymmpGM6WzYO081zhbzVnPJUqlc/edit?usp=sharing"
+],
+[
+"Grade Calculation",
+"slides",
+"https://docs.google.com/presentation/d/15Qo5HPlHSFVTASjbMEFOoWmQACLRlPQIPkj0-PYzCuo/edit?usp=sharing"
+],
+[
+"Asynchronous Movement",
+"doc",
+"https://docs.google.com/document/d/1SiTwMIi_8FdDK-nGYbteRCysXZQ9fDEqwXVrxYy7dhA/edit?usp=sharing"
+],
+[
+"Global History Course",
+"doc",
+"https://docs.google.com/document/d/16f4Tn62bIUGVBZrfGquDfnyN3kVSuFYujcXq5oOuCP4/edit?usp=sharing"
+]
+]
+},
+{
+"name": "Alpha School",
+"place": "Austin, Texas",
+"grades": "Grades K to 12",
+"parts": [
+"Learning and Instruction",
+"Technology",
+"Mastery-Based Grading",
+"Flexible Time, Space, and Grouping",
+"Reimagined Roles"
+],
+"desc": "Students spend about two hours a day on personalized, AI-supported academics and use the rest of the day for projects and life skills, with adults working as guides rather than lecturers.",
+"files": [
+[
+"2 Hour Learning",
+"slides",
+"https://docs.google.com/presentation/d/1UBVDIqejeIOoJGZLEshVy8MU4e0aylc3bIR46L_vxlo/edit?usp=sharing"
+],
+[
+"Alpha High School",
+"video",
+"https://youtu.be/MlhICmO5rwQ"
+],
+[
+"Alpha Spyglass Tour",
+"video",
+"https://youtu.be/H23Z_WjgOFY"
+],
+[
+"5th and 6th Graders Run a Food Truck",
+"video",
+"https://youtu.be/RFz3I0wPyXE"
+],
+[
+"Cancer: A Food Borne Illness (trailer)",
+"video",
+"https://youtu.be/L-8I7wqCn9U"
+]
+]
+},
+{
+"name": "Thomas A. Edison CTE High School",
+"place": "Queens, New York",
+"grades": "High school",
+"parts": [
+"Flexible Time, Space, and Grouping",
+"Reimagined Roles",
+"Community Alliance"
+],
+"desc": "A career and technical education high school where students choose pathways such as electrical and solar installation, automotive technology, robotics and drone engineering, and architectural drafting, with a school-wide competency rubric.",
+"files": [
+[
+"CTE Pathways",
+"doc",
+"https://docs.google.com/document/d/1faxX-sfGMZrH0CJQsGQeA13f1WWEpifztX46ms-2ag0/edit?usp=sharing"
+],
+[
+"Competency Rubric",
+"doc",
+"https://docs.google.com/document/d/1hPEbdgEK4ZnUZJsZSJpg_Sxr03UaKOo_V42U6WGA7w4/edit?usp=sharing"
+],
+[
+"CTE Overview",
+"video",
+"https://youtu.be/yvsvqip2zH8"
+],
+[
+"Principal Perspective",
+"video",
+"https://youtu.be/0JnGGPsdc-k"
+],
+[
+"Addressing the Disconnect",
+"video",
+"https://youtu.be/1GiKVeNWvpw"
+],
+[
+"Student Designers, Part 1",
+"video",
+"https://youtu.be/5sJijwxnoyI"
+],
+[
+"Student Designers, Part 2",
+"video",
+"https://youtu.be/6RYYh6SdTYM"
+]
+]
+}
+];
+const WHEEL_PARTS = ["Competencies","Learning and Instruction","Technology","Mastery-Based Grading","Flexible Time, Space, and Grouping","Reimagined Roles","Community Alliance","Policy Shifts"];
+const FILE_KIND = {slides:"Slides", doc:"Doc", pdf:"PDF", audio:"Audio", video:"Video"};
+function schoolsHTML(){
+  return `<section class="sm-intro">
+      <p>Each school below is rethinking some part of what school looks like. The tags come from our Competency-Based Learning Framework, so you can find schools working on the same piece you are.</p>
+      <a class="mat" href="docs/Competency-Wheel.pdf" target="_blank" rel="noopener"><span class="mat-ic" aria-hidden="true">\u2197</span><span><b>Competency-Based Learning Framework</b><small>The wheel these tags come from \u00B7 PDF</small></span></a>
+    </section>
+    <div class="sm-filter" role="group" aria-label="Filter schools"><button type="button" class="on" data-part="">All schools</button>${WHEEL_PARTS.map(p=>`<button type="button" data-part="${esc(p)}">${esc(p)}</button>`).join("")}</div>
+    <div class="sm-grid">${SCHOOLS.map((sc,i)=>`<article class="sm-card" data-parts="${esc(sc.parts.join("|"))}">
+      <div class="sm-top"><span class="sm-ic" aria-hidden="true">${CICONS.school}</span><div><h3>${esc(sc.name)}</h3><div class="sm-where">${esc(sc.place)} \u00B7 ${esc(sc.grades)}</div></div></div>
+      <p>${esc(sc.desc)}</p>
+      <div class="sm-tags">${sc.parts.map(p=>`<span>${esc(p)}</span>`).join("")}</div>
+      ${sc.files.length?`<details class="sm-files"><summary>See their materials (${sc.files.length})</summary><ul>${sc.files.map(([t,k,u])=>`<li><a href="${esc(u)}" target="_blank" rel="noopener"><span class="sm-kind k-${k}">${FILE_KIND[k]}</span>${esc(t)}</a></li>`).join("")}</ul></details>`:""}
+    </article>`).join("")}</div>`;
+}
+function wireSchools(){
+  const btns = app.querySelectorAll(".sm-filter button");
+  btns.forEach(b=>b.onclick=()=>{
+    btns.forEach(x=>x.classList.toggle("on", x===b));
+    const p = b.dataset.part;
+    app.querySelectorAll(".sm-card").forEach(c=>{ c.hidden = !!p && !c.dataset.parts.split("|").includes(p); });
+  });
+}
 function materialsHTML(c, i){
   const m = c && SERIES_MATERIALS[c.id] && SERIES_MATERIALS[c.id][i+1];
   if(!m) return "";
