@@ -283,6 +283,7 @@ nav.main a.on{color:var(--navy)}
 .mat b{display:block;font-size:15px;line-height:1.3}.mat small{display:block;font-size:13px;color:var(--muted);margin-top:2px}
 .wh-wrap{display:grid;grid-template-columns:minmax(280px,440px) 1fr;gap:34px;align-items:start;background:#fff;border:1px solid var(--line);border-radius:22px;padding:26px 30px;margin:6px 0 26px}
 @media(max-width:820px){.wh-wrap{grid-template-columns:1fr;padding:20px 16px}}
+.wh-hint{margin:10px 0 0;text-align:center;font-size:13.5px;line-height:1.45;color:var(--muted)}.wh-hint b{color:var(--navy)}
 .wheel{width:100%;height:auto;display:block;font-family:inherit}
 .wh-seg{cursor:pointer;outline:none}
 .wh-fill{fill:#FCF7F1;stroke:#fff;stroke-width:3;transition:fill .15s}
@@ -2004,11 +2005,11 @@ function schoolsHTML(){
       <div class="sm-hover" aria-hidden="true"><div class="sm-hover-h">Aligned to</div><div class="sm-tags">${sc.parts.map(p=>`<span>${esc(partLabel(p))}</span>`).join("")}</div></div>
     </article>`).join("");
   return `<section class="wh-wrap">
-      <div class="wh-left">${wheelSVG()}</div>
+      <div class="wh-left">${wheelSVG()}<p class="wh-hint"><b>Hover</b> over an area to preview its schools. <b>Click</b> an area to keep the list open, then choose a school.</p></div>
       <div class="wh-panel" aria-live="polite"><div class="wh-default">
         <div class="eyebrow">Competency-Based Learning Framework</div>
         <h2>Which schools are doing what?</h2>
-        <p>Hover over or tap any part of the wheel to see the schools working on it. Click a part to show only those schools in the cards below.</p>
+        <p>Each part of the wheel is an area of our framework. See which schools are working on each one, then explore their materials in the cards below.</p>
         <a class="wh-pdf" href="docs/Competency-Wheel.pdf" target="_blank" rel="noopener">Download the framework (PDF) \u2197</a>
       </div><div class="wh-detail" hidden></div></div>
     </section>
