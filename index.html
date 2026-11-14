@@ -1354,7 +1354,8 @@ const toSec = t => t.split(":").reduce((a,v)=>a*60+(+v),0);
 const chapKey = t => (t||"").toLowerCase().replace(/[\u2018\u2019'"\u201C\u201D]/g,"").replace(/[^a-z0-9]+/g," ").trim();
 /* Chapters by position in a series collection (used when titles are still being decided) */
 const SERIES_CHAPTERS = {
- "mastery-based-grading": {1: [["00:00","Introduction to mastery-based grading"],["02:32","Where grading fits in school transformation"],["06:37","Why do we give grades?"],["07:34","How traditional grades are calculated"],["10:23","Organizing grades by standard"],["14:17","Not yet meeting, meeting, exceeding"],["18:58","Grading a real piece of evidence"],["21:15","Task-based vs. mastery-based rubrics"],["26:49","Next steps and the series ahead"]]}
+ "mastery-based-grading": {1: [["00:00","Introduction to mastery-based grading"],["02:32","Where grading fits in school transformation"],["06:37","Why do we give grades?"],["07:34","How traditional grades are calculated"],["10:23","Organizing grades by standard"],["14:17","Not yet meeting, meeting, exceeding"],["18:58","Grading a real piece of evidence"],["21:15","Task-based vs. mastery-based rubrics"],["26:49","Next steps and the series ahead"]],
+  2: [["00:00","Welcome and the three guiding questions"],["00:46","Rate evidence only on the standards it assesses"],["02:19","Walking through a four-standard performance task"],["04:40","Sharing rubrics across content areas and grades"],["06:40","From single pieces of evidence to an overall rating"],["07:44","Setting the rule for meeting and exceeding"],["09:32","A percentage, not an average, and the power of yet"],["10:02","Re-performance, not re-testing"],["11:18","Organizing grades over time"],["12:46","Try it at this station"]]}
 };
 /* Extra links by position in a series collection: [url, bold label, small line] */
 /* Questions each video answers, by position in a series collection (shown on the collection page) */
