@@ -275,6 +275,12 @@ nav.main a.on{color:var(--navy)}
 .part-q li{counter-increment:pq;position:relative;padding-left:32px;font-size:15px;line-height:1.45}
 .part-q li::before{content:counter(pq);position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:#E3F2FC;color:var(--blue);font-size:12.5px;font-weight:700;display:grid;place-items:center}
 .part-go{margin-top:auto;padding-top:6px;font-weight:700;font-size:14.5px;color:var(--blue)}
+.mats{margin:22px 0}.mats .eyebrow{margin-bottom:10px}
+.mats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.mat{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;color:var(--navy);text-decoration:none;transition:border-color .15s,box-shadow .15s}
+.mat:hover,.mat:focus-visible{border-color:var(--blue);box-shadow:0 6px 16px rgba(5,65,91,.08)}
+.mat-ic{flex:none;width:30px;height:30px;border-radius:50%;background:#E3F2FC;color:var(--blue);display:grid;place-items:center;font-weight:800}
+.mat b{display:block;font-size:15px;line-height:1.3}.mat small{display:block;font-size:13px;color:var(--muted);margin-top:2px}
 .series-note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55;color:var(--muted)}
 .series-note b{color:var(--navy)}
 .res-icon{width:44px;height:44px;border-radius:12px;background:var(--beige);color:var(--blue);display:grid;place-items:center;flex:none}
@@ -1412,6 +1418,40 @@ function partCardHTML(r, i, total, qs, c){
     <span class="part-go">Watch \u2192</span>
   </a>`;
 }
+/* Station materials by position in a series collection: [label, link, short note]. Local docs download; Drive links open. */
+const SERIES_MATERIALS = {
+ "mastery-based-grading": {
+  1: [["Station Details and Working Guidelines","docs/mbg/Station-Details-and-Working-Guidelines.pdf","All five stations at a glance"]],
+  2: [["Station 1 Overview","docs/mbg/Station-1-Overview.pdf","Guiding questions and tasks"],
+      ["Try It Out Prompts","docs/mbg/Station-1-Try-It-Out-Prompts.pdf","The three tasks"],
+      ["5th Grade ELA Rubric","https://drive.google.com/file/d/1njQS3sWLhxrNP9G8haXfumpRzbnBAVTz/view","Use with the student writing"],
+      ["5th Grade Student Writing (Typed)","docs/mbg/5th-Grade-Student-Writing-Typed.pdf","Four writing samples"],
+      ["5th Grade Student Writing (Handwritten)","docs/mbg/5th-Grade-Student-Writing-Handwritten.pdf","The original pages"],
+      ["Sample Evidence Scores","docs/mbg/Station-1-Sample-Evidence-Scores.pdf","Rate each overall standard"]],
+  3: [["Station 2 Overview","docs/mbg/Station-2-Overview.pdf","Guiding questions and tasks"],
+      ["Try It Out Prompts","https://drive.google.com/file/d/1hEWqbVCV28_p881OS2xw3NJeiGaBsE0q/view","The two tasks"],
+      ["Student Work Samples","https://drive.google.com/file/d/1SiN8fi3wYQAYY0298QhlONIf04yLkppg/view","Two math work samples to analyze"],
+      ["Sample Performance Tasks","docs/mbg/Station-2-Sample-Performance-Tasks.pdf","Four Authentic Education tasks"]],
+  4: [["Station 3 Overview","docs/mbg/Station-3-Overview.pdf","Guiding questions and tasks"],
+      ["Sample Class Data","docs/mbg/Station-3-Sample-Class-Data.pdf","For the coaching task"],
+      ["5th Grade ELA Rubric","https://drive.google.com/file/d/1njQS3sWLhxrNP9G8haXfumpRzbnBAVTz/view","For norming with a partner"],
+      ["5th Grade Student Writing (Typed)","docs/mbg/5th-Grade-Student-Writing-Typed.pdf","Samples to norm"]],
+  5: [["Station 4 Overview","docs/mbg/Station-4-Overview.pdf","Guiding questions and tasks"],
+      ["Student-Led Conferences Letter","docs/mbg/Station-4-Student-Led-Conferences-Letter.pdf","A sixth-grade family newsletter"],
+      ["Competencies for Parents","https://drive.google.com/file/d/1yHFD2Q-PqZ-gEGb76JXyUHKbYGOf51Vl/view","A middle school's letter to families"]],
+  6: [["Station 5 Overview","docs/mbg/Station-5-Overview.pdf","Guiding questions and tasks"],
+      ["State Test and Class Data","docs/mbg/Station-5-State-Test-and-Class-Data.pdf","Item analysis for the try it out"],
+      ["Letter Grade Conversion Letter","docs/mbg/Station-5-Letter-Grade-Conversion.pdf","How one school explained it to students"]]
+ }
+};
+function materialsHTML(c, i){
+  const m = c && SERIES_MATERIALS[c.id] && SERIES_MATERIALS[c.id][i+1];
+  if(!m) return "";
+  return `<section class="mats"><div class="eyebrow">${i===0?"Materials":"Station materials"}</div><div class="mats-grid">${m.map(([t,u,n])=>{
+    const local = !/^https?:/.test(u);
+    return `<a class="mat" href="${esc(u)}" ${local?"download":`target="_blank" rel="noopener"`}><span class="mat-ic" aria-hidden="true">${local?"\u2193":"\u2197"}</span><span><b>${esc(t)}</b><small>${esc(n)}${local?" \u00B7 PDF":" \u00B7 Opens in Google Drive"}</small></span></a>`;
+  }).join("")}</div></section>`;
+}
 const SERIES_LINKS = {
  "mastery-based-grading": {1: [["https://vimeo.com/158058171","Watch the Young Women\u2019s Leadership School of Astoria video referenced in this session","Opens on Vimeo in a new tab \u2197"]],
   2: [["https://jumpro.pe","Explore JumpRope, the mastery-based gradebook mentioned in this video","Opens the JumpRope website in a new tab \u2197"]]}
@@ -1669,6 +1709,7 @@ function renderResource(r){
     ${side?"":`<p class="desc">${esc(r.summary)}</p>`}
     ${q&&q.c.note?`<div class="series-note">${q.c.note}</div>`:""}
     ${notesHTML(r, pdf ? "What you will learn" : "As you watch")}
+    ${q?materialsHTML(q.c, q.i):""}
     ${isWYT(r)?recordHTML():""}
     ${rs?`<div class="rs-credit">${RS_CREDIT}${rs.wiggins?`<br><br>${WIGGINS_CREDIT}`:""}</div>`:""}
     ${sr&&sr.blueprint?`<a class="bp-link" href="${BLUEPRINT_PDF}" target="_blank" rel="noopener"><b>Keep the Engagement Blueprint open while you watch</b><span>Opens the PDF in a new tab ↗</span></a>`:""}
