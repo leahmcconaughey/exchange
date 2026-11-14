@@ -731,8 +731,8 @@ const COLLECTIONS = [
   stories:[], resources:RESEARCH.map(x=>x.slug)},
  {id:"watching-yourself-teach", title:"Watching Yourself Teach", tag:"The Replay Effect", blurb:"It is scary, and it is worth it: what educators learn when they watch themselves teach", tone:"sky", icon:"play", leaders:true,
   byTag:["Watching Yourself Teach"], byResTag:["Watching Yourself Teach"], stories:[], resources:[]},
- {id:"mastery-based-grading", title:"Mastery-Based Grading", tag:"Video Series", blurb:"Six videos on grading the learning: what to track, how to give feedback, and how classrooms, schools, and districts make the shift", tone:"orange", icon:"check", series:true, partLabel:true, leaders:true,
-  note:`<b>About this series:</b> These six videos were created for an in-person conference, back when our company was called the Urban Learning Institute. We are now LearningWorks. Part 1 was the opening session for everyone. Parts 2 through 6 were stations: small groups watched the video at each station and then tried a short task together. When you hear "station" or "try this," that is what it refers to. Each station's task and materials are on its page, below the video. The videos were also shared on an earlier online resource hub, so you may hear references to a course, a community, or links "in the post below."`,
+ {id:"mastery-based-grading", title:"Mastery-Based Grading", tag:"Video Series", blurb:"A Start Here video and five station videos on grading the learning: what to track, how to give feedback, and how classrooms, schools, and districts make the shift", tone:"orange", icon:"check", series:true, partLabel:true, startHere:true, leaders:true,
+  note:`<b>About this series:</b> These videos were created for an in-person conference, back when our company was called the Urban Learning Institute. We are now LearningWorks. The Start Here video was the opening session for everyone. Videos 1 through 5 were the five stations: small groups watched the video at each station and then tried a short task together. When you hear "station" or "try this," that is what it refers to. Each station's task and materials are on its page, below the video. The videos were also shared on an earlier online resource hub, so you may hear references to a course, a community, or links "in the post below."`,
   byResTag:["Mastery-Based Grading"], stories:[], resources:[]},
  {id:"student-voice", title:"Student Voice", tag:"Hear It from Students", blurb:"What meaningful learning feels like, in students\u2019 own words", tone:"orange", icon:"chat", byTag:"Student Voice",
   stories:[]},
@@ -1178,7 +1178,7 @@ function renderCollection(c){
     ${c.id==="watching-yourself-teach"?recordHTML():""}
     ${TESTIMONIALS.some(t=>(t.colls||[]).includes(c.id))?`<div class="testi-grid">${TESTIMONIALS.filter(t=>(t.colls||[]).includes(c.id)).map(t=>testimonialHTML(t,true)).join("")}</div>`:""}
     ${rlist.length?(SERIES_QUESTIONS[c.id]
-      ? `<div class="part-grid">${rlist.map((r,i)=>partCardHTML(r,i,Math.max(rlist.length,Object.keys(SERIES_QUESTIONS[c.id]).length),SERIES_QUESTIONS[c.id][i+1]||[])).join("")}</div>`
+      ? `<div class="part-grid">${rlist.map((r,i)=>partCardHTML(r,i,Math.max(rlist.length,Object.keys(SERIES_QUESTIONS[c.id]).length),SERIES_QUESTIONS[c.id][i+1]||[],c)).join("")}</div>`
       : `<div class="tryit-grid">${rlist.map(resourceHTML).join("")}</div>`):""}
     ${list.length?`<div class="grid">${list.map(cardHTML).join("")}</div>`:""}
     ${c.note?`<div class="series-note small">${c.note}</div>`:""}
@@ -1369,10 +1369,15 @@ const SERIES_QUESTIONS = {
   6:["How can I align this with state tests?","How can I convert mastery-based grades to letter grades for a transcript?"]
  }
 };
-function partCardHTML(r, i, total, qs){
+/* Part names: collections with startHere call the first video "Start Here" and number the rest Video 1, 2, ... */
+function partName(c, i, total, long){
+  if(c && c.startHere){ if(i===0) return "Start Here"; return long ? `Video ${i} of ${total-1}` : `Video ${i}`; }
+  return long ? `Part ${i+1} of ${total}` : `Part ${i+1}`;
+}
+function partCardHTML(r, i, total, qs, c){
   return `<a class="part-card" href="#${r.slug}" data-res="${r.slug}">
-    <span class="part-pill">Part ${i+1} of ${total}</span>
-    <h3>${esc(r.title.replace(/^(video|part)\s*\d+\s*[:.\-\u2013\u2014]\s*/i,""))}</h3>
+    <span class="part-pill">${partName(c,i,total,true)}</span>
+    <h3>${esc(r.title.replace(/^((video|part)\s*\d+|start here)\s*[:.\-\u2013\u2014]\s*/i,""))}</h3>
     <div class="part-q-h">This video answers</div>
     <ol class="part-q">${qs.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
     <span class="part-go">Watch \u2192</span>
@@ -1451,12 +1456,12 @@ function seqFor(r){
 function seriesStripHTML(q){
   if(!q || q.list.length<2) return "";
   return `<nav class="series-strip" aria-label="${esc(q.c.title)} parts"><a class="sn" href="#c-${q.c.id}" data-coll="${q.c.id}">${esc(q.c.title)}</a>
-    <ol>${q.list.map((x,k)=>`<li><a href="#${x.slug}" data-res="${x.slug}" title="Part ${k+1}: ${esc(x.title)}"${k===q.i?' aria-current="page"':""}>${k+1}</a></li>`).join("")}</ol></nav>`;
+    <ol>${q.list.map((x,k)=>`<li><a href="#${x.slug}" data-res="${x.slug}" title="${partName(q.c,k,q.list.length)}: ${esc(x.title)}"${k===q.i?' aria-current="page"':""}>${q.c.startHere?(k===0?"\u25B6":k):k+1}</a></li>`).join("")}</ol></nav>`;
 }
 function nextUpHTML(q){
   if(!q || q.list.length<2) return "";
   return q.next
-    ? `<a class="next-up" href="#${q.next.slug}" data-res="${q.next.slug}"><span><span class="k">Next: Part ${q.i+2} of ${q.list.length}</span><b>${esc(q.next.title)}</b></span><span class="ar" aria-hidden="true">→</span></a>`
+    ? `<a class="next-up" href="#${q.next.slug}" data-res="${q.next.slug}"><span><span class="k">Next: ${partName(q.c,q.i+1,q.list.length,true)}</span><b>${esc(q.next.title)}</b></span><span class="ar" aria-hidden="true">→</span></a>`
     : `<a class="next-up done" href="#c-${q.c.id}" data-coll="${q.c.id}"><span><span class="k">You finished the series</span><b>Back to ${esc(q.c.title)}</b></span><span class="ar" aria-hidden="true">→</span></a>`;
 }
 /* ---------- "Your next step": two hand-picked follow-ups for every page ----------
@@ -1623,7 +1628,7 @@ function renderResource(r){
   app.innerHTML = `<article class="wrap story">
     ${q?`<a class="back" href="#c-${q.c.id}" data-coll="${q.c.id}">← Back to ${esc(q.c.title)}</a>`:`<a class="back" href="#resources" data-go="resources">← Back to Resources</a>`}
     ${classVoiceHTML(r)}
-    <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_META[sr.s].name} · Part ${sr.part} of ${SERIES_META[sr.s].total}`:rs?`Research Series · Part ${rs.part} of ${RESEARCH.length}`:(q&&q.c.partLabel)?`${esc(q.c.title)} · Part ${q.i+1} of ${q.list.length}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
+    <div class="res-hero"><span class="res-icon big">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><div><div class="eyebrow">${sr?`${SERIES_META[sr.s].name} · Part ${sr.part} of ${SERIES_META[sr.s].total}`:rs?`Research Series · Part ${rs.part} of ${RESEARCH.length}`:(q&&q.c.partLabel)?`${esc(q.c.title)} · ${partName(q.c,q.i,q.list.length,true)}`:esc(r.type)}</div><h1>${esc(r.title)}</h1></div></div>
     ${seriesStripHTML(q)}
     ${sr?statLineHTML(FEEDBACK[sr.s]):""}
     ${embed&&side?`<div class="vid-side">${resPlayerHTML(r, embed)}<div class="side-text"><p class="desc">${esc(r.summary)}</p>${pdf||r.slides?`<div class="pdf-actions side-actions">${pdf?`<a class="open-res" href="${esc(pdfLink)}" download>Download the quick guide ↓</a>`:""}${r.slides?`<a class="open-res ghost" href="${esc(slidesDownload(r.slides))}" ${/^https?:/i.test(r.slides)?`target="_blank" rel="noopener"`:"download"}>Download the video slides ↓</a>`:""}</div>`:""}</div></div>`:""}
