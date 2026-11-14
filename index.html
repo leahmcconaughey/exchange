@@ -721,6 +721,7 @@ const COLLECTIONS = [
  {id:"watching-yourself-teach", title:"Watching Yourself Teach", tag:"The Replay Effect", blurb:"It is scary, and it is worth it: what educators learn when they watch themselves teach", tone:"sky", icon:"play", leaders:true,
   byTag:["Watching Yourself Teach"], byResTag:["Watching Yourself Teach"], stories:[], resources:[]},
  {id:"mastery-based-grading", title:"Mastery-Based Grading", tag:"Video Series", blurb:"Six videos on grading the learning: what to track, how to give feedback, and how classrooms, schools, and districts make the shift", tone:"orange", icon:"check", series:true, partLabel:true, leaders:true,
+  note:`<b>About this series:</b> These six videos were created for an in-person conference. Part 1 was the opening session for everyone. Parts 2 through 6 were stations: small groups watched the video at each station and then tried a short task together. When you hear "station" or "try this," that is what it refers to. Each station's task and materials are on its page, below the video. The videos were also shared on an earlier online resource hub, so you may hear references to a course, a community, or links "in the post below."`,
   byResTag:["Mastery-Based Grading"], stories:[], resources:[]},
  {id:"student-voice", title:"Student Voice", tag:"Hear It from Students", blurb:"What meaningful learning feels like, in students\u2019 own words", tone:"orange", icon:"chat", byTag:"Student Voice",
   stories:[]},
@@ -1164,6 +1165,7 @@ function renderCollection(c){
     ${c.fb?proofHTML(FEEDBACK[c.fb]):""}
     ${c.rotQuotes?rotHTML(c):""}
     ${c.id==="watching-yourself-teach"?recordHTML():""}
+    ${c.note?`<div class="series-note">${c.note}</div>`:""}
     ${TESTIMONIALS.some(t=>(t.colls||[]).includes(c.id))?`<div class="testi-grid">${TESTIMONIALS.filter(t=>(t.colls||[]).includes(c.id)).map(t=>testimonialHTML(t,true)).join("")}</div>`:""}
     ${rlist.length?`<div class="tryit-grid">${rlist.map(resourceHTML).join("")}</div>`:""}
     ${list.length?`<div class="grid">${list.map(cardHTML).join("")}</div>`:""}
@@ -1590,6 +1592,7 @@ function renderResource(r){
       <div class="slide-actions"><a class="open-res ghost" href="${esc(slidesFull(slides))}" target="_blank" rel="noopener">Open full screen ↗</a></div>`:""}
     ${(embed||slides)?nextUpHTML(q):""}
     ${side?"":`<p class="desc">${esc(r.summary)}</p>`}
+    ${q&&q.c.note?`<div class="series-note">${q.c.note}</div>`:""}
     ${notesHTML(r, pdf ? "What you will learn" : "As you watch")}
     ${isWYT(r)?recordHTML():""}
     ${rs?`<div class="rs-credit">${RS_CREDIT}${rs.wiggins?`<br><br>${WIGGINS_CREDIT}`:""}</div>`:""}
