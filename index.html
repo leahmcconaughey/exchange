@@ -1734,13 +1734,6 @@ function renderResource(r){
 /* ---------- testimonials (shared with permission) ----------
    "story" finds the matching Exchange story so the quote also shows on that story's page. */
 const TESTIMONIALS = [
- {name:"Ty", role:"Music Teacher", org:"Perry Public Schools", lead:true,
-  headline:"Today I experienced my best teaching class period in all of my 18 years of teaching.",
-  body:"I have taught recorder units every year since teaching, but never before have I felt like it was the students driving their own learning and being responsible for their own growth... until now! The kids were excited about our team challenges and about the challenge to grow as learners. Thank you again for challenging our way of thinking as teachers, and for pushing us to always want more from our kids (and ourselves).",
-  story: s => s.subjects.includes("Music") && /perry upper/i.test(s.school)},
- {name:"Jennifer", org:"New York City Public Schools, District 31", lead:true,
-  headline:"Creating a building where both students and teachers are encouraged to think, reflect, and grow makes a real difference for student success.",
-  body:"I appreciate that you consistently keep the focus on helping teachers think deeply about their practice so we can do what\u2019s best for our students. Thank you for showing up with care, professionalism, and respect for the work we do every day."},
  {name:"Katie", org:"Perry Public Schools", lead:true,
   headline:"I removed myself from the discussion and told them I was just going to take notes.",
   body:"I adjusted my lesson by changing how we do discussions after reading a scene of Hamlet. I came up with some higher level questions, put them into groups to discuss, then we came back together as a class. Even though I asked them to go slowly for me, they were all excitedly talking at once... They were super engaged the whole time. I definitely underestimated how much room I would need for notes.",
@@ -1777,7 +1770,14 @@ const TESTIMONIALS = [
   body:"...Their experience was similar to mine and since Tuesday, we have had some really good conversations. And, yesterday I happened to be with a principal when a teacher texted to say she was trying the learning out during a science lesson. I was able to see the thinking/doing slide in action as well as hear from the teacher how she used class voice to enhance the lesson - there was so much rich student discussion, adult facilitating rather than rescuing, and the share at the end showed how students had made meaning of the thinking and were able to use academic language to make a collective model."},
  {name:"Becca", lead:true, colls:["engagement-blueprint","professional-learning"],
   headline:"I haven\u2019t been to anything so impactful in well over a decade -- maybe more!",
-  body:"Emma and I put your tips to work right away and we\u2019ve been so excited about the energy and learning in our rooms. In particular, we\u2019re using the \u201Cthinking\u201D and \u201Cdoing\u201D slide format and also using Classvoice to tweak curriculum lessons. The low lift changes have had massive impact already. On Thursday, my science lesson was going so well I texted my principal and invited her in, if she was around. She just happened to be meeting with our instructional coach, who was also in the session, at that moment. They both popped by and loved what they saw."}
+  body:"Emma and I put your tips to work right away and we\u2019ve been so excited about the energy and learning in our rooms. In particular, we\u2019re using the \u201Cthinking\u201D and \u201Cdoing\u201D slide format and also using Classvoice to tweak curriculum lessons. The low lift changes have had massive impact already. On Thursday, my science lesson was going so well I texted my principal and invited her in, if she was around. She just happened to be meeting with our instructional coach, who was also in the session, at that moment. They both popped by and loved what they saw."},
+ {name:"Ty", role:"Music Teacher", org:"Perry Public Schools", lead:true,
+  headline:"Today I experienced my best teaching class period in all of my 18 years of teaching.",
+  body:"I have taught recorder units every year since teaching, but never before have I felt like it was the students driving their own learning and being responsible for their own growth... until now! The kids were excited about our team challenges and about the challenge to grow as learners. Thank you again for challenging our way of thinking as teachers, and for pushing us to always want more from our kids (and ourselves).",
+  story: s => s.subjects.includes("Music") && /perry upper/i.test(s.school)},
+ {name:"Jennifer", org:"New York City Public Schools, District 31", lead:true,
+  headline:"Creating a building where both students and teachers are encouraged to think, reflect, and grow makes a real difference for student success.",
+  body:"I appreciate that you consistently keep the focus on helping teachers think deeply about their practice so we can do what\u2019s best for our students. Thank you for showing up with care, professionalism, and respect for the work we do every day."}
 ];
 /* Leaders page: three random picks from the lead:true pool on each visit */
 const pickThree = arr => { const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a.slice(0,3); };
