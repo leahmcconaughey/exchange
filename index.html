@@ -105,7 +105,7 @@ nav.main a.on{color:var(--navy)}
 .story{padding-block:22px 70px;display:grid;gap:22px}
 .back{font-weight:700;color:var(--blue);text-decoration:none;font-size:15px;display:inline-flex;gap:6px;align-items:center;justify-self:start}
 .story h1{margin:0;font-size:34px;line-height:1.2;font-weight:800;text-wrap:balance}
-.player{display:block;border-radius:18px;overflow:hidden;box-shadow:0 20px 40px -28px rgba(5,65,91,.55);text-decoration:none}
+.player{position:relative;display:block;border-radius:18px;overflow:hidden;box-shadow:0 20px 40px -28px rgba(5,65,91,.55);text-decoration:none}
 .player .cover .play{width:11cqw;height:11cqw;right:44.5cqw;bottom:auto;top:50%;transform:translateY(-50%);opacity:0;transition:opacity .2s}
 .player:hover .cover .play,.player:focus-visible .cover .play{opacity:1}
 .story .desc{font-size:18px;line-height:1.6;margin:0}
@@ -471,8 +471,8 @@ a.cv-tool:hover{border-color:var(--blue)}
 .side-actions{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
 .yt-wrap.thumb{aspect-ratio:16/9}
 .yt-cover .yt-thumb{display:block;width:100%;height:100%;object-fit:cover}
-.yt-cover .yt-play{z-index:2;position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;background:var(--navy);box-shadow:0 0 0 6px rgba(255,255,255,.85)}
-.yt-cover .yt-play::after{content:"";position:absolute;left:31px;top:24px;border-left:22px solid #fff;border-top:14px solid transparent;border-bottom:14px solid transparent}
+.yt-play{z-index:2;position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;background:var(--navy);box-shadow:0 0 0 6px rgba(255,255,255,.85)}
+.yt-play::after{content:"";position:absolute;left:31px;top:24px;border-left:22px solid #fff;border-top:14px solid transparent;border-bottom:14px solid transparent}
 </style>
 <!-- GoatCounter analytics: no cookies, no sign-in. Pages are counted by the router below. -->
 <script>window.goatcounter={no_onload:true};window.__gcq=[];
@@ -1279,7 +1279,7 @@ function mountVideo(s){
   const wrap = document.getElementById("ytwrap");
   const fallback = ()=>{
     if(!document.body.contains(wrap)) return;
-    wrap.outerHTML = `<a class="player" href="${esc(s.link)}" target="_blank" rel="noopener">${coverHTML(s)}</a>`;
+    wrap.outerHTML = `<a class="player" href="${esc(s.link)}" target="_blank" rel="noopener">${coverHTML(s)}${s.img&&NO_PLAY_COVER.test(s.img)?'<span class="yt-play"></span>':""}</a>`;
   };
   loadYT().then(YT=>{
     if(!document.body.contains(wrap)) return;
@@ -1594,9 +1594,11 @@ function classVoiceHTML(r){
    show the cover over the player (clicks pass through to YouTube), the same way story pages do. */
 const resYtId = (r, embed) => /youtube/.test(embed||"") ? ytId(embed) : "";
 /* No cover image? Use the video's own thumbnail (no YouTube title bar) with a play button */
+/* Custom-designed covers that do not have a play button built into the image */
+const NO_PLAY_COVER = /classvoice/i;
 function resPlayerHTML(r, embed){
   const id = resYtId(r, embed);
-  if(id && r.img) return `<div class="player yt-wrap" id="ytwrap"><div class="yt-frame"><div id="yt"></div></div><div class="yt-cover" aria-hidden="true"><div class="cover real"><img src="${r.img}" alt=""></div><span class="yt-play"></span></div></div>`;
+  if(id && r.img) return `<div class="player yt-wrap" id="ytwrap"><div class="yt-frame"><div id="yt"></div></div><div class="yt-cover" aria-hidden="true"><div class="cover real"><img src="${r.img}" alt=""></div>${NO_PLAY_COVER.test(r.img)?'<span class="yt-play"></span>':""}</div></div>`;
   if(id) return `<div class="player yt-wrap thumb" id="ytwrap"><div class="yt-frame"><div id="yt"></div></div><div class="yt-cover" aria-hidden="true"><img class="yt-thumb" src="https://i.ytimg.com/vi/${id}/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${id}/hqdefault.jpg'" alt=""><span class="yt-play"></span></div></div>`;
   return `<div class="player video"><iframe src="${embed}" title="${esc(r.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
 }
