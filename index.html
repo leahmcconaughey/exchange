@@ -356,6 +356,7 @@ a.sm-open{text-decoration:none}
 .sm-kind.k-video{background:#FDE3CB;color:#9a5a1c}.sm-kind.k-pdf{background:#DFF0E3;color:#2f6b45}
 .end-nav{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:26px 0 8px;padding-top:18px;border-top:1px solid var(--line)}
 .coll-lead{max-width:760px;margin:6px 0 22px;font-size:18px;line-height:1.6;color:var(--navy)}
+.guide-sec{margin:26px 0}.guide-sec h2{margin:4px 0 6px}
 .series-note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55;color:var(--muted)}
 .series-note b{color:var(--navy)}
 .res-icon{width:44px;height:44px;border-radius:12px;background:var(--beige);color:var(--blue);display:grid;place-items:center;flex:none}
@@ -1371,6 +1372,18 @@ function notesHTML(o, def){
   if(lines[0].endsWith(":") && lines.length>1){ head = lines.shift().slice(0,-1); }
   return `<section class="notes-list"><h2>${esc(head)}</h2><ul>${lines.map(l=>`<li>${esc(l)}</li>`).join("")}</ul></section>`;
 }
+/* Facilitator guides shown below a story's video, matched by title (any of the listed titles) */
+const STORY_GUIDES = [
+ {titles:["Shipwrecked: Designing a Battery","What Washed Ashore","Build the Battery First","Thinking First, Then the Chemistry","Shipwrecked: Designing a Battery Before the Lesson"],
+  pdf:"docs/Shipwrecked-Battery-Facilitator-Guide.pdf",
+  blurb:"Use this video with a team. The guide walks through what happens, the Engagement Blueprint decisions to look for, and discussion questions with notes on what to listen for."}
+];
+function guideHTML(s){
+  const g = STORY_GUIDES.find(g=>g.titles.some(t=>slug(t)===s.slug)); if(!g) return "";
+  return `<section class="guide-sec"><div class="eyebrow orange">Facilitator guide</div><h2>Lead a conversation about this video</h2><p class="desc">${esc(g.blurb)}</p>
+    <div class="pdf-view"><iframe src="${esc(g.pdf)}#view=FitH" title="Facilitator guide" loading="lazy"></iframe></div>
+    <div class="pdf-actions"><a class="open-res" href="${esc(g.pdf)}" download>Download the facilitator guide \u2193</a><a class="open-res ghost" href="${esc(g.pdf)}" target="_blank" rel="noopener">Open in a new tab \u2197</a></div></section>`;
+}
 function renderStory(s){
   const inColls = COLLECTIONS.filter(c=>c.stories.includes(s.slug));
   app.innerHTML = `<article class="wrap story">
@@ -1378,6 +1391,7 @@ function renderStory(s){
     <h1>${esc(s.title)}</h1>
     <div class="vid-side">${s.video?`<div class="player yt-wrap" id="ytwrap"><div class="yt-frame"><div id="yt"></div></div><div class="yt-cover" aria-hidden="true">${coverHTML(s)}</div></div>`:`<a class="player" href="${esc(s.link)}" target="_blank" rel="noopener">${coverHTML(s)}</a>`}<div class="side-text"><p class="desc">${esc(s.summary)}</p><div class="where">${esc(s.places.slice().reverse().join(" · "))}</div></div></div>
     ${notesHTML(s)}
+    ${guideHTML(s)}
     ${isWYT(s)?recordHTML():""}
     ${inColls.length?`<div class="chips">${inColls.map(c=>`<a class="chip coll-chip" href="#c-${c.id}" data-coll="${c.id}">In collection: ${esc(c.title)}</a>`).join("")}</div>`:""}
     ${testimonialsFor(s).map(t=>testimonialHTML(t,false)).join("")}
