@@ -245,6 +245,12 @@ nav.main a.on{color:var(--navy)}
 .bp-link span{font-size:14px;font-weight:700;color:var(--blue)}
 .precheck{background:#fff;border:1px solid var(--line);border-left:6px solid var(--blue);border-radius:14px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
 .precheck p{margin:4px 0 0;max-width:640px}
+.res-try{display:grid;grid-template-columns:minmax(260px,1fr) minmax(280px,1fr);gap:20px;align-items:stretch}
+.grid + .res-try{margin-top:26px}
+.res-try .tryit-grid{grid-template-columns:1fr}
+.res-try .precheck{flex-direction:column;align-items:flex-start;justify-content:center;gap:18px}
+.res-try .precheck .pdf-actions{display:flex;flex-wrap:wrap;gap:10px}
+@media(max-width:760px){.res-try{grid-template-columns:1fr}}
 .testi{margin:0;align-content:start;background:#fff;border:1px solid var(--line);border-top:6px solid var(--orange);border-radius:18px;padding:26px 28px;display:grid;gap:14px;position:relative}
 .testi blockquote{margin:0;display:grid;gap:10px}
 .testi blockquote p{margin:0;line-height:1.6}
@@ -1322,8 +1328,9 @@ function renderCollection(c){
     ${list.length?`<div class="grid">${list.map(cardHTML).join("")}</div>`:""}
     ${rlist.length?(SERIES_QUESTIONS[c.id]
       ? `<div class="part-grid">${rlist.map((r,i)=>partCardHTML(r,i,Math.max(rlist.length,Object.keys(SERIES_QUESTIONS[c.id]).length),SERIES_QUESTIONS[c.id][i+1]||[],c)).join("")}</div>`
+      : c.id==="watching-yourself-teach" ? `<div class="res-try"><div class="tryit-grid">${rlist.map(resourceHTML).join("")}</div>${recordHTML()}</div>`
       : `<div class="tryit-grid">${rlist.map(resourceHTML).join("")}</div>`):""}
-    ${c.id==="watching-yourself-teach"?recordHTML():""}
+    ${c.id==="watching-yourself-teach"&&!rlist.length?recordHTML():""}
     ${c.note?`<div class="series-note small">${c.note}</div>`:""}
     ${c.schools?schoolsHTML():""}
     ${c.drivePdf?`<div class="pdf-view" style="margin:22px 0"><iframe src="https://drive.google.com/file/d/${c.drivePdf}/preview" title="${esc(c.drivePdfTitle||c.title)}" loading="lazy"></iframe></div>`:""}
