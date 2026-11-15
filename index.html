@@ -228,6 +228,9 @@ nav.main a.on{color:var(--navy)}
 .quote-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 .results{display:grid;gap:16px;margin-top:44px}
 .results h2{margin:0;font-size:28px;font-weight:800}
+.pdf-pages{max-width:820px;margin:18px auto;display:grid;gap:14px}
+.pdf-page{width:100%;height:auto;display:block;background:#fff;border-radius:10px;border:1px solid var(--line);box-shadow:0 14px 34px -24px rgba(5,65,91,.45)}
+.pdf-loading{padding:40px;text-align:center;color:var(--muted)}
 .pdf-view{border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#fff;height:min(78vh,820px)}
 .pdf-view iframe{width:100%;height:100%;border:0;display:block}
 .pdf-actions{display:flex;gap:12px;flex-wrap:wrap}
@@ -732,6 +735,9 @@ const FOCUS_GROUPS = [
 ];
 const areasOf = focus => FOCUS_GROUPS.filter(([,tags])=>focus.some(f=>tags.includes(f.toLowerCase()))).map(([n])=>n);
 const areaFor = tag => (FOCUS_GROUPS.find(([,tags])=>tags.includes(String(tag).toLowerCase()))||[])[0];
+/* Drive PDFs we also host on the Exchange, so they show in the clean page viewer (no black bars) */
+const LOCAL_PDFS = {"1FWwIrFvu_-9v1l_7EeavvRMKmar3LUjr":"docs/Jigsaw-Putting-the-Pieces-Together.pdf"};
+function localPdf(u){ const m=(u||"").match(/drive\.google\.com\/file\/d\/([\w-]{20,})/); return m && LOCAL_PDFS[m[1]] ? LOCAL_PDFS[m[1]] : u; }
 function buildData(rows){
   const head = rows[0].map(h=>h.trim());
   const col = name => head.indexOf(name);
@@ -748,7 +754,7 @@ function buildData(rows){
     let subDistrict = "";
     parts = parts.map((x,i)=>{ const m = i>0 && x.match(/^(?:community school\s*)?(?:district|d)\s*#?\s*(\d+)$/i); if(m){ subDistrict = "District "+(+m[1]); return subDistrict; } return x; });
     const schoolName = parts.slice(1).find(x=>x!==subDistrict) || "";
-    const base = {title:get(r,"Title"), link:get(r,"Primary Link"), related:get(r,"Related Content"), notes:get(r,"Additional Context"), slides:get(r,"Slides Link"), summary:get(r,"Short Summary"),
+    const base = {title:get(r,"Title"), link:localPdf(get(r,"Primary Link")), related:get(r,"Related Content"), notes:get(r,"Additional Context"), slides:get(r,"Slides Link"), summary:get(r,"Short Summary"),
       grades, subjects:subjectsRaw.map(nice), focus:focusRaw.map(nice), places:parts, org:parts[0]||"", school:schoolName, subDistrict: subDistrict ? `${parts[0]==="New York City Public Schools"?"NYC ":""}${subDistrict}` : "",
       img: imgPath(get(r,"Featured Image URL")) || COVER_BY_TITLE[coverKey(get(r,"Title"))] || "",
       gradeLevels: parseGrades(get(r,"Grade Level"))};
@@ -1384,7 +1390,7 @@ const STORY_GUIDES = [
 function guideHTML(s){
   const g = STORY_GUIDES.find(g=>g.titles.some(t=>slug(t)===s.slug)); if(!g) return "";
   return `<section class="guide-sec"><div class="eyebrow orange">Facilitator guide</div><h2>Lead a conversation about this video</h2><p class="desc">${esc(g.blurb)}</p>
-    <div class="pdf-view"><iframe src="${esc(g.pdf)}#view=FitH" title="Facilitator guide" loading="lazy"></iframe></div>
+    ${pdfViewHTML(g.pdf,"Facilitator guide")}
     <div class="pdf-actions"><a class="open-res" href="${esc(g.pdf)}" download>Download the facilitator guide \u2193</a><a class="open-res ghost" href="${esc(g.pdf)}" target="_blank" rel="noopener">Open in a new tab \u2197</a></div>${g.also?`<div class="mats" style="margin-top:18px"><div class="eyebrow">How should students share out? Use these with the guide</div><div class="mats-grid">${g.also.map(([t,u])=>`<a class="mat" href="${esc(u)}" target="_blank" rel="noopener"><span class="mat-ic" aria-hidden="true">\u2197</span><span><b>${esc(t)}</b><small>One-pager \u00B7 PDF</small></span></a>`).join("")}</div></div>`:""}</section>`;
 }
 function renderStory(s){
@@ -1404,6 +1410,7 @@ function renderStory(s){
   wireRows(app);
   app.querySelectorAll("button.chip").forEach(b=>b.onclick=()=>tagToFilter(b.dataset.tag));
   if(s.video) mountVideo(s);
+  mountPdfViews();
   if(s.video && CHAPTERS[chapKey(s.title)]) wireChapters(`https://www.youtube.com/embed/${s.video}?rel=0`);
 }
 
@@ -2819,6 +2826,32 @@ function slidesEmbed(r){
   return id ? `https://docs.google.com/presentation/d/${id[1]}/embed?start=false&loop=false&delayms=60000` : "";
 }
 const isPdf = l => /\.pdf(\?|#|$)/i.test(l||"");
+/* Clean PDF viewer: draws each page on a white canvas with PDF.js, sized to the page, no viewer chrome */
+let pdfjsReady = null;
+function loadPdfjs(){
+  /* pdf.js (Mozilla, Apache 2.0) is hosted on the Exchange in tools/pdfjs */
+  if(!pdfjsReady) pdfjsReady = import(new URL("tools/pdfjs/pdf.min.mjs", location.href).href).then(lib=>{ lib.GlobalWorkerOptions.workerSrc = new URL("tools/pdfjs/pdf.worker.min.mjs", location.href).href; return lib; });
+  return pdfjsReady;
+}
+function pdfViewHTML(url, title){ return `<div class="pdf-pages" data-pdf="${esc(url)}" aria-label="${esc(title)}"><div class="pdf-loading">Loading\u2026</div></div>`; }
+async function mountPdfViews(){
+  const boxes = [...app.querySelectorAll(".pdf-pages[data-pdf]")]; if(!boxes.length) return;
+  let lib; try{ lib = await loadPdfjs(); }catch(e){ lib = null; }
+  for(const box of boxes){
+    const url = box.dataset.pdf;
+    const fallback = ()=>{ box.innerHTML = `<div class="pdf-view"><iframe src="${esc(url)}#view=FitH" title="PDF" loading="lazy"></iframe></div>`; };
+    if(!lib){ fallback(); continue; }
+    try{
+      const doc = await lib.getDocument({url}).promise; box.innerHTML = "";
+      for(let n=1;n<=doc.numPages;n++){
+        const page = await doc.getPage(n), w = box.clientWidth || 800, base = page.getViewport({scale:1});
+        const vp = page.getViewport({scale:(w/base.width)*Math.min(window.devicePixelRatio||1,2)});
+        const c = document.createElement("canvas"); c.width = vp.width; c.height = vp.height; c.className="pdf-page";
+        box.appendChild(c); await page.render({canvas:c, canvasContext:c.getContext("2d"), viewport:vp}).promise;
+      }
+    }catch(e){ fallback(); }
+  }
+}
 const BLUEPRINT_PDF = "docs/Engagement-Blueprint.pdf";
 const CLASSVOICE_URL = "https://classvoice.net", PRECHECK_PDF = "docs/Pre-Check-Guide.pdf", RECORD_PDF = "docs/Record-Guide.pdf";
 const recordHTML = () => `<section class="precheck"><div><div class="eyebrow">Try it in your classroom</div>
@@ -3036,7 +3069,7 @@ function renderResource(r){
     ${early?"":linkBlock}
     ${sr&&sr.blueprint?precheckHTML():""}
     ${sr?`<div class="series-note">${SERIES_NOTE}</div>`:""}
-    ${pdf&&!embed?`<div class="pdf-view"><iframe src="${esc(pdfLink)}#view=FitH" title="${esc(r.title)}" loading="lazy"></iframe></div>
+    ${pdf&&!embed?`${pdfViewHTML(pdfLink, r.title)}
       <div class="pdf-actions"><a class="open-res" href="${esc(pdfLink)}" download>Download PDF ↓</a><a class="open-res ghost" href="${esc(pdfLink)}" target="_blank" rel="noopener">Open in a new tab ↗</a></div>`:""}
     ${/engagement blueprint|pre-check/i.test(r.title)?precheckHTML():""}
     ${r.link&&!embed&&!pdf&&!slides?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
@@ -3048,6 +3081,7 @@ function renderResource(r){
   </article>`;
   wireRows(app);
   if(embed) wireChapters(embed);
+  mountPdfViews();
   { const yid = resYtId(r, embed); if(yid) mountVideo({video:yid, link:"https://youtu.be/"+yid, title:r.title, img:r.img || `https://i.ytimg.com/vi/${yid}/hqdefault.jpg`}); }
 }
 
