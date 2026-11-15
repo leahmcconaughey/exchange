@@ -2924,7 +2924,10 @@ function picksFor(item){
   }
   return out;
 }
+/* "Your next step" shows only on pages Leah has chosen. Add an exact title here to turn it on for that page. */
+const NEXT_STEP_ON = new Set([]);
 function picksHTML(item){
+  if(!NEXT_STEP_ON.has(item.title)) return "";
   const ps = picksFor(item);
   if(!ps.length) return "";
   return `<section class="tryit picks"><div class="eyebrow">Your next step</div><h2>${ps.length>1?"Two to try next":"Try this next"}</h2><div class="picks-grid">${ps.map(o=>bySlug[o.slug]===o?cardHTML(o):resourceHTML(o)).join("")}</div></section>`;
