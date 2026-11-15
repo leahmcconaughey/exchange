@@ -1390,6 +1390,7 @@ function renderStory(s){
     <a class="back" href="#stories" data-go="stories">← Back to Stories</a>
     <h1>${esc(s.title)}</h1>
     <div class="vid-side">${s.video?`<div class="player yt-wrap" id="ytwrap"><div class="yt-frame"><div id="yt"></div></div><div class="yt-cover" aria-hidden="true">${coverHTML(s)}</div></div>`:`<a class="player" href="${esc(s.link)}" target="_blank" rel="noopener">${coverHTML(s)}</a>`}<div class="side-text"><p class="desc">${esc(s.summary)}</p><div class="where">${esc(s.places.slice().reverse().join(" · "))}</div></div></div>
+    ${s.video && CHAPTERS[chapKey(s.title)] ? chaptersHTML({chapters:CHAPTERS[chapKey(s.title)]}, `https://www.youtube.com/embed/${s.video}?rel=0`) : ""}
     ${notesHTML(s)}
     ${guideHTML(s)}
     ${isWYT(s)?recordHTML():""}
@@ -1400,6 +1401,7 @@ function renderStory(s){
   wireRows(app);
   app.querySelectorAll("button.chip").forEach(b=>b.onclick=()=>tagToFilter(b.dataset.tag));
   if(s.video) mountVideo(s);
+  if(s.video && CHAPTERS[chapKey(s.title)]) wireChapters(`https://www.youtube.com/embed/${s.video}?rel=0`);
 }
 
 /* The YouTube player loads behind the cover, and the cover lets clicks pass through,
@@ -2763,6 +2765,7 @@ const SERIES_LINKS = {
   2: [["https://jumpro.pe","Explore JumpRope, the mastery-based gradebook mentioned in this video","Opens the JumpRope website in a new tab \u2197"]]}
 };
 const CHAPTERS = {
+ ...Object.fromEntries(["Shipwrecked: Designing a Battery","What Washed Ashore","Build the Battery First","Thinking First, Then the Chemistry"].map(t=>[chapKey(t),[["0:00","The shipwreck challenge"],["1:13","Two metals and a solution"],["2:50","Testing with a flashlight"],["3:52","Stepping back"],["5:25","Why groups matter"],["6:19","Back to the prototypes"],["7:11","Prototypes on the test"]]])),
  [chapKey("Clarifying the 3 C's")]: [["00:00","Three Cs quick recap"],["03:02","Dots become content and concepts"],["05:13","Context and situation meaning"],["08:03","Competency and real contexts"],["10:32","Brain patterns and why it matters"]]
 };
 function chaptersHTML(sr, embed){
