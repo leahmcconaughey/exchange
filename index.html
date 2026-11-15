@@ -823,6 +823,8 @@ const COLLECTIONS = [
   note:`<b>About this series:</b> These videos were created for an in-person conference, back when our company was called the Urban Learning Institute. We are now LearningWorks. The Start Here video was the opening session for everyone. Parts 1 through 5 were the five stations: small groups watched the video at each station and then tried a short task together. When you hear "station" or "try this," that is what it refers to. Each station's task and materials are on its page, below the video. The videos were also shared on an earlier online resource hub, so you may hear references to a course, a community, or links "in the post below."`,
   byResTag:["Mastery-Based Grading"], stories:[], resources:[]},
  {id:"school-models", title:"Competency-Based School Models", tag:"See It in Schools", blurb:"Schools we have visited and worked with that are redesigning learning, grading, time, and roles", tone:"sky", icon:"school", leaders:true, schools:true, stories:[], resources:[]},
+ {id:"participation-structures", title:"Participation Structures", tag:"One-Pagers", blurb:"Quick guides to structuring group work and share-outs so every student does the thinking", tone:"peach", icon:"people", leaders:true,
+  byResTag:["Participation Structures"], stories:[], resources:[]},
  {id:"student-voice", title:"Student Voice", tag:"Hear It from Students", blurb:"What meaningful learning feels like, in students\u2019 own words", tone:"orange", icon:"chat", byTag:"Student Voice",
   stories:[]},
  {id:"professional-learning", title:"Professional Learning", tag:"Teachers Learning Together", blurb:"Learning walks, coaching, peer visits, and other ways educators grow together", tone:"sage", icon:"people", leaders:true,
@@ -1376,13 +1378,14 @@ function notesHTML(o, def){
 const STORY_GUIDES = [
  {titles:["Shipwrecked: Designing a Battery","What Washed Ashore","Build the Battery First","Thinking First, Then the Chemistry","Shipwrecked: Designing a Battery Before the Lesson"],
   pdf:"docs/Shipwrecked-Battery-Facilitator-Guide.pdf",
-  blurb:"Use this video with a team. The guide walks through what happens, the Engagement Blueprint decisions to look for, and discussion questions with notes on what to listen for."}
+  blurb:"Use this video with a team. The guide walks through what happens, the Engagement Blueprint decisions to look for, and discussion questions with notes on what to listen for.",
+  also:[["Hope Is Not a Strategy: Designing Share-Outs So Everyone Thinks","docs/Hope-Is-Not-a-Strategy-Share-Outs.pdf"],["No More Back-to-Back Presentations: A Better Way to Share Out","docs/No-More-Back-to-Back-Presentations.pdf"]]}
 ];
 function guideHTML(s){
   const g = STORY_GUIDES.find(g=>g.titles.some(t=>slug(t)===s.slug)); if(!g) return "";
   return `<section class="guide-sec"><div class="eyebrow orange">Facilitator guide</div><h2>Lead a conversation about this video</h2><p class="desc">${esc(g.blurb)}</p>
     <div class="pdf-view"><iframe src="${esc(g.pdf)}#view=FitH" title="Facilitator guide" loading="lazy"></iframe></div>
-    <div class="pdf-actions"><a class="open-res" href="${esc(g.pdf)}" download>Download the facilitator guide \u2193</a><a class="open-res ghost" href="${esc(g.pdf)}" target="_blank" rel="noopener">Open in a new tab \u2197</a></div></section>`;
+    <div class="pdf-actions"><a class="open-res" href="${esc(g.pdf)}" download>Download the facilitator guide \u2193</a><a class="open-res ghost" href="${esc(g.pdf)}" target="_blank" rel="noopener">Open in a new tab \u2197</a></div>${g.also?`<div class="mats" style="margin-top:18px"><div class="eyebrow">How should students share out? Use these with the guide</div><div class="mats-grid">${g.also.map(([t,u])=>`<a class="mat" href="${esc(u)}" target="_blank" rel="noopener"><span class="mat-ic" aria-hidden="true">\u2197</span><span><b>${esc(t)}</b><small>One-pager \u00B7 PDF</small></span></a>`).join("")}</div></div>`:""}</section>`;
 }
 function renderStory(s){
   const inColls = COLLECTIONS.filter(c=>c.stories.includes(s.slug));
