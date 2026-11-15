@@ -328,19 +328,30 @@ nav.main a.on{color:var(--navy)}
 .sm-card[data-school-page]{cursor:pointer;transition:box-shadow .15s,border-color .15s}.sm-card[data-school-page]:hover,.sm-card[data-school-page]:focus-visible{border-color:var(--blue);box-shadow:0 10px 30px rgba(5,65,91,.12)}
 a.sm-open{text-decoration:none}
 .sp-tags{margin-top:12px}.sp-tags span{background:#fff}
-.sp-sec{margin:34px 0 0}.sp-sec h2{font-size:24px;margin:0 0 6px;padding-bottom:10px;border-bottom:2px solid var(--line)}
-.sp-intro{max-width:820px;font-size:16px;line-height:1.6;color:var(--navy);margin:12px 0 0}
-.sp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;margin-top:16px;align-items:start}
-.sp-tile{margin:0;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.sp-glance{margin:22px 0 8px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px 26px}
+.sp-glance-h{font-size:12.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);margin-bottom:14px}
+.sp-glance dl{margin:0;display:grid;grid-template-columns:repeat(4,1fr);gap:16px 24px}@media(max-width:860px){.sp-glance dl{grid-template-columns:1fr 1fr}}@media(max-width:520px){.sp-glance dl{grid-template-columns:1fr}}
+.sp-glance dt{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.sp-glance dd{margin:0;font-size:15.5px;font-weight:600;line-height:1.45}.sp-glance .sp-wide{grid-column:1/-1}
+.sp-jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.sp-jump button{font:inherit;font-size:13.5px;font-weight:700;color:var(--navy);background:#E3F2FC;border:1px solid transparent;border-radius:999px;padding:6px 14px;cursor:pointer}.sp-jump button:hover{border-color:var(--blue);background:#fff}
+.sp-sec{margin:22px 0 0;background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px 26px 26px;scroll-margin-top:16px}
+.sp-sec-head{display:flex;align-items:center;gap:12px}.sp-sec-head h2{margin:0;font-size:24px;line-height:1.2}
+.sp-num{flex:none;width:34px;height:34px;border-radius:50%;background:#E3F2FC;color:var(--blue);font-weight:800;font-size:15px;display:grid;place-items:center}
+.sp-intro{max-width:860px;font-size:16px;line-height:1.6;color:var(--navy);margin:12px 0 0}
+.sp-list{margin:12px 0 0;padding-left:22px;columns:2;column-gap:36px;font-size:15px;line-height:1.55}@media(max-width:700px){.sp-list{columns:1}}.sp-list li{break-inside:avoid;margin-bottom:4px}
+.sp-quote{margin:16px 0 0;padding:14px 20px;border-left:4px solid var(--orange);background:var(--beige);border-radius:0 12px 12px 0;max-width:860px}.sp-quote p{margin:0;font-size:16px;line-height:1.55;font-weight:600}.sp-quote cite{display:block;margin-top:6px;font-style:normal;font-size:13.5px;color:var(--muted)}
+.sp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-top:18px;align-items:start}
+.sp-tile{margin:0;background:#FBFDFE;border:1px solid #DCE8EF;border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
 .sp-frame{position:relative;background:#EEF4F8}.sp-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.sp-frame.f-video,.sp-frame.f-slides{aspect-ratio:16/9}.sp-frame.f-doc,.sp-frame.f-pdf{height:420px}.sp-frame.f-audio{height:160px}
+.sp-frame.f-video,.sp-frame.f-slides{aspect-ratio:16/9}.sp-frame.f-doc,.sp-frame.f-pdf{height:360px}.sp-frame.f-audio{height:160px}
 .sp-tile figcaption{padding:14px 16px 16px;display:grid;gap:8px}
 .sp-cap-top{display:flex;gap:10px;align-items:center}.sp-cap-top b{font-size:16px;line-height:1.3}
-.sp-tile p{margin:0;font-size:14.5px;line-height:1.5;color:var(--muted)}
+.sp-tile p{margin:0;font-size:14px;line-height:1.45;color:var(--muted)}
 .sp-open{font-weight:700;font-size:13.5px;color:var(--blue);text-decoration:none}
 .sp-link{padding:18px;gap:10px;text-decoration:none;color:var(--navy);align-items:flex-start}.sp-link:hover{border-color:var(--blue)}.sp-link b{font-size:16px;line-height:1.35}
 .sp-chaps{display:flex;flex-wrap:wrap;gap:6px}.sp-chaps button{font:inherit;font-size:13px;font-weight:600;color:var(--navy);background:var(--beige);border:1px solid transparent;border-radius:999px;padding:4px 11px;cursor:pointer}.sp-chaps button:hover{border-color:var(--blue)}.sp-chaps span{color:var(--blue);font-weight:800;margin-right:6px}
-.sm-kind.k-article,.sm-kind.k-search{background:#EDE7F6;color:#5b3f8c}
+.sm-kind.k-article,.sm-kind.k-search,.sm-kind.k-website{background:#EDE7F6;color:#5b3f8c}
 .sm-kind{flex:none;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:3px 7px;background:#E3F2FC;color:var(--blue);min-width:44px;text-align:center}
 .sm-kind.k-video{background:#FDE3CB;color:#9a5a1c}.sm-kind.k-pdf{background:#DFF0E3;color:#2f6b45}
 .end-nav{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:26px 0 8px;padding-top:18px;border-top:1px solid var(--line)}
@@ -1589,6 +1600,82 @@ const SCHOOLS = [
 "search",
 "https://www.google.com/search?q=%22Twenty-one+and+in+high+school%22+Hechinger+Report"
 ]
+],
+"glance": {
+"type": "Transfer school for over-age, under-credited students",
+"standout": "Self-paced, competency-based courses inside a four-hour Arena Block"
+},
+"sections": [
+{
+"h": "Overview",
+"p": "A partnership between the NYC DOE and Family of Services, Bronx Arena helps students who are behind on credits reengage through self-paced, personalized learning.",
+"quote": [
+"In [my old school] every semester you got 8 credits. But here you have to earn your credits. Before I passed because I completed handouts. Here, YOU have to do it.",
+"Tatiania, a Bronx Arena student, on the difference between her old school and Bronx Arena"
+],
+"items": [
+[
+"In customized classrooms, at-risk students thrive (PBS NewsHour)",
+"PBS NewsHour visits Bronx Arena\u2019s classrooms."
+]
+]
+},
+{
+"h": "Competencies",
+"p": "Bronx Arena first grouped the Common Core standards into 51 competencies, then streamlined them to 9. Each has a four-point rubric and three tiers, so every class assesses progress the same way.",
+"items": [
+[
+"Competencies",
+"The 9 competencies and their rubrics."
+]
+]
+},
+{
+"h": "Technology: Blended Learning Challenges",
+"p": "Every course lives online and has three challenges: an introduction, meaning making, and a capstone that asks students to transfer. Each challenge is tied to 4 to 8 competencies and must be passed at 70%.",
+"items": [
+[
+"Blended Learning",
+"How courses and challenges are set up online."
+],
+[
+"2025 Course Catalog",
+"Every course students can take."
+]
+]
+},
+{
+"h": "Scheduling",
+"p": "The day has three periods: electives, a four-hour Arena Block, and advisory, gym, and tutoring. In the Arena Block, one generalist teacher stays with a group of 25 all year while content specialists push in.",
+"items": [
+[
+"Arena Blocks",
+"How the eight Arena Block groups are organized."
+]
+]
+},
+{
+"h": "More Resources",
+"p": "",
+"items": [
+[
+"Bronx Arena Handbook",
+"The student and parent handbook."
+],
+[
+"Electives for Credit",
+"Electives students can take for credit."
+],
+[
+"One Bronx high school is trying to reach high-needs students by ditching the traditional classroom (Chalkbeat)",
+"Chalkbeat on leaving the traditional classroom behind."
+],
+[
+"Twenty-one and in high school (The Hechinger Report)",
+"The Hechinger Report on second chances."
+]
+]
+}
 ]
 },
 {
@@ -1643,6 +1730,68 @@ const SCHOOLS = [
 "video",
 "https://youtu.be/vL3bS85G_Oo"
 ]
+],
+"glance": {
+"type": "Public high school",
+"standout": "Personalized, product-based learning, with Wednesdays set aside for Interest-Based Modules"
+},
+"sections": [
+{
+"h": "Personalization: One Child at a Time",
+"p": "Students begin in the Explorer\u2019s Academy and, as they grow more independent, build their own schedules in the Master\u2019s Academy. A Personalized Pathways Team designs individual programs for students who need something different.",
+"items": [
+[
+"Personalized Learning Plans",
+"How students plan their own path."
+],
+[
+"Advisory",
+"How advisory supports each student."
+]
+]
+},
+{
+"h": "Interest-Based Modules",
+"p": "On Wednesdays the regular schedule stops. Students choose a three-hour module and work with expert facilitators to make films, robots, music, and more.",
+"items": [
+[
+"Bronx Compass: Cool and Calm",
+"Two students bring music production into their module."
+],
+[
+"Podcast conversation",
+"A student podcast made during a module."
+]
+]
+},
+{
+"h": "The Academies",
+"p": "",
+"items": [
+[
+"Academies",
+"An overview of the academies."
+],
+[
+"The Academies",
+"Details on each academy."
+]
+]
+},
+{
+"h": "Curriculum",
+"p": "",
+"items": [
+[
+"Curriculum",
+"The curriculum spiral, aligned to high-leverage competencies."
+],
+[
+"Rubrics",
+"The Bronx Compass product rubric."
+]
+]
+}
 ]
 },
 {
@@ -1714,6 +1863,91 @@ const SCHOOLS = [
 "pdf",
 "https://drive.google.com/file/d/1a2w5qTws7Dgp_xusbBcW5totfZ0n_hgf/view"
 ]
+],
+"glance": {
+"type": "Comprehensive public high school",
+"standout": "Extended Learning Opportunities let students earn credit through real-world projects with a mentor"
+},
+"sections": [
+{
+"h": "Extended Learning Opportunities",
+"p": "ELOs let students follow their interests, take the curriculum into the real world, and work one-on-one with a teacher and an expert. They also strengthen competency-based assessment and community connections.",
+"items": [
+[
+"ELO Case Study",
+"One ELO from start to finish."
+],
+[
+"The Three Rs of ELOs",
+"Rigor, relevance, and relationships."
+],
+[
+"Types of ELOs",
+"The kinds of ELOs students can do."
+],
+[
+"School Board ELO Policy",
+"The board policy that makes ELOs official."
+]
+]
+},
+{
+"h": "The Process",
+"p": "",
+"items": [
+[
+"The 3-Step ELO Process",
+"The three steps every ELO follows."
+],
+[
+"ELO Planning Grid",
+"The grid students use to plan."
+],
+[
+"Stakeholder Involvement",
+"Who is involved, and how."
+]
+]
+},
+{
+"h": "Portfolio Requirements",
+"p": "Every ELO ends with a portfolio that includes:",
+"list": [
+"Table of contents",
+"Original project proposal",
+"Dates and details of the ELO process",
+"Evidence of collaboration with the mentor teacher, community partner, and others",
+"Research notes and sources",
+"Learning logs, work samples, interviews, or other written artifacts",
+"Drawings, photographs, or other visual evidence of learning",
+"Evidence of ongoing and final reflection",
+"Evidence of competency or goal achievement",
+"A summary reflecting on the process, results, and impact"
+],
+"items": []
+},
+{
+"h": "Rubrics",
+"p": "",
+"items": [
+[
+"Research Rubric",
+"How research is assessed."
+],
+[
+"Product Rubric",
+"How the final product is assessed."
+],
+[
+"Presentation Rubric",
+"How the presentation is assessed."
+],
+[
+"Reflection Rubric",
+"How reflection is assessed."
+]
+]
+}
 ]
 },
 {
@@ -1786,28 +2020,37 @@ const SCHOOLS = [
 "Mastery-Based Grading",
 "video",
 "https://youtu.be/3j5mntMEQv0"
+],
+[
+"2024 School Quality Snapshot",
+"website",
+"https://tools.nycenet.edu/snapshot/2024/15K442/EMS/#INFO"
 ]
 ],
 "sections": [
 {
 "h": "Overview",
-"p": "Middle School 442 School for Innovation was an original member of the NYC DOE\u2019s Office of Innovation. Over the course of several years, they transformed from a traditional school model to a forward-thinking, innovative culture with authentic learning, inclusive classrooms, purposeful grading, and meaningful uses for technology.",
+"p": "An original member of the NYC DOE\u2019s Office of Innovation, MS 442 moved from a traditional model to authentic learning, inclusive classrooms, purposeful grading, and meaningful technology. One third of students have IEPs, and every core class is co-taught.",
 "items": [
 [
 "Intro",
-""
+"An introduction to MS 442."
 ],
 [
 "Context",
-"Footage from a site visit to MS 442. Principal Noreen Mills provides context and background for the school. MS 442 has always focused on an inclusive environment to support all learners: one third of their students have IEPs, all core content classes are taught through an ICT approach, and half of the classes on each grade level are Nest classes."
+"The principal shares the school\u2019s background."
 ],
 [
 "School Visit Slides",
-"Principal Noreen Mills\u2019 complete slide deck."
+"The principal\u2019s complete slide deck."
 ],
 [
 "Results",
-"Principal Mills describes MS 442\u2019s overall school performance as measured by the New York City Department of Education."
+"School performance, as measured by the NYC DOE."
+],
+[
+"2024 School Quality Snapshot",
+"The latest results the principal mentions."
 ]
 ]
 },
@@ -1821,39 +2064,39 @@ const SCHOOLS = [
 ],
 [
 "Curriculum Resources",
-"Hear Principal Mills talk about integrating authentic learning and mastery-based grading with two curriculum resources: Illustrative Mathematics and Wit & Wisdom."
+"Using Illustrative Mathematics and Wit & Wisdom."
 ]
 ]
 },
 {
 "h": "Scheduling and Grouping",
-"p": "Students are organized in grade-level teams. They receive 6 periods of ELA and math per week, along with 2 periods of ELA and math intensives. They also receive numerous elective classes and a mentoring (advisory) period.",
+"p": "Grade-level teams get 6 periods of ELA and math each week, plus 2 periods of intensives, electives, and advisory.",
 "items": [
 [
 "Sample Student Schedule",
-"A sample 6th grade weekly schedule."
+"A sample 6th grade week."
 ],
 [
 "Intensives",
-"Principal Mills discusses intensives."
+"How ELA and math intensives work."
 ],
 [
 "Professional Collaboration Schedule",
-"The schedule allows for multiple peer collaborative opportunities per week, including whole-school professional learning, department time, and team time. Instructional coaches teach part time, which allows other teachers to observe their classrooms for various practices."
+"Whole-school, department, and team time each week."
 ]
 ]
 },
 {
-"h": "Experiential Whole-School Professional Learning",
-"p": "MS 442 believes in experiential professional learning where teachers feel what it feels like to be a student. The Phone Booth Challenge session, facilitated at the beginning of MS 442\u2019s transformation journey, integrated authentic learning, effective technology, and mastery-based grading.",
+"h": "Experiential Professional Learning",
+"p": "Teachers feel what it is like to be a student. The Phone Booth Challenge combined authentic learning, technology, and mastery-based grading.",
 "items": [
 [
 "Phone Booth Challenge Overview",
-"Learn more about the challenge teachers were given."
+"The challenge teachers were given."
 ],
 [
 "Phone Booth Challenge",
-"Hear teachers work, see final products, and catch the debrief."
+"Teachers at work, final products, and the debrief."
 ]
 ]
 },
@@ -1863,7 +2106,7 @@ const SCHOOLS = [
 "items": [
 [
 "Mastery-Based Grading",
-"Hear Principal Mills discuss standards-based grading, including their four-point scale and making up work through Up Grades."
+"The four-point scale and making up work through Up Grades."
 ]
 ]
 }
@@ -1883,6 +2126,10 @@ const SCHOOLS = [
 "Fabrication Lab"
 ]
 ]
+},
+"glance": {
+"type": "Public middle school, grades 6 to 8",
+"standout": "Inclusive classrooms, standards-based grading, and experiential professional learning"
 }
 },
 {
@@ -1962,7 +2209,113 @@ const SCHOOLS = [
 "Glo Up wins the 2023 Congressional App Challenge (Congressional App Challenge)",
 "article",
 "https://www.congressionalappchallenge.us/23-ny14/"
+],
+[
+"How TYWLS explains mastery-based grading to families",
+"website",
+"https://tywlsofastoria.wixsite.com/tywlsofastoria/faq"
+],
+[
+"Civil War unit website",
+"website",
+"https://gzimdahl.weebly.com/unit-4-the-civil-war-and-a-new-birth-of-freedom.html"
 ]
+],
+"glance": {
+"type": "All-girls public school, grades 6 to 12",
+"standout": "Ten shared outcomes graded in every class, plus two-week Intensives"
+},
+"sections": [
+{
+"h": "Overview",
+"p": "Founded in 2006, TYWLS of Astoria supports the whole girl and encourages students to take responsibility for their own learning.",
+"items": [
+[
+"The Essence of Our Programs",
+"The heart of the school\u2019s programs (2022)."
+]
+]
+},
+{
+"h": "Mastery-Based Learning",
+"p": "Every teacher grades the same ten shared outcomes: Argue, Be Precise, Collaborate, Communicate, Conclude, Create, Discern, Innovate, Investigate, and Plan. Students and families see exactly what to work on, and grades are no longer a mystery.",
+"items": [
+[
+"Mastery-Based Grading: Inter-Rater Reliability",
+"Teachers norm their ratings on the same outcome."
+],
+[
+"How TYWLS explains mastery-based grading to families",
+"The school\u2019s FAQ for parents."
+]
+]
+},
+{
+"h": "Transformational Technology",
+"p": "Students are producers, not just consumers, of technology.",
+"items": [
+[
+"Glo Up: a 2023 Congressional App Challenge winner",
+"A student app that won a national challenge."
+],
+[
+"Glo Up wins the 2023 Congressional App Challenge (Congressional App Challenge)",
+"The winning announcement."
+],
+[
+"Trash Go! NYC: a student-designed app",
+"Another app designed by students."
+]
+]
+},
+{
+"h": "Intensives",
+"p": "Once a year, regular classes pause for two weeks. Teacher partners spend ten full days with multi-grade groups on one authentic project, with field trips and experts. Each Intensive counts as a one-credit course.",
+"items": [
+[
+"Intensives Course Offerings",
+"The student-facing list of Intensives."
+]
+]
+},
+{
+"h": "Asynchronous Learning",
+"p": "Some teachers design classes so students move at their own pace. These artifacts come from Greg\u2019s US History unit on the Civil War.",
+"items": [
+[
+"Asynchronous Learning Theory of Action",
+"Why the school uses asynchronous learning."
+],
+[
+"A Civil War Unit Website",
+"A walkthrough of the unit website."
+],
+[
+"Civil War unit website",
+"The full unit website students use each day."
+],
+[
+"Student Performance Tracker",
+"Lessons, assessments, and check-ins in one place."
+],
+[
+"Unit Planning Calendar",
+"What is due, and when."
+],
+[
+"Student Planning Log",
+"Students track progress; the teacher checks it."
+],
+[
+"Guidelines for Task Cards",
+"How task cards work."
+],
+[
+"Sample Task Card",
+"Task card 2 of 7 from the unit."
+]
+]
+}
 ]
 },
 {
@@ -1979,7 +2332,43 @@ const SCHOOLS = [
 "The Relationship School, by David Brooks (The New York Times, 2012)",
 "search",
 "https://www.google.com/search?q=%22The+Relationship+School%22+David+Brooks+New+York+Times"
+],
+[
+"Virtual tour of PS 770",
+"video",
+"https://www.facebook.com/PS770/videos/190258132391699/"
 ]
+],
+"glance": {
+"type": "Public elementary school (PS 770)",
+"standout": "Teams of four teachers, led by a Master Teacher, loop with 60 students"
+},
+"sections": [
+{
+"h": "The Relationship School",
+"p": "Big open rooms hold 60 students and four teachers. Students work in small groups while the Master Teacher moves between them, more like an extended family than a factory.",
+"items": [
+[
+"The Relationship School, by David Brooks (The New York Times, 2012)",
+"David Brooks visits the school."
+]
+]
+},
+{
+"h": "Staffing and Scheduling",
+"p": "Each grade has 60 students and four teachers: Apprentice, Associate, Partner, and Master. The Master Teacher trains the team, leads 90 minutes of planning every morning, vets every lesson, and gives feedback.",
+"items": []
+},
+{
+"h": "Grouping and Curriculum",
+"p": "Teachers group and regroup students freely. Mornings focus on reading, writing, and math. Afternoons focus on scientific inquiry through six themes: agriculture, engineering, energy, medicine, transportation, and communication.",
+"items": [
+[
+"Virtual tour of PS 770",
+"A virtual tour of the school."
+]
+]
+}
 ]
 },
 {
@@ -2022,6 +2411,64 @@ const SCHOOLS = [
 "doc",
 "https://docs.google.com/document/d/16f4Tn62bIUGVBZrfGquDfnyN3kVSuFYujcXq5oOuCP4/edit?usp=sharing"
 ]
+],
+"glance": {
+"type": "Transfer high school",
+"standout": "Count everything and make everything count: every assignment must reach 70% to pass"
+},
+"sections": [
+{
+"h": "Overview",
+"p": "A transfer school where students earn credits quickly through hands-on learning with real-world uses.",
+"items": [
+[
+"Mission and Vision",
+"The school\u2019s mission and vision."
+]
+]
+},
+{
+"h": "Curriculum Design",
+"p": "\u201cCount everything and make everything count.\u201d",
+"items": [
+[
+"Curriculum Design",
+"How courses are designed."
+],
+[
+"Curriculum Design Notes",
+"Notes on the design process."
+]
+]
+},
+{
+"h": "Grading",
+"p": "Every lesson must reach at least 70% to pass. Scores add up to a final grade out of 100, so a 78 means all the work is done and the number shows its quality.",
+"quote": [
+"Transparency is crucial. Students should know exactly what they need to pass a class.",
+"Olympus Academy"
+],
+"items": [
+[
+"Grade Calculation",
+"How final grades are calculated."
+]
+]
+},
+{
+"h": "Asynchronous Movement",
+"p": "",
+"items": [
+[
+"Asynchronous Movement",
+"How students move through courses at their own pace."
+],
+[
+"Global History Course",
+"A Global History case study."
+]
+]
+}
 ]
 },
 {
@@ -2069,12 +2516,73 @@ const SCHOOLS = [
 "Student Designers, Part 2",
 "video",
 "https://youtu.be/6RYYh6SdTYM"
+],
+[
+"NYC high school reimagines career and technical education (The 74)",
+"article",
+"https://www.the74million.org/article/nyc-high-school-reimagines-career-technical-education-for-the-21st-century/"
 ]
+],
+"glance": {
+"type": "Career and technical education high school",
+"standout": "13 CTE programs; students graduate with a diploma and an industry certification"
+},
+"sections": [
+{
+"h": "Career and Technical Education",
+"p": "Edison offers 13 CTE programs. Students graduate with two diplomas: a high school diploma and an endorsed CTE diploma with a state-recognized industry certification.",
+"items": [
+[
+"CTE Overview",
+"What CTE looks like at Edison."
+],
+[
+"Principal Perspective",
+"The principal on building the CTE program."
+],
+[
+"CTE Pathways",
+"The programs students can choose."
+]
+]
+},
+{
+"h": "Research and Development",
+"p": "Core teachers and student designers prototype transfer tasks that connect academic and CTE classes. Each task aligns to five competencies: communication, collaboration, feedback, design thinking, and professionalism.",
+"items": [
+[
+"Addressing the Disconnect",
+"An R&D co-leader on bridging CTE and core classes."
+],
+[
+"Competency Rubric",
+"A draft competency rubric (still in development)."
+],
+[
+"NYC high school reimagines career and technical education (The 74)",
+"The 74 on Edison\u2019s approach to CTE."
+]
+]
+},
+{
+"h": "Student Designers",
+"p": "Students apply for paid jobs as Student Designers. They lead after-school sessions at nearby elementary and middle schools and advise core teachers, offering a student\u2019s view of each lesson.",
+"items": [
+[
+"Student Designers, Part 1",
+"Student Designers teaching younger students."
+],
+[
+"Student Designers, Part 2",
+"Student Designers advising teachers."
+]
+]
+}
 ]
 }
 ];
 const WHEEL_PARTS = ["Competencies","Learning and Instruction","Technology","Mastery-Based Grading","Flexible Time, Space, and Grouping","Reimagined Roles","Community Alliance","Policy Shifts"];
-const FILE_KIND = {slides:"Slides", doc:"Doc", pdf:"PDF", audio:"Audio", video:"Video", article:"Article", search:"Search"};
+const FILE_KIND = {slides:"Slides", doc:"Doc", pdf:"PDF", audio:"Audio", video:"Video", article:"Article", search:"Search", website:"Website"};
 /* Interactive Competency-Based Learning Framework wheel. Segments run clockwise from 12 o'clock.
    "part" is the area name used in each school's list. */
 const WHEEL = [
@@ -2178,39 +2686,53 @@ function fileEmbed(k,u){
 function schoolTileHTML(sc,[t,k,u],cap){
   const src = fileEmbed(k,u), local = !/^https?:/.test(u);
   const chap = (sc.chapters||{})[t];
-  const open = `<a class="sp-open" href="${esc(u)}" target="_blank" rel="noopener">${k==="video"?"Watch on YouTube":local?"Open the PDF":"Open full size"} \u2197</a>`;
-  if(!src) return `<a class="sp-tile sp-link" href="${esc(u)}" target="_blank" rel="noopener"><span class="sm-kind k-${k}">${FILE_KIND[k]}</span><b>${esc(t)}</b>${cap?`<p>${esc(cap)}</p>`:""}<span class="sp-open">${k==="search"?"Search for the article":"Read it"} \u2197</span></a>`;
-  return `<figure class="sp-tile k-${k}">
+  if(!src) return `<a class="sp-tile sp-link" href="${esc(u)}" target="_blank" rel="noopener"><span class="sm-kind k-${k}">${FILE_KIND[k]}</span><b>${esc(t)}</b>${cap?`<p>${esc(cap)}</p>`:""}<span class="sp-open">${k==="search"?"Search for the article":k==="video"?"Watch the video":k==="website"?"Visit the site":"Read the article"} ↗</span></a>`;
+  return `<figure class="sp-tile">
       <div class="sp-frame f-${k}"><iframe src="${esc(src)}" title="${esc(t)}" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
       <figcaption><div class="sp-cap-top"><span class="sm-kind k-${k}">${FILE_KIND[k]}</span><b>${esc(t)}</b></div>
       ${cap?`<p>${esc(cap)}</p>`:""}
       ${chap?`<div class="sp-chaps">${chap.map(([ts,l])=>`<button type="button" data-t="${ts.split(":").reduce((m,x)=>m*60+ +x,0)}"><span>${esc(ts)}</span>${esc(l)}</button>`).join("")}</div>`:""}
-      ${open}</figcaption></figure>`;
+      <a class="sp-open" href="${esc(u)}" target="_blank" rel="noopener">${k==="video"?"Watch on YouTube":local?"Open the PDF":"Open full size"} ↗</a></figcaption></figure>`;
 }
 function renderSchool(sc){
   const byTitle = Object.fromEntries(sc.files.map(f=>[f[0],f]));
-  const used = new Set();
-  const grid = items => `<div class="sp-grid">${items.map(([f,cap])=>{ used.add(f[0]); return schoolTileHTML(sc,f,cap); }).join("")}</div>`;
-  let body = "";
-  if(sc.sections){
-    body = sc.sections.map(sec=>`<section class="sp-sec"><h2>${esc(sec.h)}</h2>${sec.p?`<p class="sp-intro">${esc(sec.p)}</p>`:""}${grid(sec.items.filter(([t])=>byTitle[t]).map(([t,cap])=>[byTitle[t],cap]))}</section>`).join("");
-  }
+  const secs = (sc.sections||[]).slice();
+  const used = new Set(secs.flatMap(x=>x.items.map(([t])=>t)));
   const rest = sc.files.filter(f=>!used.has(f[0]));
-  const groups = [["Videos",["video"]],["Slides, documents, and PDFs",["slides","doc","pdf","audio"]],["In the news",["article","search"]]];
-  body += groups.map(([h,ks])=>{ const fs = rest.filter(f=>ks.includes(f[1])); return fs.length?`<section class="sp-sec"><h2>${sc.sections?"More: ":""}${h}</h2>${grid(fs.map(f=>[f,""]))}</section>`:""; }).join("");
-  if(!sc.files.length) body = `<p class="sp-intro">Materials from this school are on the way.</p>`;
+  if(rest.length) secs.push({h: secs.length?"More Materials":"Materials", p:"", items: rest.map(f=>[f[0],""])});
+  const counts = {}; sc.files.forEach(f=>{ const g = f[1]==="video"?"videos":["slides","doc","pdf","audio"].includes(f[1])?"documents":"links"; counts[g]=(counts[g]||0)+1; });
+  const countLine = [["videos","video","videos"],["documents","document","documents"],["links","article or link","articles and links"]].filter(([g])=>counts[g]).map(([g,one,many])=>`${counts[g]} ${counts[g]===1?one:many}`).join(" · ");
+  const gl = sc.glance||{};
+  const secHTML = (sec,n) => `<section class="sp-sec" id="sp-${n}">
+      <div class="sp-sec-head"><span class="sp-num">${n+1}</span><h2>${esc(sec.h)}</h2></div>
+      ${sec.p?`<p class="sp-intro">${esc(sec.p)}</p>`:""}
+      ${sec.list?`<ol class="sp-list">${sec.list.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>`:""}
+      ${sec.quote?`<blockquote class="sp-quote"><p>“${esc(sec.quote[0])}”</p><cite>${esc(sec.quote[1])}</cite></blockquote>`:""}
+      ${sec.items.length?`<div class="sp-grid">${sec.items.filter(([t])=>byTitle[t]).map(([t,cap])=>schoolTileHTML(sc,byTitle[t],cap)).join("")}</div>`:""}
+    </section>`;
   app.innerHTML = `<article class="wrap story school-page">
-    <a class="back" href="#c-school-models" data-coll="school-models">\u2190 Back to Competency-Based School Models</a>
-    <div class="coll-hero tone-sky"><span class="coll-icon">${CICONS.school}</span><div><div class="eyebrow">School Model \u00B7 ${esc(sc.place)} \u00B7 ${esc(sc.grades)}</div><h1>${esc(sc.name)}</h1><p>${esc(sc.desc)}</p>
-      <div class="sm-tags sp-tags">${sc.parts.map(p=>`<span>${esc(partLabel(p))}</span>`).join("")}</div></div></div>
-    ${body}
-    ${sc.files.some(f=>f[1]==="search")?`<p class="sm-note">Search links open a web search for the article, since it lives on the publisher\u2019s site.</p>`:""}
-    <nav class="end-nav"><a class="back" href="#c-school-models" data-coll="school-models">\u2190 All school models</a></nav>
+    <a class="back" href="#c-school-models" data-coll="school-models">← Back to Competency-Based School Models</a>
+    <div class="coll-hero tone-sky"><span class="coll-icon">${CICONS.school}</span><div><div class="eyebrow">School Model</div><h1>${esc(sc.name)}</h1><p>${esc(sc.desc)}</p></div></div>
+    <section class="sp-glance" aria-label="At a glance">
+      <div class="sp-glance-h">At a Glance</div>
+      <dl>
+        <div><dt>Where</dt><dd>${esc(sc.place)}</dd></div>
+        <div><dt>School</dt><dd>${esc(gl.type||sc.grades)}</dd></div>
+        <div><dt>What stands out</dt><dd>${esc(gl.standout||"")}</dd></div>
+        <div><dt>On this page</dt><dd>${esc(countLine)}</dd></div>
+        <div class="sp-wide"><dt>Framework areas</dt><dd><div class="sm-tags">${sc.parts.map(p=>`<span>${esc(partLabel(p))}</span>`).join("")}</div></dd></div>
+      </dl>
+      ${secs.length>1?`<nav class="sp-jump" aria-label="Sections">${secs.map((x,n)=>`<button type="button" data-jump="sp-${n}">${esc(x.h)}</button>`).join("")}</nav>`:""}
+    </section>
+    ${secs.map(secHTML).join("")}
+    ${sc.files.some(f=>f[1]==="search")?`<p class="sm-note">Search links open a web search for the article, since it lives on the publisher’s site.</p>`:""}
+    <nav class="end-nav"><a class="back" href="#c-school-models" data-coll="school-models">← All school models</a></nav>
   </article>`;
   app.querySelectorAll(".sp-chaps button").forEach(b=>b.onclick=()=>{
     const f = b.closest(".sp-tile").querySelector("iframe");
     f.src = f.src.replace(/[?&](start|autoplay)=\d+/g,"") + `&start=${b.dataset.t}&autoplay=1`;
   });
+  app.querySelectorAll("[data-jump]").forEach(b=>b.onclick=()=>{ const el = document.getElementById(b.dataset.jump); if(el) el.scrollIntoView({behavior:"smooth", block:"start"}); });
 }
 function materialsHTML(c, i){
   const m = c && SERIES_MATERIALS[c.id] && SERIES_MATERIALS[c.id][i+1];
