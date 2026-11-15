@@ -229,6 +229,11 @@ nav.main a.on{color:var(--navy)}
 .results{display:grid;gap:16px;margin-top:44px}
 .results h2{margin:0;font-size:28px;font-weight:800}
 .pdf-pages{max-width:820px;margin:18px auto;display:grid;gap:14px}
+.pdf-side{display:grid;grid-template-columns:minmax(0,760px) minmax(240px,1fr);gap:36px;align-items:start;margin:10px 0 22px}
+.pdf-side .pdf-pages{margin:0;max-width:none}
+.pdf-aside{position:sticky;top:96px;display:grid;gap:16px}.pdf-aside .desc{margin:0}
+.pdf-aside .pdf-actions{display:grid;gap:10px;margin:0}.pdf-aside .open-res{text-align:center;justify-content:center;width:100%;max-width:300px;box-sizing:border-box}
+@media(max-width:900px){.pdf-side{grid-template-columns:1fr}.pdf-aside{position:static;order:-1}}
 .pdf-page{width:100%;height:auto;display:block;background:#fff;border-radius:10px;border:1px solid var(--line);box-shadow:0 14px 34px -24px rgba(5,65,91,.45)}
 .pdf-loading{padding:40px;text-align:center;color:var(--muted)}
 .pdf-view{border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#fff;height:min(78vh,820px)}
@@ -3059,7 +3064,9 @@ function renderResource(r){
       <div class="slide-actions"><a class="open-res ghost" href="${esc(slidesFull(slides))}" target="_blank" rel="noopener">Open full screen ↗</a></div>`:""}
     ${(embed||slides)?nextUpHTML(q):""}
     ${early?chapBlock+linkBlock:""}
-    ${side?"":`<p class="desc">${esc(r.summary)}</p>`}
+    ${pdf&&!embed&&!slides?`<div class="pdf-side"><div class="pdf-main">${pdfViewHTML(pdfLink, r.title)}</div>
+      <aside class="pdf-aside"><p class="desc">${esc(r.summary)}</p><div class="pdf-actions side-actions"><a class="open-res" href="${esc(pdfLink)}" download>Download PDF \u2193</a><a class="open-res ghost" href="${esc(pdfLink)}" target="_blank" rel="noopener">Open in a new tab \u2197</a></div></aside></div>`
+      : side?"":`<p class="desc">${esc(r.summary)}</p>`}
     ${notesHTML(r, pdf ? "What you will learn" : "As you watch")}
     ${q?materialsHTML(q.c, q.i):""}
     ${isWYT(r)?recordHTML():""}
@@ -3069,8 +3076,7 @@ function renderResource(r){
     ${early?"":linkBlock}
     ${sr&&sr.blueprint?precheckHTML():""}
     ${sr?`<div class="series-note">${SERIES_NOTE}</div>`:""}
-    ${pdf&&!embed?`${pdfViewHTML(pdfLink, r.title)}
-      <div class="pdf-actions"><a class="open-res" href="${esc(pdfLink)}" download>Download PDF ↓</a><a class="open-res ghost" href="${esc(pdfLink)}" target="_blank" rel="noopener">Open in a new tab ↗</a></div>`:""}
+
     ${/engagement blueprint|pre-check/i.test(r.title)?precheckHTML():""}
     ${r.link&&!embed&&!pdf&&!slides?`<a class="open-res" href="${esc(r.link)}" target="_blank" rel="noopener">Open resource →</a>`:""}
     ${companionHTML(sr)}
