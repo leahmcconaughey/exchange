@@ -365,6 +365,8 @@ a.sm-open{text-decoration:none}
 .end-nav{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:26px 0 8px;padding-top:18px;border-top:1px solid var(--line)}
 .coll-lead{max-width:760px;margin:6px 0 22px;font-size:18px;line-height:1.6;color:var(--navy)}
 .guide-sec{margin:26px 0}.guide-sec h2{margin:4px 0 6px}
+.grid + .tryit-grid,.grid + .part-grid{margin-top:26px}
+.tryit-grid + .precheck,.grid + .precheck{margin-top:26px}
 .series-note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55;color:var(--muted)}
 .series-note b{color:var(--navy)}
 .res-icon{width:44px;height:44px;border-radius:12px;background:var(--beige);color:var(--blue);display:grid;place-items:center;flex:none}
@@ -1316,12 +1318,12 @@ function renderCollection(c){
     ${sib?`<a class="other-path" href="#c-${sib.id}" data-coll="${sib.id}">${c.series?"Learning with colleagues?":"Learning on your own?"} Try <b>${esc(sib.title)}</b> →</a>`:""}
     ${c.fb?proofHTML(FEEDBACK[c.fb]):""}
     ${c.rotQuotes?rotHTML(c):""}
-    ${c.id==="watching-yourself-teach"?recordHTML():""}
     ${TESTIMONIALS.some(t=>(t.colls||[]).includes(c.id))?rowHTML("coll-voices","What educators say","",TESTIMONIALS.filter(t=>(t.colls||[]).includes(c.id)).map(t=>testimonialHTML(t,true)).join("")):""}
+    ${list.length?`<div class="grid">${list.map(cardHTML).join("")}</div>`:""}
     ${rlist.length?(SERIES_QUESTIONS[c.id]
       ? `<div class="part-grid">${rlist.map((r,i)=>partCardHTML(r,i,Math.max(rlist.length,Object.keys(SERIES_QUESTIONS[c.id]).length),SERIES_QUESTIONS[c.id][i+1]||[],c)).join("")}</div>`
       : `<div class="tryit-grid">${rlist.map(resourceHTML).join("")}</div>`):""}
-    ${list.length?`<div class="grid">${list.map(cardHTML).join("")}</div>`:""}
+    ${c.id==="watching-yourself-teach"?recordHTML():""}
     ${c.note?`<div class="series-note small">${c.note}</div>`:""}
     ${c.schools?schoolsHTML():""}
     ${c.drivePdf?`<div class="pdf-view" style="margin:22px 0"><iframe src="https://drive.google.com/file/d/${c.drivePdf}/preview" title="${esc(c.drivePdfTitle||c.title)}" loading="lazy"></iframe></div>`:""}
@@ -1394,9 +1396,9 @@ const STORY_GUIDES = [
 ];
 function guideHTML(s){
   const g = STORY_GUIDES.find(g=>g.titles.some(t=>slug(t)===s.slug)); if(!g) return "";
-  return `<section class="guide-sec"><div class="eyebrow orange">Facilitator guide</div><h2>Lead a conversation about this video</h2><p class="desc">${esc(g.blurb)}</p>
-    ${pdfViewHTML(g.pdf,"Facilitator guide")}
-    <div class="pdf-actions"><a class="open-res" href="${esc(g.pdf)}" download>Download the facilitator guide \u2193</a><a class="open-res ghost" href="${esc(g.pdf)}" target="_blank" rel="noopener">Open in a new tab \u2197</a></div>${g.also?`<div class="mats" style="margin-top:18px"><div class="eyebrow">How should students share out? Use these with the guide</div><div class="mats-grid">${g.also.map(([t,u])=>`<a class="mat" href="${esc(u)}" target="_blank" rel="noopener"><span class="mat-ic" aria-hidden="true">\u2197</span><span><b>${esc(t)}</b><small>One-pager \u00B7 PDF</small></span></a>`).join("")}</div></div>`:""}</section>`;
+  return `<section class="guide-sec"><div class="eyebrow orange">Facilitator guide</div><h2>Lead a conversation about this video</h2>
+    <div class="pdf-side"><div class="pdf-main">${pdfViewHTML(g.pdf,"Facilitator guide")}</div>
+    <aside class="pdf-aside"><p class="desc">${esc(g.blurb)}</p><div class="pdf-actions side-actions"><a class="open-res" href="${esc(g.pdf)}" download>Download the guide \u2193</a><a class="open-res ghost" href="${esc(g.pdf)}" target="_blank" rel="noopener">Open in a new tab \u2197</a></div></aside></div>${g.also?`<div class="mats" style="margin-top:18px"><div class="eyebrow">How should students share out? Use these with the guide</div><div class="mats-grid">${g.also.map(([t,u])=>`<a class="mat" href="${esc(u)}" target="_blank" rel="noopener"><span class="mat-ic" aria-hidden="true">\u2197</span><span><b>${esc(t)}</b><small>One-pager \u00B7 PDF</small></span></a>`).join("")}</div></div>`:""}</section>`;
 }
 function renderStory(s){
   const inColls = COLLECTIONS.filter(c=>c.stories.includes(s.slug));
@@ -3060,13 +3062,13 @@ function renderResource(r){
     ${sr?statLineHTML(FEEDBACK[sr.s]):""}
     ${embed&&side?`<div class="vid-side">${resPlayerHTML(r, embed)}<div class="side-text"><p class="desc">${esc(r.summary)}</p>${pdf||r.slides?`<div class="pdf-actions side-actions">${pdf?`<a class="open-res" href="${esc(pdfLink)}" download>Download the quick guide ↓</a>`:""}${r.slides?`<a class="open-res ghost" href="${esc(slidesDownload(r.slides))}" ${/^https?:/i.test(r.slides)?`target="_blank" rel="noopener"`:"download"}>Download the video slides ↓</a>`:""}</div>`:""}</div></div>`:""}
     ${embed&&!side?resPlayerHTML(r, embed):""}
-    ${slides?`<div class="player slides"><iframe src="${esc(slides)}" title="${esc(r.title)} slideshow" allowfullscreen loading="lazy"></iframe></div>
-      <div class="slide-actions"><a class="open-res ghost" href="${esc(slidesFull(slides))}" target="_blank" rel="noopener">Open full screen ↗</a></div>`:""}
+    ${slides?`<div class="pdf-side"><div class="pdf-main"><div class="player slides"><iframe src="${esc(slides)}" title="${esc(r.title)} slideshow" allowfullscreen loading="lazy"></iframe></div></div>
+      <aside class="pdf-aside"><p class="desc">${esc(r.summary)}</p><div class="pdf-actions side-actions"><a class="open-res" href="${esc(slidesFull(slides))}" target="_blank" rel="noopener">Open full screen \u2197</a>${r.slides?`<a class="open-res ghost" href="${esc(slidesDownload(r.slides))}" ${/^https?:/i.test(r.slides)?`target="_blank" rel="noopener"`:"download"}>Download the slides \u2193</a>`:""}</div></aside></div>`:""}
     ${(embed||slides)?nextUpHTML(q):""}
     ${early?chapBlock+linkBlock:""}
     ${pdf&&!embed&&!slides?`<div class="pdf-side"><div class="pdf-main">${pdfViewHTML(pdfLink, r.title)}</div>
       <aside class="pdf-aside"><p class="desc">${esc(r.summary)}</p><div class="pdf-actions side-actions"><a class="open-res" href="${esc(pdfLink)}" download>Download PDF \u2193</a><a class="open-res ghost" href="${esc(pdfLink)}" target="_blank" rel="noopener">Open in a new tab \u2197</a></div></aside></div>`
-      : side?"":`<p class="desc">${esc(r.summary)}</p>`}
+      : (side||slides)?"":`<p class="desc">${esc(r.summary)}</p>`}
     ${notesHTML(r, pdf ? "What you will learn" : "As you watch")}
     ${q?materialsHTML(q.c, q.i):""}
     ${isWYT(r)?recordHTML():""}
