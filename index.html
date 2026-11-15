@@ -355,6 +355,7 @@ a.sm-open{text-decoration:none}
 .sm-kind{flex:none;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:3px 7px;background:#E3F2FC;color:var(--blue);min-width:44px;text-align:center}
 .sm-kind.k-video{background:#FDE3CB;color:#9a5a1c}.sm-kind.k-pdf{background:#DFF0E3;color:#2f6b45}
 .end-nav{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:26px 0 8px;padding-top:18px;border-top:1px solid var(--line)}
+.coll-lead{max-width:760px;margin:6px 0 22px;font-size:18px;line-height:1.6;color:var(--navy)}
 .series-note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:15px;line-height:1.55;color:var(--muted)}
 .series-note b{color:var(--navy)}
 .res-icon{width:44px;height:44px;border-radius:12px;background:var(--beige);color:var(--blue);display:grid;place-items:center;flex:none}
@@ -805,7 +806,7 @@ const COLLECTIONS = [
  {id:"new-to-this-work", title:"New to This Work", tag:"Start Here", blurb:"Small, doable first steps from teachers who started where you are", tone:"sage", icon:"sprout",
   stories:["getting-back-to-the-classroom-i-wanted","stepping-back-so-students-can-step-up","a-small-shift-that-gets-students-thinking","less-telling-more-thinking","concept-before-content","they-already-knew-more-than-i-thought"]},
  /* Meaning Making 101 is a starting page with two doors: learn on your own, or learn with a group */
- {id:"meaning-making-101", title:"Meaning Making 101", tag:"Start Here", blurb:"How will you learn this? Choose your path: on your own, or with a group", tone:"sky", icon:"compass", stories:[],
+ {id:"meaning-making-101", title:"Meaning Making 101", tag:"Start Here", lead:"Meaning making can sound like just another buzzword. These tutorials make it concrete: what it is, what it is not, what it looks like, and what it sounds like in a real classroom, so your whole team can use the same language.", blurb:"How will you learn this? Choose your path: on your own, or with a group", tone:"sky", icon:"compass", stories:[],
   hub:["meaning-making-101-on-your-own","meaning-making-101-with-a-group"]},
  {id:"meaning-making-101-on-your-own", title:"Meaning Making 101: On Your Own", door:"On my own", tag:"Self-Paced Video Series", time:"about 2 hours total", timeNote:"About 2 hours in all, at your own pace. Take one tutorial at a time and come back whenever you are ready for the next.", blurb:"A self-paced tutorial series that walks you through meaning making, step by step", tone:"sky", icon:"play", series:true, fb:"101", inHub:"meaning-making-101",
   stories:[], resources:["r-meaning-making-101-the-why","r-meaning-making-101-the-how-part-1","r-meaning-making-101-the-how-part-iia","r-meaning-making-101-the-how-part-iib","r-meaning-making-101-leahs-thinking"]},
@@ -1286,6 +1287,7 @@ function renderCollection(c){
     app.innerHTML = `<article class="wrap story">
       <a class="back" href="#stories" data-go="stories">← Back to the library</a>
       <div class="coll-hero tone-${c.tone}"><span class="coll-icon">${CICONS[c.icon]}</span><div><div class="eyebrow">${c.tag?esc(c.tag)+" · ":""}Curated Collection</div><h1>${esc(c.title)}</h1><p>Same ideas, two ways in. Choose the path that fits how you will learn.</p></div></div>
+      ${c.lead?`<p class="coll-lead">${esc(c.lead)}</p>`:""}
       <h2 class="door-h">How will you learn this?</h2>
       <div class="doors-2">${c.hub.map(id=>doorHTML(collById(id))).join("")}</div>
     </article>`;
