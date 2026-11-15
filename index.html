@@ -3105,6 +3105,10 @@ function renderResource(r){
 /* ---------- testimonials (shared with permission) ----------
    "story" finds the matching Exchange story so the quote also shows on that story's page. */
 const TESTIMONIALS = [
+ {name:"Eliza", org:"Farmington Public Schools", lead:true, colls:["professional-learning","fps-level-up"],
+  headline:"For teachers who are hesitant about being out of the classroom for this, I get it.",
+  body:"I was a little bit hesitant at first, but I\u2019m honestly so very happy that I did do it today. It was really invaluable to have the time to talk with my colleagues because I don\u2019t really have that time.",
+  story: s => /worth a day out of the classroom/i.test(s.title)},
  {name:"Sara", org:"Newton Public Schools", lead:true, colls:["engagement-blueprint","professional-learning"],
   headline:"The session on Tuesday was among the best and most applicable PD I have had!",
   body:"...Their experience was similar to mine and since Tuesday, we have had some really good conversations. And, yesterday I happened to be with a principal when a teacher texted to say she was trying the learning out during a science lesson. I was able to see the thinking/doing slide in action as well as hear from the teacher how she used class voice to enhance the lesson - there was so much rich student discussion, adult facilitating rather than rescuing, and the share at the end showed how students had made meaning of the thinking and were able to use academic language to make a collective model."},
