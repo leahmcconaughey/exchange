@@ -293,7 +293,7 @@ nav.main a.on{color:var(--navy)}
 .part-q li{counter-increment:pq;position:relative;padding-left:32px;font-size:15px;line-height:1.45}
 .part-q li::before{content:counter(pq);position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:#E3F2FC;color:var(--blue);font-size:12.5px;font-weight:700;display:grid;place-items:center}
 .part-go{margin-top:auto;padding-top:6px;font-weight:700;font-size:14.5px;color:var(--blue)}
-.mats{margin:22px 0}.mats .eyebrow{margin-bottom:10px}
+.slides-pdf{margin:6px 0 24px;max-width:760px}.slides-pdf .eyebrow{margin-bottom:10px}.slides-pdf .pdf-pages{margin:0;max-width:none}.mats{margin:22px 0}.mats .eyebrow{margin-bottom:10px}
 .mats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
 .mat{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;color:var(--navy);text-decoration:none;transition:border-color .15s,box-shadow .15s}
 .mat:hover,.mat:focus-visible{border-color:var(--blue);box-shadow:0 6px 16px rgba(5,65,91,.08)}
@@ -1123,14 +1123,12 @@ function gradePickerHTML(k, f, v){
       </div>
     </details></div>`;
 }
-/* District dropdown: each district, with NYC's community school districts grouped under New York City */
+/* District dropdown: one option per district; New York City Public Schools is a single option (no sub-districts) */
 function placeOptions(f, cur){
   const opt = (v,label) => `<option value="${esc(v)}"${cur===v?" selected":""}>${esc(label)}</option>`;
   const NYC = "New York City Public Schools";
   let html = f.opts.filter(o=>o!==NYC).map(o=>opt(o,o)).join("");
-  if(f.opts.includes(NYC)){
-    html += `<optgroup label="New York City Public Schools">${opt(NYC,"All NYC districts")}${f.subs.filter(s=>s.startsWith("NYC ")).map(s=>opt(s, s.replace(/^NYC /,""))).join("")}</optgroup>`;
-  }
+  if(f.opts.includes(NYC)) html += opt(NYC, NYC);
   return html;
 }
 function renderLibrary(tab){
@@ -3134,7 +3132,7 @@ function renderResource(r){
     ${(embed||slides)?nextUpHTML(q):""}
     ${early?chapBlock+linkBlock:""}
     ${pdf&&!embed&&!slides?`<div class="pdf-side"><div class="pdf-main">${pdfViewHTML(pdfLink, r.title)}</div>
-      <aside class="pdf-aside"><p class="desc">${esc(r.summary)}</p><div class="pdf-actions side-actions"><a class="open-res" href="${esc(pdfLink)}" download>Download PDF \u2193</a><a class="open-res ghost" href="${esc(pdfLink)}" target="_blank" rel="noopener">Open in a new tab \u2197</a></div></aside></div>`
+      <aside class="pdf-aside"><p class="desc">${esc(r.summary)}</p><div class="pdf-actions side-actions"><a class="open-res" href="${esc(pdfLink)}" download>Download PDF \u2193</a><a class="open-res ghost" href="${esc(pdfLink)}" target="_blank" rel="noopener">Open in a new tab \u2197</a>${isPdf(r.slides)?`<a class="open-res ghost" href="${esc(r.slides)}" download>Download the slides \u2193</a>`:""}</div></aside></div>${isPdf(r.slides)?`<section class="slides-pdf"><div class="eyebrow">The slides</div>${pdfViewHTML(r.slides, r.title+" slides")}</section>`:""}`
       : (side||slides)?"":`<p class="desc">${esc(r.summary)}</p>`}
     ${notesHTML(r, pdf ? "What you will learn" : "As you watch")}
     ${extrasHTML(r)}
