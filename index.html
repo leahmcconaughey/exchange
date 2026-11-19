@@ -2778,6 +2778,17 @@ function renderSchool(sc){
   });
   app.querySelectorAll("[data-jump]").forEach(b=>b.onclick=()=>{ const el = document.getElementById(b.dataset.jump); if(el) el.scrollIntoView({behavior:"smooth", block:"start"}); });
 }
+/* Extra printables shown on a resource page, matched by the resource's title */
+const RESOURCE_EXTRAS = {
+  "content-gist-concept-card-sort": {head:"Print these for the session", items:[
+    ["Content, Gist, Concept Cut-Apart Cards","docs/Content-Gist-Concept-Cards.pdf","Part 1 cards, printed by grade band"],
+    ["High-Cognitive Prompt Cut-Apart Cards","docs/High-Cognitive-Prompt-Cards.pdf","Part 2 cards, printed by grade band"],
+    ["Facilitator Answer Key","docs/Content-Gist-Concept-Answer-Key.pdf","Answers for Parts 1 and 2"]]}
+};
+function extrasHTML(r){
+  const x = RESOURCE_EXTRAS[r.slug.replace(/^r-/,"")]; if(!x) return "";
+  return `<section class="mats"><div class="eyebrow">${esc(x.head)}</div><div class="mats-grid">${x.items.map(([t,u,n])=>`<a class="mat" href="${esc(u)}" download><span class="mat-ic" aria-hidden="true">\u2193</span><span><b>${esc(t)}</b><small>${esc(n)} \u00B7 PDF</small></span></a>`).join("")}</div></section>`;
+}
 function materialsHTML(c, i){
   const m = c && SERIES_MATERIALS[c.id] && SERIES_MATERIALS[c.id][i+1];
   if(!m) return "";
@@ -3079,6 +3090,7 @@ function renderResource(r){
       <aside class="pdf-aside"><p class="desc">${esc(r.summary)}</p><div class="pdf-actions side-actions"><a class="open-res" href="${esc(pdfLink)}" download>Download PDF \u2193</a><a class="open-res ghost" href="${esc(pdfLink)}" target="_blank" rel="noopener">Open in a new tab \u2197</a></div></aside></div>`
       : (side||slides)?"":`<p class="desc">${esc(r.summary)}</p>`}
     ${notesHTML(r, pdf ? "What you will learn" : "As you watch")}
+    ${extrasHTML(r)}
     ${q?materialsHTML(q.c, q.i):""}
     ${isWYT(r)?recordHTML():""}
     ${rs?`<div class="rs-credit">${RS_CREDIT}${rs.wiggins?`<br><br>${WIGGINS_CREDIT}`:""}</div>`:""}
