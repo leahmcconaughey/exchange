@@ -394,6 +394,14 @@ a.sm-open{text-decoration:none}
 .tryit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
 .best-for{font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#B8600F;margin:0 0 8px}
 .pick-wrap{display:flex;flex-direction:column;min-width:0}
+.trio-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:start}
+.trio-step{display:flex;flex-direction:column;min-width:0}
+.trio-k{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--navy);margin:0 0 10px}
+.trio-n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--orange);color:var(--navy);font-size:15px;letter-spacing:0}
+.trio-k em{font-style:normal;font-size:12px;background:var(--navy);color:#fff;border-radius:999px;padding:3px 10px;margin-left:auto;letter-spacing:.04em}
+.trio-step.here>a{outline:3px solid var(--orange);outline-offset:2px;border-radius:16px}
+.trio-note{margin:4px 0 0;color:var(--muted);font-size:15px}
+@media (max-width:860px){.trio-grid{grid-template-columns:minmax(0,1fr)}}
 .picks-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
 @media (max-width:620px){.picks-grid{grid-template-columns:minmax(0,1fr)}}
 /* Meaning Making 101: companion video callout */
@@ -3018,7 +3026,23 @@ const BEST_FOR = {
   "concept-before-content": "Classroom story · watch on your own or with a team"
 };
 const bestFor = o => BEST_FOR[pickKey(o.title)] || "";
+/* Learning paths: a story, a tutorial, and a group experience shown as numbered steps on all three pages */
+const TRIOS = [
+  { title:"Learn it in three steps",
+    note:"On your own? Steps 1 and 2 work in either order. Save step 3 for when you have a group.",
+    steps:[["Concept Before Content","Watch the story"],["Clarifying the 3 C's","Get the overview"],["Content, Gist, Concept Card Sort","Try it with a group"]] }
+];
+function trioHTML(item){
+  const t = TRIOS.find(t=>t.steps.some(([s])=>pickKey(s)===pickKey(item.title)));
+  if(!t) return "";
+  const all=[...stories,...resources]; const byKey=Object.fromEntries(all.map(o=>[pickKey(o.title),o]));
+  const cells = t.steps.map(([s,label],i)=>{ const o=byKey[pickKey(s)]; if(!o) return "";
+    const here = o===item; const c = bySlug[o.slug]===o?cardHTML(o):resourceHTML(o);
+    return `<div class="trio-step${here?" here":""}"><div class="trio-k"><span class="trio-n">${i+1}</span>${esc(label)}${here?`<em>You are here</em>`:""}</div>${c}</div>`; }).join("");
+  return `<section class="tryit picks trio"><div class="eyebrow">Your next step</div><h2>${esc(t.title)}</h2><div class="trio-grid">${cells}</div><p class="trio-note">${esc(t.note)}</p></section>`;
+}
 function picksHTML(item){
+  { const tr = trioHTML(item); if(tr) return tr; }
   if(!NEXT_STEP_ON.has(item.title)) return "";
   const ps = picksFor(item);
   if(!ps.length) return "";
