@@ -2913,7 +2913,8 @@ function nextUpHTML(q){
 const PICKS = {
   "Stepping Back So Students Can Step Up": ["From Worksheet to Thinking Task","Taking Off the Training Wheels"],
   "A Small Shift That Gets Students Thinking": ["Meaning Making 101 - The How Part 1","From Delivering Content to Facilitating Thinking"],
-  "Concept Before Content": ["Meaning Making 101 - The How Part IIa","From Sound to Sense-Making"],
+  "Concept Before Content": ["Content, Gist, Concept Card Sort","Meaning Making 101 - The How Part IIa"],
+  "Content, Gist, Concept Card Sort": ["Concept Before Content","Clarifying the 3 C's"],
   "From Delivering Content to Facilitating Thinking": ["Engagement Blueprint","A Small Shift That Gets Students Thinking"],
   "Is our system really working?": ["Why School Must Change","Rewriting Perry's Story"],
   "Building Community Through Student-Centered Learning": ["When Collaboration Becomes the Culture","3 Dimensions of Engagement"],
@@ -3007,7 +3008,7 @@ function picksFor(item){
   return out;
 }
 /* "Your next step" shows only on pages Leah has chosen. Add an exact title here to turn it on for that page. */
-const NEXT_STEP_ON = new Set([]);
+const NEXT_STEP_ON = new Set(["Concept Before Content","Content, Gist, Concept Card Sort"]);
 function picksHTML(item){
   if(!NEXT_STEP_ON.has(item.title)) return "";
   const ps = picksFor(item);
