@@ -392,6 +392,8 @@ a.sm-open{text-decoration:none}
 .tryit{background:var(--sky);border-radius:18px;padding:24px;display:grid;gap:12px}
 .tryit h2{margin:0;font-size:24px;font-weight:800}
 .tryit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.best-for{font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#B8600F;margin:0 0 8px}
+.pick-wrap{display:flex;flex-direction:column;min-width:0}
 .picks-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
 @media (max-width:620px){.picks-grid{grid-template-columns:minmax(0,1fr)}}
 /* Meaning Making 101: companion video callout */
@@ -2913,7 +2915,7 @@ function nextUpHTML(q){
 const PICKS = {
   "Stepping Back So Students Can Step Up": ["From Worksheet to Thinking Task","Taking Off the Training Wheels"],
   "A Small Shift That Gets Students Thinking": ["Meaning Making 101 - The How Part 1","From Delivering Content to Facilitating Thinking"],
-  "Concept Before Content": ["Content, Gist, Concept Card Sort","Meaning Making 101 - The How Part IIa"],
+  "Concept Before Content": ["Clarifying the 3 C's","Content, Gist, Concept Card Sort"],
   "Content, Gist, Concept Card Sort": ["Concept Before Content","Clarifying the 3 C's"],
   "From Delivering Content to Facilitating Thinking": ["Engagement Blueprint","A Small Shift That Gets Students Thinking"],
   "Is our system really working?": ["Why School Must Change","Rewriting Perry's Story"],
@@ -2980,7 +2982,7 @@ const PICKS = {
   "Refining Your Authentic Transfer Task": ["little t vs. Big T Transfer","Letters from the Wild"],
   "3 Dimensions of Engagement": ["The Three Types of Engagement","Getting Messy with Light and Shadow"],
   "My Beef with Bloom's Taxonomy": ["Acquisition, Meaning Making, Transfer","Meaning Making 101 - The Why"],
-  "Clarifying the 3 C's": ["Meaning Making 101 - The How Part 1","Concept Before Content"],
+  "Clarifying the 3 C's": ["Concept Before Content","Content, Gist, Concept Card Sort"],
   "ClassVoice: Pre-Check": ["From Worksheet to Thinking Task","Engagement Blueprint"],
   "ClassVoice: Record": ["The Replay Effect","Our Own Worst Critics"]
 };
@@ -3008,12 +3010,19 @@ function picksFor(item){
   return out;
 }
 /* "Your next step" shows only on pages Leah has chosen. Add an exact title here to turn it on for that page. */
-const NEXT_STEP_ON = new Set(["Concept Before Content","Content, Gist, Concept Card Sort"]);
+const NEXT_STEP_ON = new Set(["Concept Before Content","Content, Gist, Concept Card Sort","Clarifying the 3 C's"]);
+/* A short "how to use it" label shown above a pick card */
+const BEST_FOR = {
+  "content-gist-concept-card-sort": "Group activity · best when you are leading a group",
+  "clarifying-the-3-cs": "Tutorial · best on your own, also works with a group",
+  "concept-before-content": "Classroom story · watch on your own or with a team"
+};
+const bestFor = o => BEST_FOR[pickKey(o.title)] || "";
 function picksHTML(item){
   if(!NEXT_STEP_ON.has(item.title)) return "";
   const ps = picksFor(item);
   if(!ps.length) return "";
-  return `<section class="tryit picks"><div class="eyebrow">Your next step</div><h2>${ps.length>1?"Two to try next":"Try this next"}</h2><div class="picks-grid">${ps.map(o=>bySlug[o.slug]===o?cardHTML(o):resourceHTML(o)).join("")}</div></section>`;
+  return `<section class="tryit picks"><div class="eyebrow">Your next step</div><h2>${ps.length>1?"Two to try next":"Try this next"}</h2><div class="picks-grid">${ps.map(o=>{ const b=bestFor(o), c=bySlug[o.slug]===o?cardHTML(o):resourceHTML(o); return b?`<div class="pick-wrap"><div class="best-for">${esc(b)}</div>${c}</div>`:c; }).join("")}</div></section>`;
 }
 function relatedFor(item){
   const norm = v => { const id = ytId(v); if(id) return "yt:"+id; const lm = (v||"").match(/loom\.com\/(?:share|embed)\/([a-f0-9]+)/i); if(lm) return "lm:"+lm[1]; if(/^https?:/i.test(v)) return "u:"+v.replace(/[?#].*$/,"").replace(/\/$/,""); return "t:"+slug(v); };
