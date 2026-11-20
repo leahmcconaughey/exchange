@@ -225,7 +225,7 @@ nav.main a.on{color:var(--navy)}
 .quote-card{background:#fff;border:1px solid var(--line);border-left:6px solid var(--orange);border-radius:14px;padding:18px 22px;display:grid;gap:8px}
 .quote-card q{font-size:17px;line-height:1.55;font-weight:600;quotes:"\201C" "\201D"}
 .quote-card .who{font-size:13.5px;color:var(--muted)}
-.quote-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.quote-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}@media(max-width:900px){.quote-grid{grid-template-columns:1fr}}
 .results{display:grid;gap:16px;margin-top:44px}
 .results h2{margin:0;font-size:28px;font-weight:800}
 .pdf-pages{max-width:820px;margin:18px auto;display:grid;gap:14px}
@@ -1501,6 +1501,11 @@ const FEEDBACK = {
   "I used to think meaning making could only apply in certain classes and lessons. Now I think it can be applied in every lesson in each and every classroom.",
   "I used to think meaning making was just more educational jargon. Now I think it is necessary."
  ]},
+ "cards101": [
+  "I used to think that my role was to guide the conversation closely so students stayed on track. Now I think that giving students more ownership of the discussion leads to deeper understanding and richer connections.",
+  "I used to think that having students lead the discussions might take up too much time and that it would be messy. Now I think the time would be worth it, and it is okay to get messy.",
+  "I used to think I needed to directly teach how to solve math problems. Now I love to leave concepts and problems open ended and see all the cool ways students solve them."
+ ],
  "201": {n:219, pct:85, top:51, course:"Meaning Making 201",
  quotes:[
   "I used to think creating meaning making activities was a big lift. Now I see that it just takes a simple change in your planning. Be less helpful!",
@@ -3253,7 +3258,7 @@ function renderVoices(){
     ${rowHTML("voices-row","In their own words",`${TESTIMONIALS.length} educators · use the arrows or swipe to see more`, TESTIMONIALS.map(t=>testimonialHTML(t,true)).join(""))}
     <section class="results"><div><div class="eyebrow">Course feedback</div><h2>Meaning Making 101 and 201</h2></div>
       ${proofHTML(F["101"])}
-      <div class="quote-grid">${[...F["101"].quotes.slice(0,2).map(q=>quoteCardHTML(q,F["101"])), ...F["201"].quotes.slice(0,2).map(q=>quoteCardHTML(q,F["201"]))].join("")}</div></section>
+      <div class="quote-grid">${[...F.cards101.map(q=>quoteCardHTML(q,F["101"])), ...F["201"].quotes.slice(0,3).map(q=>quoteCardHTML(q,F["201"]))].join("")}</div></section>
   </div>`;
   wireProof(); wireRows(app);
 }
@@ -3275,6 +3280,9 @@ function route(){
   else if(h.startsWith("school-") && schoolBySlug(h.slice(7))){ renderSchool(schoolBySlug(h.slice(7))); navKey="leaders"; }
   else { renderHome(); navKey="home"; }
   wireReadMore(app);
+  if(!["","stories","resources"].includes(h) && !app.querySelector(".end-nav")){
+    app.insertAdjacentHTML("beforeend", `<div class="wrap"><nav class="end-nav"><span></span><a class="back" href="#resources" data-go="resources">Browse all stories and resources \u2192</a></nav></div>`);
+  }
   const PAGE_NAMES = {"":"Home", stories:"Stories", resources:"Resources", leaders:"For Leaders & Coaches", voices:"Voices", about:"About"};
   const gcTitle = PAGE_NAMES[h] !== undefined ? PAGE_NAMES[h] : c ? "Collection: "+c.title : bySlug[h] ? "Story: "+bySlug[h].title : resBySlug[h] ? "Resource: "+resBySlug[h].title : (h.startsWith("school-") && schoolBySlug(h.slice(7))) ? "School: "+schoolBySlug(h.slice(7)).name : "Home";
   gcCount({path: "/" + (PAGES[h]||c||bySlug[h]||resBySlug[h]||(h.startsWith("school-")&&schoolBySlug(h.slice(7))) ? h : ""), title: gcTitle});
