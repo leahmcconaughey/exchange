@@ -1,0 +1,80 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:'Manrope';font-weight:200 800;src:url(file:///home/claude/exchange/tools/Manrope-VariableFont_wght.ttf)}
+*{box-sizing:border-box}
+html,body{margin:0;width:1280px;height:720px;overflow:hidden;background:#FCF2E8;font-family:'Liberation Sans',Arial,sans-serif}
+#chrome{position:absolute;left:0;top:0;width:1280px;height:46px;background:#EEF0F3;border-bottom:1px solid #D9DDE3;display:flex;align-items:center;padding:0 16px;gap:8px}
+.dot{width:12px;height:12px;border-radius:50%}
+#url{margin-left:24px;flex:1;max-width:620px;height:30px;border-radius:15px;background:#fff;display:flex;align-items:center;padding:0 14px;font-size:14px;color:#3a4250;gap:8px}
+#stage{position:absolute;left:0;top:46px;width:1280px;height:674px;overflow:hidden;background:#F6F7F9}
+.screen{position:absolute;left:0;top:0;transform-origin:0 0;opacity:0}
+.screen.on{opacity:1}
+img.screen{display:block}
+/* app replica */
+.app{width:1280px;height:674px;background:#fff;color:#111827}
+.tabs{display:flex;justify-content:center;padding-top:16px}
+.tabs .t{display:flex;background:#F1F2F4;border-radius:10px;padding:4px}
+.tabs span{padding:8px 46px;font-size:14px;color:#6B7280;border-radius:8px}
+.tabs span.a{background:#fff;color:#111827;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.head{display:flex;justify-content:space-between;align-items:flex-start;width:820px;margin:22px auto 0}
+.head h2{margin:0;font-size:19px;font-weight:700}.head p{margin:4px 0 0;font-size:13.5px;color:#6B7280}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #E5E7EB;border-radius:8px;padding:8px 14px;font-size:13px;background:#fff;color:#111827}
+.btn.blue{background:#3B82F6;border-color:#3B82F6;color:#fff;font-weight:600}
+.card{width:820px;margin:18px auto 0;border:1px solid #E5E7EB;border-radius:12px;padding:20px 22px}
+.card h3{margin:0 0 16px;font-size:15.5px;font-weight:700;display:flex;justify-content:space-between}
+label{display:block;font-size:13.5px;font-weight:600;margin:12px 0 6px}
+.in{border:1px solid #D1D5DB;border-radius:7px;padding:9px 11px;font-size:13.5px;color:#9CA3AF;min-height:38px;white-space:pre-wrap}
+.in.typed{color:#111827}.in.area{min-height:66px}
+.caret{display:inline-block;width:1.5px;height:16px;background:#111827;vertical-align:-3px;margin-left:1px}
+.seg{display:flex;gap:6px}.seg span{font-size:12.5px;padding:6px 11px;border-radius:6px;border:1px solid #E5E7EB;color:#4B5563}.seg span.a{background:#3B82F6;color:#fff;border-color:#3B82F6}
+.drop{margin-top:10px;border:1.5px dashed #CBD5E1;border-radius:8px;padding:12px;display:flex;gap:10px;align-items:center;font-size:13px;color:#6B7280;min-height:52px}
+.file{display:inline-flex;gap:6px;align-items:center;background:#EFF6FF;color:#1D4ED8;border-radius:6px;padding:5px 10px;font-size:12.5px;font-weight:600}
+.hint{font-size:12px;color:#6B7280;margin-top:8px}
+.analyze{margin-top:16px;width:100%;justify-content:center;padding:11px;font-size:14px}
+.empty{width:820px;margin:28px auto;border:1px dashed #E5E7EB;border-radius:12px;padding:40px;text-align:center;color:#9CA3AF;font-size:14px}
+.center{width:1280px;height:674px;display:grid;place-items:center;background:#F6F7F9}
+.login{width:420px;background:#fff;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.08);padding:40px;text-align:center}
+.login img{width:230px}.login p{color:#6B7280;font-size:14px;margin:8px 0 26px}
+.gbtn{display:inline-flex;gap:10px;align-items:center;border:1.5px solid #1E3A8A;color:#1E3A8A;border-radius:999px;padding:11px 22px;font-weight:600;font-size:14px}
+.spin{width:44px;height:44px;border-radius:50%;border:4px solid #DBEAFE;border-top-color:#3B82F6;margin:0 auto 16px}
+.anal{text-align:center;color:#374151;font-size:15px}
+.rec2{display:grid;grid-template-columns:1fr 1fr;gap:18px;width:820px;margin:22px auto 0}
+.rc{border:1px solid #E5E7EB;border-radius:12px;padding:22px}
+.rc b{display:block;font-size:16px;margin:10px 0 6px}.rc p{margin:0;color:#6B7280;font-size:13.5px;line-height:1.45}
+.rc .ic{width:40px;height:40px;border-radius:10px;background:#EFF6FF;display:grid;place-items:center;color:#2563EB;font-size:20px}
+.startb{margin-top:16px;display:inline-flex;gap:8px;align-items:center;background:#DC2626;color:#fff;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600}
+.note{width:820px;margin:16px auto 0;font-size:13px;color:#6B7280;display:flex;gap:18px}
+.recbox{width:820px;margin:22px auto 0;border:1px solid #FECACA;background:#FEF2F2;border-radius:12px;padding:26px;display:flex;align-items:center;gap:22px}
+.rdot{width:16px;height:16px;border-radius:50%;background:#DC2626}
+.timer{font-size:34px;font-weight:700;font-variant-numeric:tabular-nums;color:#111827;width:150px}
+.wave{flex:1;display:flex;align-items:center;gap:4px;height:60px}.wave i{flex:1;background:#F87171;border-radius:2px}
+.stopb{background:#111827;color:#fff;border-radius:8px;padding:10px 18px;font-size:14px;font-weight:600}
+/* report header for precheck */
+.rhead{position:absolute;left:0;top:0;width:100%;height:110px;display:flex;justify-content:space-between;align-items:center;padding:0 60px}
+.rhead h2{margin:0;font-size:30px;font-weight:700;color:#111827}.rhead small{display:block;font-size:20px;color:#6B7280;font-weight:400;margin-top:4px}
+.askb{display:inline-flex;gap:10px;align-items:center;border:2px solid #D1D5DB;background:#fff;border-radius:12px;padding:14px 24px;font-size:22px;font-weight:600;color:#111827}
+#askpanel{position:absolute;top:46px;right:0;width:420px;height:674px;background:#fff;border-left:1px solid #E5E7EB;box-shadow:-10px 0 30px rgba(0,0,0,.08);transform:translateX(440px);padding:22px;display:flex;flex-direction:column}
+#askpanel h3{margin:0;font-size:17px}#askpanel p{color:#6B7280;font-size:13.5px;margin:6px 0 0}
+#askpanel .box{margin-top:auto;border:1px solid #D1D5DB;border-radius:10px;padding:12px;font-size:14px;min-height:80px;color:#111827}
+#askpanel .send{align-self:flex-end;margin-top:10px}
+/* overlays */
+#cur{position:absolute;left:0;top:0;width:26px;height:26px;z-index:50;pointer-events:none;transform:translate(-3px,-2px)}
+#ring{position:absolute;width:38px;height:38px;margin:-19px 0 0 -19px;border-radius:50%;background:rgba(242,167,102,.55);z-index:49;opacity:0}
+#cap{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);z-index:60;background:#fff;color:#05415B;border:2px solid #F2A766;font-family:Manrope,sans-serif;font-weight:700;font-size:23px;line-height:1.35;padding:13px 26px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.18);text-align:center;max-width:1000px;opacity:0}
+#cap b{color:#038FDD;font-weight:800}
+#card{position:absolute;inset:0;z-index:70;background:#FCF2E8;display:none;place-items:center;font-family:Manrope,sans-serif;color:#05415B;text-align:center}
+#card .lg{display:flex;gap:30px;align-items:center;justify-content:center;margin-bottom:34px}
+#card h1{margin:0;font-size:58px;font-weight:800;letter-spacing:-.01em}
+#card .bar{width:90px;height:6px;border-radius:3px;background:#F2A766;margin:24px auto 0}
+#card .sub{font-size:25px;margin-top:22px;font-weight:500}
+#card .url{margin-top:34px;font-size:23px;font-weight:800;background:#F2A766;display:inline-block;padding:13px 28px;border-radius:12px}
+#card .sm{margin-top:20px;font-size:18px;font-weight:600}
+</style></head><body>
+<div id="chrome"><span class="dot" style="background:#FF5F57"></span><span class="dot" style="background:#FEBC2E"></span><span class="dot" style="background:#28C840"></span>
+<div id="url"><svg width="12" height="14" viewBox="0 0 12 14"><rect x="1" y="6" width="10" height="7" rx="1.5" fill="#6B7280"/><path d="M3 6V4a3 3 0 0 1 6 0v2" stroke="#6B7280" stroke-width="1.6" fill="none"/></svg><span id="urltext">classvoice.net</span></div></div>
+<div id="stage"></div>
+<div id="askpanel"><h3>Ask Leah</h3><p>Ask a follow-up question about your Pre-Check report.</p><div class="box" id="askq"><span class="caret"></span></div><span class="btn blue send">Send</span></div>
+<div id="ring"></div>
+<div id="cur"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M4 2l15 11-6.5 1.2L16 21l-3 1.4-3.4-6.6L4 20z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+<div id="cap"></div>
+<div id="card"><div><div class="lg" id="cardlogos"></div><h1 id="ct"></h1><div class="bar"></div><div class="sub" id="cs"></div><div id="cu"></div></div></div>
+</body></html>
