@@ -60,4 +60,21 @@ async def main(only=None):
             await pg.goto("file://"+tmp); await pg.wait_for_timeout(150)
             await pg.screenshot(path=path); print("made", out)
         await b.close()
-asyncio.run(main(sys.argv[1] if len(sys.argv)>1 else None))
+if not (len(sys.argv)>1 and sys.argv[1]=="art"): asyncio.run(main(sys.argv[1] if len(sys.argv)>1 else None))
+
+# Small circle art for the For Leaders & Coaches cards (picture on the side): covers/collections/<id>-art.png
+async def art_only():
+    from playwright.async_api import async_playwright
+    async with async_playwright() as p:
+        b = await p.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--no-sandbox","--allow-file-access-from-files"])
+        pg = await b.new_page(viewport={"width":400,"height":400})
+        for out,tone,tag,title,meta,art in COVERS:
+            if not out.startswith("covers/collections/"): continue
+            circ = TONES[tone][5]
+            h = f"""<!doctype html><html><head><style>@font-face{{font-family:Manrope;src:url('file://{FONT}/Manrope-VariableFont_wght.ttf');font-weight:200 800}}
+*{{margin:0}} body{{width:400px;height:400px;background:transparent}} .c{{width:400px;height:400px;border-radius:50%;background:{circ};display:grid;place-items:center}} svg{{width:270px;height:270px}}</style></head>
+<body><div class="c"><svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">{ART[art]}</svg></div></body></html>"""
+            open("/tmp/_art.html","w").write(h); await pg.goto("file:///tmp/_art.html"); await pg.wait_for_timeout(100)
+            path = os.path.join(ROOT, out.replace(".png","-art.png")); await pg.screenshot(path=path, omit_background=True); print("made", path)
+        await b.close()
+if __name__ == "__main__" and len(sys.argv)>1 and sys.argv[1]=="art": asyncio.run(art_only())
