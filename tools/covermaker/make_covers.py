@@ -26,7 +26,7 @@ COVERS = [
  ("covers/collections/school-models.png","sky","See It in Schools","Competency\u2011Based School Models","School Visits | Redesign","school-models"),
  ("covers/collections/engagement-blueprint.png","peach","Curated Collection","Explore the Engagement Blueprint","Guides | Stories","engagement-blueprint"),
  ("covers/collections/coaching-conversation.png","sage","Curated Collection","Coaching Conversation","Stories to Talk About","coaching-conversation"),
- ("covers/collections/coaching-chronicles.png","blue","From a Farmington Coach","Coaching Chronicles","Monthly Newsletter | Instructional Nudges","coaching-chronicles"),
+ ("covers/collections/coaching-chronicles.png","blue","From a Michigan Coach","Coaching Chronicles","Monthly Newsletter | Instructional Nudges","coaching-chronicles"),
  ("covers/69-The-Jigsaw-Putting-the-Pieces-Together.png","peach","Participation Structures","The Jigsaw","One-Pager | Small Groups","jigsaw"),
  ("covers/70-Hope-Is-Not-a-Strategy-Designing-Share-Outs-So-Everyone-Thinks.png","sky","Participation Structures","Hope Is Not a Strategy","One-Pager | Share-Outs","share-outs"),
  ("covers/71-No-More-Back-to-Back-Presentations-A-Better-Way-to-Share-Out.png","orange","Participation Structures","No More Back-to-Back Presentations","One-Pager | Share-Outs","gallery"),
