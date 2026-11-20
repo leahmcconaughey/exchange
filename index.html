@@ -271,6 +271,10 @@ nav.main a.on{color:var(--navy)}
 .rot-dots button[aria-current="true"]::before{background:var(--navy)}
 .testi-img{width:100%;border-radius:12px;display:block}
 .track>.testi{flex-basis:clamp(280px,31%,400px);align-self:flex-start}
+.fb-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.fb-toggle{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:99px;padding:4px;gap:4px}
+.fb-toggle button{font:inherit;font-weight:700;font-size:15px;border:0;background:none;color:var(--navy,#05415B);padding:10px 18px;border-radius:99px;cursor:pointer}
+.fb-toggle button.on{background:#05415B;color:#fff}
 .track>.quote-card{flex:0 0 clamp(280px,31%,400px);align-self:stretch;align-content:space-between}
 .track .testi-img{max-height:190px;object-fit:cover;width:100%}
 .testi .clampable{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
@@ -3232,11 +3236,15 @@ function renderVoices(){
   </section>
   <div class="wrap voices">
     ${rowHTML("voices-row","In their own words",`${TESTIMONIALS.length} educators · use the arrows or swipe to see more`, TESTIMONIALS.map(t=>testimonialHTML(t,true)).join(""))}
-    <section class="results"><div><div class="eyebrow">Course feedback</div><h2>Meaning Making 101 and 201</h2></div>
-      ${proofHTML(F["101"])}
-      ${rowHTML("mm-quotes","More reflections","Meaning Making 101 and 201 · use the arrows or swipe to see more",[...F["101"].quotes.slice(0,3).map(q=>quoteCardHTML(q,F["101"])), ...F["201"].quotes.slice(0,3).map(q=>quoteCardHTML(q,F["201"]))].join(""))}</section>
+    <section class="results"><div class="fb-head"><div><div class="eyebrow">Course feedback</div><h2>Meaning Making 101 and 201</h2></div>
+      <div class="fb-toggle" role="tablist">${["101","201"].map((k,i)=>`<button type="button" role="tab" data-c="${k}" aria-selected="${!i}" class="${i?"":"on"}">Meaning Making ${k}</button>`).join("")}</div></div>
+      <div id="proof-slot">${proofHTML(F["101"])}</div></section>
   </div>`;
   wireProof(); wireRows(app);
+  app.querySelectorAll(".fb-toggle button").forEach(b=>b.onclick=()=>{
+    app.querySelectorAll(".fb-toggle button").forEach(x=>{const on=x===b; x.classList.toggle("on",on); x.setAttribute("aria-selected",on);});
+    app.querySelector("#proof-slot").innerHTML = proofHTML(F[b.dataset.c]); wireProof();
+  });
 }
 
 /* ---------- routing ---------- */
