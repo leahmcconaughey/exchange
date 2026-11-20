@@ -430,6 +430,13 @@ a.sm-open{text-decoration:none}
 /* leaders */
 .lead-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;padding-block:28px 0}
 .lead-grid .coll{min-height:200px}
+.cc-feature{padding-block:28px 0}
+.cc-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:16px}
+.cc-head h2{margin:4px 0 6px}
+.cc-head p{margin:0;max-width:760px;color:var(--muted,#555)}
+.cc-all{white-space:nowrap;font-weight:700}
+.cc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:620px){.cc-grid{grid-template-columns:minmax(0,1fr)}.cc-head{flex-direction:column;align-items:flex-start}}
 /* about */
 .about-intro p{max-width:66ch}
 .about-sec{padding-block:30px;border-top:1px solid var(--line);display:grid;gap:16px}
@@ -772,6 +779,23 @@ const areasOf = focus => FOCUS_GROUPS.filter(([,tags])=>focus.some(f=>tags.inclu
 const areaFor = tag => (FOCUS_GROUPS.find(([,tags])=>tags.includes(String(tag).toLowerCase()))||[])[0];
 /* Drive PDFs we also host on the Exchange, so they show in the clean page viewer (no black bars) */
 const LOCAL_PDFS = {"1FWwIrFvu_-9v1l_7EeavvRMKmar3LUjr":"docs/Jigsaw-Putting-the-Pieces-Together.pdf"};
+/* Coaching Chronicles: Monica's monthly coaching newsletter (Farmington Public Schools).
+   Each issue picks one Engagement Blueprint move, shows it in real classrooms, and gives teachers a nudge to try.
+   Add a new issue at the TOP of this list (newest first): PDF in docs/coaching, cover in covers. */
+const COACHING_CHRONICLES = [
+ {month:"November 2026", nudge:"Look for Patterns", pdf:"docs/coaching/Coaching-Chronicles-November-2026.pdf", img:"covers/68-Coaching-Chronicles-November-2026.png",
+  summary:"Students can do the task without thinking deeply about the ideas. This month\u2019s nudge: give students several artifacts and a high-cognitive prompt, then ask what patterns they notice and what those patterns reveal.",
+  notes:"Inside this issue:\nOne artifact gives information. Multiple artifacts invite connections.\nPhotos of first graders analyzing a mentor text and sorting words in small groups\nEnrichment groups: instead of doing more, students think differently and deeply (an \u201cInstead of\u2026 Try\u2026\u201d chart)"},
+ {month:"October 2026", nudge:"Leave Some Blank Space", pdf:"docs/coaching/Coaching-Chronicles-October-2026.pdf", img:"covers/67-Coaching-Chronicles-October-2026.png",
+  summary:"Students can be busy, compliant, and participating without doing much of the thinking. This month\u2019s nudge: design lessons with large blank space so students do the thinking and that thinking becomes visible.",
+  notes:"Inside this issue:\nWhat we leave blank may be where student thinking becomes visible.\nPhotos of first, third, and fourth graders using blank space to think through a story, a work of art, and a science question\nA reflection question for planning your next lesson"}
+].map(x=>{
+  const title = `Coaching Chronicles: ${x.nudge}`, focus = ["Coaching","Engagement Blueprint","Cognitive Engagement","Instructional Nudge"];
+  return {title, link:x.pdf, related:"", notes:x.notes, slides:"", summary:x.summary, month:x.month,
+    grades:["Elementary"], subjects:[], focus, places:["Farmington Public Schools"], org:"Farmington Public Schools", school:"", subDistrict:"",
+    img:x.img, gradeLevels:["K","1","2","3","4","5"], areas:areasOf(focus), type:"Newsletter", audience:[], slug:"r-"+slug(title),
+    allTags:["Elementary",...focus,"Newsletter","Coaching Chronicles","Monica",x.month]};
+});
 function localPdf(u){ const m=(u||"").match(/drive\.google\.com\/file\/d\/([\w-]{20,})/); return m && LOCAL_PDFS[m[1]] ? LOCAL_PDFS[m[1]] : u; }
 function buildData(rows){
   const head = rows[0].map(h=>h.trim());
@@ -820,7 +844,7 @@ async function boot(){
     const res = await fetch(SHEET_CSV, {cache:"no-store"});
     if(!res.ok) throw new Error(res.status);
     const {S,R} = buildData(parseCSV(await res.text()));
-    stories = S; resources = R;
+    stories = S; resources = [...R, ...COACHING_CHRONICLES];
     startApp();
   }catch(err){
     app.innerHTML = `<div class="wrap loading"><b>The stories couldn't load right now.</b><br>Please refresh the page in a moment.</div>`;
@@ -871,6 +895,8 @@ const COLLECTIONS = [
  {id:"professional-learning", title:"Professional Learning", tag:"Teachers Learning Together", blurb:"Learning walks, coaching, peer visits, and other ways educators grow together", tone:"sage", icon:"people", leaders:true,
   byTag:["Professional Learning","Learning Walks","Collective Practice","Teacher As Professional","Coaching"],
   stories:["opening-the-classroom-door","seeing-the-big-picture","seeing-classrooms-differently"]},
+ {id:"coaching-chronicles", title:"Coaching Chronicles", tag:"From a Farmington Coach", blurb:"A monthly newsletter from Farmington coach Monica: one Engagement Blueprint move, real classroom photos, and a nudge to try", tone:"peach", icon:"doc",
+  stories:[], resources:COACHING_CHRONICLES.map(x=>x.slug)},
  /* FPS Level-Up: any Farmington story tagged "Level-Up" (or "Level Up") in the sheet joins automatically. Link: exchange.learning-works.org/#c-fps-level-up */
  {id:"fps-level-up", title:"FPS Level-Up", tag:"Farmington Public Schools", blurb:"Farmington teachers get the opportunity to deepen their understanding of student-centered learning and the Positioning Blueprint", tone:"sky", icon:"people",
   byTag:["Level-Up","Level Up"], byOrg:"Farmington Public Schools",
@@ -1263,6 +1289,12 @@ function renderLeaders(){
     <div class="eyebrow orange">LearningWorks Exchange</div>
     <h1>For leaders &amp; coaches</h1>
     <p>Curated starting points for the next staff meeting, coaching conversation, or system-level question.</p>
+  </section>
+  <section class="wrap cc-feature">
+    <div class="cc-head"><div><div class="eyebrow">Featured for coaches</div><h2>Check Out the Coaching Chronicles</h2>
+      <p>Every month, Monica, an instructional coach in Farmington Public Schools, picks one Engagement Blueprint move, shows what it looks like in real classrooms, and gives teachers one specific nudge to try. A model for keeping your own staff focused on one small shift at a time.</p></div>
+      ${COACHING_CHRONICLES.length>2?`<a class="cc-all" href="#c-coaching-chronicles" data-coll="coaching-chronicles">See all ${COACHING_CHRONICLES.length} issues →</a>`:""}</div>
+    <div class="cc-grid">${COACHING_CHRONICLES.slice(0,2).map(resourceHTML).join("")}</div>
   </section>
   <section class="wrap lead-grid">${lead.map(c=>collectionHTML(c)).join("")}</section>
   <div class="wrap rows">
