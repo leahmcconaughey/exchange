@@ -1438,6 +1438,7 @@ function renderStory(s){
     ${inColls.length?`<div class="chips">${inColls.map(c=>`<a class="chip coll-chip" href="#c-${c.id}" data-coll="${c.id}">In collection: ${esc(c.title)}</a>`).join("")}</div>`:""}
     ${testimonialsFor(s).map(t=>testimonialHTML(t,false)).join("")}
     ${picksHTML(s)}
+    ${endNavHTML(s)}
   </article>`;
   wireRows(app);
   app.querySelectorAll("button.chip").forEach(b=>b.onclick=()=>tagToFilter(b.dataset.tag));
@@ -3058,6 +3059,13 @@ function trioHTML(item){
     return `<div class="trio-step${here?" here":""}"><div class="trio-k"><span class="trio-n">${i+1}</span>${esc(label)}${here?`<em>You are here</em>`:""}</div>${c}</div>`; }).join("");
   return `<section class="tryit picks trio"><div class="eyebrow">Your next step</div><h2>${esc(t.title)}</h2><div class="trio-grid">${cells}</div><p class="trio-note">${esc(t.note)}</p></section>`;
 }
+/* Bottom of every story and resource page: back to its collection (the one they came from, if it holds this item), plus browse all */
+let lastColl = "";
+function endNavHTML(item){
+  const has = c => (c.stories||[]).includes(item.slug) || (c.resources||[]).includes(item.slug);
+  const c = COLLECTIONS.find(x=>x.id===lastColl && has(x)) || COLLECTIONS.find(has);
+  return `<nav class="end-nav">${c?`<a class="back" href="#c-${c.id}" data-coll="${c.id}">\u2190 Back to ${esc(c.title)}</a>`:"<span></span>"}<a class="back" href="#resources" data-go="resources">Browse all stories and resources \u2192</a></nav>`;
+}
 function picksHTML(item){
   { const tr = trioHTML(item); if(tr) return tr; }
   if(!NEXT_STEP_ON.has(item.title)) return "";
@@ -3156,7 +3164,7 @@ function renderResource(r){
     ${companionHTML(sr)}
     ${sr?quoteCardHTML(FEEDBACK[sr.s].quotes[(sr.part-1)%FEEDBACK[sr.s].quotes.length],FEEDBACK[sr.s]):""}
     ${q&&q.c.note?`<div class="series-note">${q.c.note}</div>`:""}
-    ${early?`<nav class="end-nav"><a class="back" href="#c-${q.c.id}" data-coll="${q.c.id}">\u2190 Back to ${esc(q.c.title)}</a><a class="back" href="#resources" data-go="resources">Browse all stories and resources \u2192</a></nav>`:picksHTML(r)}
+    ${early?"":picksHTML(r)}${endNavHTML(r)}
     ${!(embed||slides)?nextUpHTML(q):""}
   </article>`;
   wireRows(app);
@@ -3252,6 +3260,7 @@ function route(){
   clearInterval(hintTimer); clearInterval(proofTimer);
   const h = location.hash.slice(1);
   const c = h.startsWith("c-") && COLLECTIONS.find(x=>"c-"+x.id===h);
+  if(c) lastColl = c.id;
   let navKey = NAV_FOR[h];
   if(PAGES[h]) PAGES[h]();
   else if(c) renderCollection(c);
