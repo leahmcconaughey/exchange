@@ -235,6 +235,7 @@ nav.main a.on{color:var(--navy)}
 .pdf-aside .pdf-actions{display:grid;gap:10px;margin:0}.pdf-aside .open-res{text-align:center;justify-content:center;width:100%;max-width:300px;box-sizing:border-box}
 @media(max-width:900px){.pdf-side{grid-template-columns:1fr}.pdf-aside{position:static;order:-1}}
 .pdf-page{width:100%;height:auto;display:block;background:#fff;border-radius:10px;border:1px solid var(--line);box-shadow:0 14px 34px -24px rgba(5,65,91,.45)}
+.voices-top{margin:8px 0 56px}
 .pdf-loading{padding:40px;text-align:center;color:var(--muted)}
 .pdf-pages.scroll{position:relative;max-height:min(80vh,880px);overflow-y:auto;overscroll-behavior:contain;padding:12px;border:1px solid var(--line);border-radius:16px;background:#EDE5DC}
 .pdf-count{display:flex;justify-content:space-between;gap:12px;margin:8px 4px 0;font-size:14px;font-weight:600;color:var(--muted)}
@@ -3230,9 +3231,9 @@ function renderVoices(){
     <p>In their own words: teachers and leaders on what changed when students started doing the thinking.</p>
   </section>
   <div class="wrap voices">
+    <section class="results voices-top">${proofHTML(F["101"])}</section>
     ${rowHTML("voices-row","In their own words",`${TESTIMONIALS.length} educators · use the arrows or swipe to see more`, TESTIMONIALS.map(t=>testimonialHTML(t,true)).join(""))}
     <section class="results"><div><div class="eyebrow">Course feedback</div><h2>Meaning Making 101 and 201</h2></div>
-      ${proofHTML(F["101"])}
       <div class="quote-grid">${[...F["101"].quotes.slice(0,2).map(q=>quoteCardHTML(q,F["101"])), ...F["201"].quotes.slice(0,2).map(q=>quoteCardHTML(q,F["201"]))].join("")}</div></section>
   </div>`;
   wireProof(); wireRows(app);
