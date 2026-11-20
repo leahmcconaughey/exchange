@@ -1440,6 +1440,7 @@ function renderStory(s){
     ${isWYT(s)?recordHTML():""}
     ${inColls.length?`<div class="chips">${inColls.map(c=>`<a class="chip coll-chip" href="#c-${c.id}" data-coll="${c.id}">In collection: ${esc(c.title)}</a>`).join("")}</div>`:""}
     ${testimonialsFor(s).map(t=>testimonialHTML(t,false)).join("")}
+    ${blueprintResHTML(s)}
     ${picksHTML(s)}
     ${endNavHTML(s)}
   </article>`;
@@ -3088,6 +3089,15 @@ function relatedFor(item){
   const mine = refs(item), myKeys = keysOf(item);
   return [...stories, ...resources].filter(o => o!==item && (keysOf(o).some(k=>mine.includes(k)) || refs(o).some(k=>myKeys.includes(k))));
 }
+/* Every story and resource that references the Engagement Blueprint (its tags, title, summary,
+   notes, or related content) lists the Engagement Blueprint resource below it. */
+const mentionsBlueprint = o => (o.allTags||o.focus||[]).some(t=>/engagement blueprint/i.test(t))
+  || /engagement blueprint/i.test([o.title,o.summary,o.notes,o.related].join(" "));
+function blueprintResHTML(item){
+  const bp = resources.find(r=>/^engagement blueprint$/i.test((r.title||"").trim()));
+  if(!bp || bp===item || !mentionsBlueprint(item)) return "";
+  return `<section class="tryit picks bp-res"><div class="eyebrow">Resource</div><h2>Keep the Engagement Blueprint close</h2><div class="picks-grid">${resourceHTML(bp)}</div></section>`;
+}
 /* ClassVoice is one app with two tools; say so at the top of each tool's page */
 function classVoiceHTML(r){
   /* Matches "Pre-Check Guide", "ClassVoice: Pre-Check", "Record Guide", "ClassVoice: Record", and similar */
@@ -3172,6 +3182,7 @@ function renderResource(r){
     ${companionHTML(sr)}
     ${sr?quoteCardHTML(FEEDBACK[sr.s].quotes[(sr.part-1)%FEEDBACK[sr.s].quotes.length],FEEDBACK[sr.s]):""}
     ${q&&q.c.note?`<div class="series-note">${q.c.note}</div>`:""}
+    ${blueprintResHTML(r)}
     ${early?"":picksHTML(r)}${endNavHTML(r)}
     ${!(embed||slides)?nextUpHTML(q):""}
   </article>`;
