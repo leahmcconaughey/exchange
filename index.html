@@ -271,6 +271,7 @@ nav.main a.on{color:var(--navy)}
 .rot-dots button[aria-current="true"]::before{background:var(--navy)}
 .testi-img{width:100%;border-radius:12px;display:block}
 .track>.testi{flex-basis:clamp(280px,31%,400px);align-self:flex-start}
+.track>.quote-card{flex:0 0 clamp(280px,31%,400px);align-self:stretch;align-content:space-between}
 .track .testi-img{max-height:190px;object-fit:cover;width:100%}
 .testi .clampable{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
 .testi.open .clampable{display:block;-webkit-line-clamp:unset}
@@ -3233,7 +3234,7 @@ function renderVoices(){
     ${rowHTML("voices-row","In their own words",`${TESTIMONIALS.length} educators · use the arrows or swipe to see more`, TESTIMONIALS.map(t=>testimonialHTML(t,true)).join(""))}
     <section class="results"><div><div class="eyebrow">Course feedback</div><h2>Meaning Making 101 and 201</h2></div>
       ${proofHTML(F["101"])}
-      <div class="quote-grid">${[...F["101"].quotes.slice(0,2).map(q=>quoteCardHTML(q,F["101"])), ...F["201"].quotes.slice(0,2).map(q=>quoteCardHTML(q,F["201"]))].join("")}</div></section>
+      ${rowHTML("mm-quotes","More reflections","Meaning Making 101 and 201 · use the arrows or swipe to see more",[...F["101"].quotes.slice(0,3).map(q=>quoteCardHTML(q,F["101"])), ...F["201"].quotes.slice(0,3).map(q=>quoteCardHTML(q,F["201"]))].join(""))}</section>
   </div>`;
   wireProof(); wireRows(app);
 }
