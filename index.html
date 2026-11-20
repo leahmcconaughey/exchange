@@ -1251,7 +1251,10 @@ function renderLibrary(tab){
 
 /* ---------- LEADERS & COACHES ---------- */
 function renderLeaders(){
-  const lead = COLLECTIONS.filter(c=>c.leaders);
+  /* Order mixes the card colors so neither column is all one tone */
+  const LEAD_ORDER = ["research-series","mastery-based-grading","professional-learning","participation-structures","watching-yourself-teach","learn-the-amt-framework","staff-meeting-ready","school-models","engagement-blueprint","coaching-conversation"];
+  const rank = c => { const i = LEAD_ORDER.indexOf(c.id); return i<0 ? 999 : i; };
+  const lead = COLLECTIONS.filter(c=>c.leaders).sort((x,y)=>rank(x)-rank(y));
   const sysStories = stories.filter(s=>s.pathway!=="Classroom" || s.focus.some(f=>["Leadership","Learning Walks","Coaching","Collective Practice"].includes(f)));
   /* Everything is for everyone, so this row shows resources about leading and growing the work */
   const lRes = resources.filter(r=>r.areas.some(a=>["Professional Learning","Mastery-Based Grading","ClassVoice"].includes(a)));
@@ -1262,17 +1265,11 @@ function renderLeaders(){
     <p>Curated starting points for the next staff meeting, coaching conversation, or system-level question.</p>
   </section>
   <section class="wrap lead-grid">${lead.map(c=>collectionHTML(c)).join("")}</section>
-  <section class="wrap results"><div><div class="eyebrow">Results from the field</div><h2>What educators say about Meaning Making 101</h2></div>
-    ${proofHTML(FEEDBACK["101"])}
-    <div class="quote-grid">${FEEDBACK["101"].quotes.slice(0,3).map(q=>quoteCardHTML(q,FEEDBACK["101"])).join("")}</div>
-    ${TESTIMONIALS.length?`<div class="testi-grid three">${pickThree(TESTIMONIALS.filter(t=>t.lead)).map(t=>testimonialHTML(t,true)).join("")}</div><a class="more-voices" href="#voices" data-go="voices">Read more from educators →</a>`:""}
-    <a class="open-res" href="#c-meaning-making-101" data-coll="meaning-making-101">Explore Meaning Making 101 →</a></section>
   <div class="wrap rows">
     ${rowHTML("lead-stories","Stories about leading the work","District and school stories, learning walks, and coaching", sysStories.map(cardHTML).join(""))}
     ${lRes.length?rowHTML("lead-res","Resources for leaders & coaches","", lRes.map(resourceHTML).join("")):""}
   </div>`;
   wireRows(app);
-  wireProof();
 }
 
 /* ---------- ABOUT ---------- */
