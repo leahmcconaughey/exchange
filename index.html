@@ -235,6 +235,8 @@ nav.main a.on{color:var(--navy)}
 .pdf-aside .pdf-actions{display:grid;gap:10px;margin:0}.pdf-aside .open-res{text-align:center;justify-content:center;width:100%;max-width:300px;box-sizing:border-box}
 @media(max-width:900px){.pdf-side{grid-template-columns:1fr}.pdf-aside{position:static;order:-1}}
 .pdf-page{width:100%;height:auto;display:block;background:#fff;border-radius:10px;border:1px solid var(--line);box-shadow:0 14px 34px -24px rgba(5,65,91,.45)}
+.dur{display:inline-flex;align-items:center;gap:5px;margin-left:auto;font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}.dur svg{width:13px;height:13px}
+.part-top{display:flex;align-items:center;gap:10px}
 .pdf-loading{padding:40px;text-align:center;color:var(--muted)}
 .pdf-pages.scroll{position:relative;max-height:min(80vh,880px);overflow-y:auto;overscroll-behavior:contain;padding:12px;border:1px solid var(--line);border-radius:16px;background:#EDE5DC}
 .pdf-count{display:flex;justify-content:space-between;gap:12px;margin:8px 4px 0;font-size:14px;font-weight:600;color:var(--muted)}
@@ -271,11 +273,6 @@ nav.main a.on{color:var(--navy)}
 .rot-dots button[aria-current="true"]::before{background:var(--navy)}
 .testi-img{width:100%;border-radius:12px;display:block}
 .track>.testi{flex-basis:clamp(280px,31%,400px);align-self:flex-start}
-.fb-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
-.fb-toggle{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:99px;padding:4px;gap:4px}
-.fb-toggle button{font:inherit;font-weight:700;font-size:15px;border:0;background:none;color:var(--navy,#05415B);padding:10px 18px;border-radius:99px;cursor:pointer}
-.fb-toggle button.on{background:#05415B;color:#fff}
-.track>.quote-card{flex:0 0 clamp(280px,31%,400px);align-self:stretch;align-content:space-between}
 .track .testi-img{max-height:190px;object-fit:cover;width:100%}
 .testi .clampable{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
 .testi.open .clampable{display:block;-webkit-line-clamp:unset}
@@ -928,10 +925,14 @@ const resBySlug = Object.fromEntries(resources.map(r=>[r.slug,r]));
 COLLECTIONS.forEach(c=>{ if(c.byResTag){ const tags = c.byResTag.map(t=>t.toLowerCase()); c.resources = [...new Set([...(c.resources||[]), ...resources.filter(r=>r.focus.some(f=>tags.includes(f.toLowerCase()))).map(r=>r.slug)])]; } });
 COLLECTIONS.forEach(c=>{ if(c.byGrades) c.stories = [...new Set([...c.stories, ...stories.filter(s=>s.grades.includes("Elementary") || s.gradeLevels.some(g=>c.byGrades.includes(g))).map(s=>s.slug)])]; });
 COLLECTIONS.forEach(c=>{ if(c.byTag){ const tags = [].concat(c.byTag); c.stories = [...new Set([...c.stories, ...stories.filter(s=>(!c.byOrg || s.org===c.byOrg) && s.focus.some(f=>tags.includes(f))).map(s=>s.slug)])]; } });
+/* Video lengths in seconds, keyed by YouTube ID (shown on cards so people know what they are getting into) */
+const VIDEO_SECS = {"N6bLZwlW3OI":1650,"YpZ-L0y2w2I":842,"DxizBBzjshE":963,"A7BCRcGI658":914,"W5jLB4A9uHY":867,"k1YbAK6sJQA":624};
+const durFor = r => { const id = ytId(r.link||""); const t = id && VIDEO_SECS[id]; return t ? `${Math.floor(t/60)} min` : ""; };
+const durTag = r => durFor(r) ? `<span class="dur">${CICONS.play||""}${durFor(r)}</span>` : "";
 function resourceHTML(r){
   return `<a class="res" href="#${r.slug}" data-res="${r.slug}">
     ${r.img?`<div class="cover real res-cover"><img src="${r.img}" alt="" loading="lazy"></div>`:""}
-    <div class="res-top"><span class="res-icon">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><span class="res-type">${esc(r.type)}</span>${researchFor(r)?`<span class="rs-part">Part ${researchFor(r).part} of ${RESEARCH.length}</span>`:""}</div>
+    <div class="res-top"><span class="res-icon">${CICONS[RES_TYPE_ICON[r.type]||"doc"]}</span><span class="res-type">${esc(r.type)}</span>${researchFor(r)?`<span class="rs-part">Part ${researchFor(r).part} of ${RESEARCH.length}</span>`:""}${durTag(r)}</div>
     <h3>${esc(r.title)}</h3>
     <p${r.img?' class="clamp"':""}>${esc(r.summary)}</p>
   </a>`;
@@ -1566,7 +1567,7 @@ function partName(c, i, total, long){
 }
 function partCardHTML(r, i, total, qs, c){
   return `<a class="part-card" href="#${r.slug}" data-res="${r.slug}">
-    <span class="part-pill">${partName(c,i,total,true)}</span>
+    <div class="part-top"><span class="part-pill">${partName(c,i,total,true)}</span>${durTag(r)}</div>
     <h3>${esc(r.title.replace(/^((video|part)\s*\d+|start here)\s*[:.\-\u2013\u2014]\s*/i,""))}</h3>
     <div class="part-q-h">This video answers</div>
     <ol class="part-q">${qs.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
@@ -3236,15 +3237,11 @@ function renderVoices(){
   </section>
   <div class="wrap voices">
     ${rowHTML("voices-row","In their own words",`${TESTIMONIALS.length} educators · use the arrows or swipe to see more`, TESTIMONIALS.map(t=>testimonialHTML(t,true)).join(""))}
-    <section class="results"><div class="fb-head"><div><div class="eyebrow">Course feedback</div><h2>Meaning Making 101 and 201</h2></div>
-      <div class="fb-toggle" role="tablist">${["101","201"].map((k,i)=>`<button type="button" role="tab" data-c="${k}" aria-selected="${!i}" class="${i?"":"on"}">Meaning Making ${k}</button>`).join("")}</div></div>
-      <div id="proof-slot">${proofHTML(F["101"])}</div></section>
+    <section class="results"><div><div class="eyebrow">Course feedback</div><h2>Meaning Making 101 and 201</h2></div>
+      ${proofHTML(F["101"])}
+      <div class="quote-grid">${[...F["101"].quotes.slice(0,2).map(q=>quoteCardHTML(q,F["101"])), ...F["201"].quotes.slice(0,2).map(q=>quoteCardHTML(q,F["201"]))].join("")}</div></section>
   </div>`;
   wireProof(); wireRows(app);
-  app.querySelectorAll(".fb-toggle button").forEach(b=>b.onclick=()=>{
-    app.querySelectorAll(".fb-toggle button").forEach(x=>{const on=x===b; x.classList.toggle("on",on); x.setAttribute("aria-selected",on);});
-    app.querySelector("#proof-slot").innerHTML = proofHTML(F[b.dataset.c]); wireProof();
-  });
 }
 
 /* ---------- routing ---------- */
