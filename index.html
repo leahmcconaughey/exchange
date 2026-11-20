@@ -429,14 +429,12 @@ a.sm-open{text-decoration:none}
 .mini .nt{font-size:12.5px;font-weight:800;color:var(--blue)}
 /* leaders */
 .lead-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;padding-block:28px 0}
+.lead-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .lead-grid .coll{min-height:200px}
-.cc-feature{padding-block:28px 0}
-.cc-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:16px}
-.cc-head h2{margin:4px 0 6px}
-.cc-head p{margin:0;max-width:760px;color:var(--muted,#555)}
-.cc-all{white-space:nowrap;font-weight:700}
-.cc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
-@media (max-width:620px){.cc-grid{grid-template-columns:minmax(0,1fr)}.cc-head{flex-direction:column;align-items:flex-start}}
+.coll.has-cover{padding-top:0;align-content:start}
+.coll-cover{margin:0 -24px 4px;width:calc(100% + 48px);max-width:none;border-radius:16px 16px 0 0}
+.coll.has-cover .coll-title{margin-top:4px}
+@media (max-width:980px){.lead-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* about */
 .about-intro p{max-width:66ch}
 .about-sec{padding-block:30px;border-top:1px solid var(--line);display:grid;gap:16px}
@@ -718,7 +716,7 @@ function splitTags(tags){
 const imgPath = p => (p||"").trim().replace(/^\//,"");
 /* Cover files in the covers folder. When the sheet's Featured Image URL is blank, a story
    uses the cover whose file name matches its title (e.g. 34-Taking-Off-the-Training-Wheels.png). */
-const COVER_FILES = ["01-Stepping-Back-So-Students-Can-Step-Up.png", "02-A-Small-Shift-That-Gets-Students-Thinking.png", "03-Concept-Before-Content.png", "04-From-Delivering-Content-to-Facilitating-Thinking.png", "05-Is-Our-System-Really-Working.png", "06-Building-Community-Through-Student-Centered-Learning.png", "07-When-Collaboration-Becomes-the-Culture.png", "08-Less-Telling-More-Thinking.png", "09-From-Sound-to-Sense-Making.png", "10-Finding-Learning-All-Around-Us.png", "11-Students-Take-a-Seat-at-the-Table.png", "12-Rethinking-Needs-and-Wants.png", "13-Looking-Beyond-the-Surface.png", "14-They-Already-Knew-More-Than-I-Thought.png", "15-What-s-Beneath-the-Surface.png", "16-Same-Story-Different-Truths.png", "17-Learning-Spanish-Beyond-the-Textbook.png", "18-Getting-Back-to-the-Classroom-I-Wanted.png", "19-When-Words-Have-a-Purpose.png", "20-Opening-the-Classroom-Door.png", "21-Brewing-Up-Real-World-Math.png", "22-Seeing-the-Big-Picture.png", "23-Meaning-Making-101-The-Why.png", "23-Rewriting-Perry-s-Story.png", "24-Meaning-Making-101-The-How-Part-1.png", "24-Seeing-Classrooms-Differently.png", "25-Meaning-Making-101-The-How-Part-IIa.png", "26-Meaning-Making-101-The-How-Part-IIb.png", "27-Meaning-Making-101-Leahs-Thinking.png", "28-Meaning-Making-201-The-Why.png", "29-Meaning-Making-201-The-How.png", "30-Meaning-Making-201-The-What.png", "31-Meaning-Making-201-Leahs-Thinking.png", "32-Worms-Wonder-and-Real-Science.png", "33-The-20-Minute-Pivot.png", "34-Taking-Off-the-Training-Wheels.png", "35-Beyond-the-Essay.png", "36-Singing-for-Change.png", "37-Real-Data-Real-Excitement.png", "38-Shifting-Desks-and-Minds.png", "39-Letters-from-the-Wild.png", "40-Getting-Messy-with-Light-and-Shadow.png", "41-What-Is-Your-Carbon-Footprint.png", "42-The-Bee-Crisis-Fifth-Grade-Style.png", "43-Zoe-and-The-Bee-Project.png", "44-Teachers-Learning-Together.png", "45-Counting-What-Counts.png", "46-little-t-vs-Big-T-Transfer.png", "47-Refining-Your-Authentic-Transfer-Task.png", "48-3-Dimensions-of-Engagement.png", "49-My-Beef-with-Bloom-s-Taxonomy.png", "50-Clarifying-the-3-C-s.png", "51-Teaching-Is-A-Team-Sport.png", "52-Let-the-Thinking-Run.png", "53-ClassVoice-Record-Guide.png", "66-Content-Gist-Concept-Card-Sort.png"];
+const COVER_FILES = ["01-Stepping-Back-So-Students-Can-Step-Up.png", "02-A-Small-Shift-That-Gets-Students-Thinking.png", "03-Concept-Before-Content.png", "04-From-Delivering-Content-to-Facilitating-Thinking.png", "05-Is-Our-System-Really-Working.png", "06-Building-Community-Through-Student-Centered-Learning.png", "07-When-Collaboration-Becomes-the-Culture.png", "08-Less-Telling-More-Thinking.png", "09-From-Sound-to-Sense-Making.png", "10-Finding-Learning-All-Around-Us.png", "11-Students-Take-a-Seat-at-the-Table.png", "12-Rethinking-Needs-and-Wants.png", "13-Looking-Beyond-the-Surface.png", "14-They-Already-Knew-More-Than-I-Thought.png", "15-What-s-Beneath-the-Surface.png", "16-Same-Story-Different-Truths.png", "17-Learning-Spanish-Beyond-the-Textbook.png", "18-Getting-Back-to-the-Classroom-I-Wanted.png", "19-When-Words-Have-a-Purpose.png", "20-Opening-the-Classroom-Door.png", "21-Brewing-Up-Real-World-Math.png", "22-Seeing-the-Big-Picture.png", "23-Meaning-Making-101-The-Why.png", "23-Rewriting-Perry-s-Story.png", "24-Meaning-Making-101-The-How-Part-1.png", "24-Seeing-Classrooms-Differently.png", "25-Meaning-Making-101-The-How-Part-IIa.png", "26-Meaning-Making-101-The-How-Part-IIb.png", "27-Meaning-Making-101-Leahs-Thinking.png", "28-Meaning-Making-201-The-Why.png", "29-Meaning-Making-201-The-How.png", "30-Meaning-Making-201-The-What.png", "31-Meaning-Making-201-Leahs-Thinking.png", "32-Worms-Wonder-and-Real-Science.png", "33-The-20-Minute-Pivot.png", "34-Taking-Off-the-Training-Wheels.png", "35-Beyond-the-Essay.png", "36-Singing-for-Change.png", "37-Real-Data-Real-Excitement.png", "38-Shifting-Desks-and-Minds.png", "39-Letters-from-the-Wild.png", "40-Getting-Messy-with-Light-and-Shadow.png", "41-What-Is-Your-Carbon-Footprint.png", "42-The-Bee-Crisis-Fifth-Grade-Style.png", "43-Zoe-and-The-Bee-Project.png", "44-Teachers-Learning-Together.png", "45-Counting-What-Counts.png", "46-little-t-vs-Big-T-Transfer.png", "47-Refining-Your-Authentic-Transfer-Task.png", "48-3-Dimensions-of-Engagement.png", "49-My-Beef-with-Bloom-s-Taxonomy.png", "50-Clarifying-the-3-C-s.png", "51-Teaching-Is-A-Team-Sport.png", "52-Let-the-Thinking-Run.png", "53-ClassVoice-Record-Guide.png", "66-Content-Gist-Concept-Card-Sort.png", "69-The-Jigsaw-Putting-the-Pieces-Together.png", "70-Hope-Is-Not-a-Strategy-Designing-Share-Outs-So-Everyone-Thinks.png", "71-No-More-Back-to-Back-Presentations-A-Better-Way-to-Share-Out.png"];
 const coverKey = t => (t||"").toLowerCase().replace(/[’']/g,"").replace(/[^a-z0-9]+/g,"");
 const COVER_BY_TITLE = Object.fromEntries(COVER_FILES.map(f=>[coverKey(f.replace(/^\d+-/,"").replace(/\.[a-z]+$/i,"")), "covers/"+f]));
 function ytId(url){
@@ -895,7 +893,7 @@ const COLLECTIONS = [
  {id:"professional-learning", title:"Professional Learning", tag:"Teachers Learning Together", blurb:"Learning walks, coaching, peer visits, and other ways educators grow together", tone:"sage", icon:"people", leaders:true,
   byTag:["Professional Learning","Learning Walks","Collective Practice","Teacher As Professional","Coaching"],
   stories:["opening-the-classroom-door","seeing-the-big-picture","seeing-classrooms-differently"]},
- {id:"coaching-chronicles", title:"Coaching Chronicles", tag:"From a Farmington Coach", blurb:"A monthly newsletter from Farmington coach Monica: one Engagement Blueprint move, real classroom photos, and a nudge to try", tone:"peach", icon:"doc",
+ {id:"coaching-chronicles", title:"Coaching Chronicles", tag:"From a Farmington Coach", blurb:"A monthly newsletter from Farmington coach Monica: one Engagement Blueprint move, real classroom photos, and a nudge to try", tone:"blue", icon:"doc", leaders:true,
   stories:[], resources:COACHING_CHRONICLES.map(x=>x.slug)},
  /* FPS Level-Up: any Farmington story tagged "Level-Up" (or "Level Up") in the sheet joins automatically. Link: exchange.learning-works.org/#c-fps-level-up */
  {id:"fps-level-up", title:"FPS Level-Up", tag:"Farmington Public Schools", blurb:"Farmington teachers get the opportunity to deepen their understanding of student-centered learning and the Positioning Blueprint", tone:"sky", icon:"people",
@@ -1069,12 +1067,15 @@ function wireRows(root){
     new ResizeObserver(sync).observe(track); sync();
   });
 }
-function collectionHTML(c){
+/* Collection covers (made with tools/covermaker). Shown on the For Leaders & Coaches cards. */
+const COLL_COVERS = new Set(["coaching-chronicles","research-series","mastery-based-grading","professional-learning","participation-structures","watching-yourself-teach","learn-the-amt-framework","staff-meeting-ready","school-models","engagement-blueprint","coaching-conversation"]);
+function collectionHTML(c, withCover){
   const n = c.stories.filter(x=>bySlug[x]).length, nr = (c.resources||[]).filter(x=>resBySlug[x]).length;
   const count = c.schools ? `${SCHOOLS.length} schools` : c.hub ? `${c.hub.length} paths` : c.series ? `${nr} ${c.unit||"tutorials"}${c.time?` · ${c.time}`:""}` : [n?`${n} stories`:"", nr?`${nr} resources`:""].filter(Boolean).join(" · ");
-  return `<a class="coll tone-${c.tone}" href="#c-${c.id}" data-coll="${c.id}">
-    <span class="coll-icon">${CICONS[c.icon]}</span>
-    ${c.tag?`<span class="coll-tag">${esc(c.tag)}</span>`:""}
+  const cov = withCover && COLL_COVERS.has(c.id);
+  return `<a class="coll tone-${c.tone}${cov?" has-cover":""}" href="#c-${c.id}" data-coll="${c.id}">
+    ${cov?`<div class="cover real coll-cover"><img src="covers/collections/${c.id}.png" alt="" loading="lazy"></div>`:`<span class="coll-icon">${CICONS[c.icon]}</span>`}
+    ${c.tag&&!cov?`<span class="coll-tag">${esc(c.tag)}</span>`:""}
     <span class="coll-title${c.tag?" tagged":""}">${esc(c.title)}</span>
     <span class="coll-blurb">${esc(c.blurb)}</span>
     <span class="coll-count">${count} →</span>
@@ -1278,7 +1279,7 @@ function renderLibrary(tab){
 /* ---------- LEADERS & COACHES ---------- */
 function renderLeaders(){
   /* Order mixes the card colors so neither column is all one tone */
-  const LEAD_ORDER = ["research-series","mastery-based-grading","professional-learning","participation-structures","watching-yourself-teach","learn-the-amt-framework","staff-meeting-ready","school-models","engagement-blueprint","coaching-conversation"];
+  const LEAD_ORDER = ["coaching-chronicles","research-series","mastery-based-grading","professional-learning","participation-structures","watching-yourself-teach","learn-the-amt-framework","staff-meeting-ready","school-models","engagement-blueprint","coaching-conversation"];
   const rank = c => { const i = LEAD_ORDER.indexOf(c.id); return i<0 ? 999 : i; };
   const lead = COLLECTIONS.filter(c=>c.leaders).sort((x,y)=>rank(x)-rank(y));
   const sysStories = stories.filter(s=>s.pathway!=="Classroom" || s.focus.some(f=>["Leadership","Learning Walks","Coaching","Collective Practice"].includes(f)));
@@ -1290,13 +1291,7 @@ function renderLeaders(){
     <h1>For leaders &amp; coaches</h1>
     <p>Curated starting points for the next staff meeting, coaching conversation, or system-level question.</p>
   </section>
-  <section class="wrap cc-feature">
-    <div class="cc-head"><div><div class="eyebrow">Featured for coaches</div><h2>Check Out the Coaching Chronicles</h2>
-      <p>Every month, Monica, an instructional coach in Farmington Public Schools, picks one Engagement Blueprint move, shows what it looks like in real classrooms, and gives teachers one specific nudge to try. A model for keeping your own staff focused on one small shift at a time.</p></div>
-      ${COACHING_CHRONICLES.length>2?`<a class="cc-all" href="#c-coaching-chronicles" data-coll="coaching-chronicles">See all ${COACHING_CHRONICLES.length} issues →</a>`:""}</div>
-    <div class="cc-grid">${COACHING_CHRONICLES.slice(0,2).map(resourceHTML).join("")}</div>
-  </section>
-  <section class="wrap lead-grid">${lead.map(c=>collectionHTML(c)).join("")}</section>
+  <section class="wrap lead-grid">${lead.map(c=>collectionHTML(c,true)).join("")}</section>
   <div class="wrap rows">
     ${rowHTML("lead-stories","Stories about leading the work","District and school stories, learning walks, and coaching", sysStories.map(cardHTML).join(""))}
     ${lRes.length?rowHTML("lead-res","Resources for leaders & coaches","", lRes.map(resourceHTML).join("")):""}
